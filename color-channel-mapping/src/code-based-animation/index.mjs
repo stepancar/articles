@@ -1,4 +1,5 @@
 import { PalettesSelector } from './select.mjs';
+import { drawCircle } from '../utils.mjs';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -54,11 +55,6 @@ function getSecondCirclePosition(time) {
     }
 }
 
-function drawCircle(ctx, x, y, r, color) {
-    ctx.beginPath();
-    ctx.fillStyle = color
-    ctx.arc(x, y, r, 0, 2 * Math.PI);
-    ctx.fill();
-}
+
 
 animationLoop();

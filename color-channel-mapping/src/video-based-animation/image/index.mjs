@@ -1,7 +1,7 @@
+import { hexToRgb, rgbArrayToHex } from "../../utils.mjs";
+
 const image = document.getElementById('image');
-
 const canvas = document.getElementById('canvas');
-
 const ctx = canvas.getContext('2d');
 
 image.decode().then(() => {
@@ -9,7 +9,9 @@ image.decode().then(() => {
 
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const colorMappings = {
-        0xff0000: 0x00ff00,
+        0xff0000: 0x0000ff,
+        0x00ff00: 0xff0000,
+        0x0000ff: 0x00ff00,
     }
     replaceImageData(imageData.data, colorMappings);
     ctx.putImageData(imageData, 0, 0);
@@ -30,17 +32,4 @@ function replaceImageData(imageData, colorMappings) {
             imageData[i+2] = newB;
         }
     }
-}
-
-function rgbArrayToHex(rgbArray) {
-    return (rgbArray[0] << 16) + (rgbArray[1] << 8) + rgbArray[2]
-}
-
-function hexToRgb(hex) {
-    const b = hex % 256;
-    hex /= 256;
-    const g = hex % 256;
-    hex /= 256;
-    const r = hex % 256;
-    return [r, g, b]
 }

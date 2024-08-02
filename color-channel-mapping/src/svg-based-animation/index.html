@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Color channel mapping
+        </title>
+         
+    </head>
+ 
+    <body>
+        <svg width="500" height="500" viewBox="0 0 500 500">
+            <!-- Define the sinusoidal paths -->
+            <path id="path1" d="M 0 250 Q 125 250 250 250 T 500 50" fill="transparent" />
+            <path id="path2" d="M 0 50 Q 125 350 250 250 T 500 250" fill="transparent" />
+            <path id="path3" d="M 0 150 Q 125 550 250 250 T 500 250" fill="transparent" />
+    
+            <!-- Circle 1 (red) -->
+            <circle r="50" fill="red">
+                <animateMotion repeatCount="indefinite" dur="2s">
+                    <mpath href="#path1"/>
+                </animateMotion>
+            </circle>
+    
+            <!-- Circle 2 (green) -->
+            <circle r="90" fill="green">
+                <animateMotion repeatCount="indefinite" dur="3s" begin="0.67s">
+                    <mpath href="#path2"/>
+                </animateMotion>
+            </circle>
+    
+            <!-- Circle 3 (blue) -->
+            <circle r="30" fill="blue">
+                <animateMotion repeatCount="indefinite" dur="2s" begin="1.33s">
+                    <mpath href="#path3"/>
+                </animateMotion>
+                <animate attributeName="r" values="30;25;30;70;50;30;15;10;15;20" dur="2s" repeatCount="indefinite" />
+            </circle>
+        </svg>
+    </body>
+</html>

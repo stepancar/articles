@@ -1,23 +1,44 @@
-import { hexToRgb, rgbArrayToHex } from "../../utils.mjs";
+import { hexToRgb, rgbArrayToHex, PalettesSelector } from "../../utils.mjs";
 
 const image = document.getElementById('image');
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-
+const paleteSelector = new PalettesSelector(document.getElementById('themeSelect'));
+const ctx = canvas.getContext('2d', { antialias: false });
+let originalImageData = null;
+let currentImageData = null;
 image.decode().then(() => {
     ctx.drawImage(image, 0, 0);
+    const frame = (new VideoFrame(image, { timestamp: 0 }));
+    originalImageData = new ImageData(frame.codedWidth, frame.codedHeight);
+    frame.copyTo(originalImageData.data).then(() => {
+        currentImageData = new ImageData(structuredClone(originalImageData.data), frame.codedWidth);
+        const colorMappings = {
+            0xff0000: paleteSelector.value[0],
+            0x00ff00: paleteSelector.value[1],
+            0x0000ff: paleteSelector.value[2],
+        }
+        replaceImageData(originalImageData.data, currentImageData.data, colorMappings);
+        ctx.putImageData(originalImageData, 0, 0);
+    });
 
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const colorMappings = {
-        0xff0000: 0x0000ff,
-        0x00ff00: 0xff0000,
-        0x0000ff: 0x00ff00,
-    }
-    replaceImageData(imageData.data, colorMappings);
-    ctx.putImageData(imageData, 0, 0);
+    debugger;
+
+    // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    
 });
 
-function replaceImageData(imageData, colorMappings) {
+paleteSelector.addEventListener('change', () => {
+    const colorMappings = {
+        0xff0000: paleteSelector.value[0],
+        0x00ff00: paleteSelector.value[1],
+        0x0000ff: paleteSelector.value[2],
+    }
+    replaceImageData(originalImageData.data, currentImageData.data, colorMappings);
+    ctx.putImageData(currentImageData, 0, 0);
+});
+
+
+function replaceImageData(imageData, currentImageData, colorMappings) {
     for (let i = 0; i< imageData.length; i+=4) {
         const r = imageData[i];
         const g = imageData[i+1];
@@ -27,9 +48,9 @@ function replaceImageData(imageData, colorMappings) {
 
         if (hexColor in colorMappings) {
             const [newR, newG, newB] = hexToRgb(colorMappings[hexColor]);
-            imageData[i] = newR;
-            imageData[i+1] = newG;
-            imageData[i+2] = newB;
+            currentImageData[i] = newR;
+            currentImageData[i+1] = newG;
+            currentImageData[i+2] = newB;
         }
     }
 }

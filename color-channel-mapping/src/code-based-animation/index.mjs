@@ -1,15 +1,9 @@
-import { PalettesSelector } from './select.mjs';
-import { drawCircle } from '../utils.mjs';
+import { drawCircle, PalettesSelector, getCssHexColor } from '../utils.mjs';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 const paleteSelector = new PalettesSelector(document.getElementById('themeSelect'));
-
-
-function getHexColor(color) {
-    return '#' + color.toString('16').padStart(6, '0');
-}
 
 function animationLoop(time) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -21,21 +15,21 @@ function animationLoop(time) {
         circle1Position.x,
         circle1Position.y,
         50,
-        getHexColor(paleteSelector.value[0])
+        getCssHexColor(paleteSelector.value[0])
     );
     drawCircle(
         ctx,
         circle2Position.x,
         circle2Position.y,
         10 + Math.abs(Math.sin(time / 1000)) * 40,
-        getHexColor(paleteSelector.value[1])
+        getCssHexColor(paleteSelector.value[1])
     );
     drawCircle(
         ctx,
         circle2Position.x + 40,
         circle2Position.y + 40,
         10 + Math.abs(Math.sin(time / 400)) * 90,
-        getHexColor(paleteSelector.value[2])
+        getCssHexColor(paleteSelector.value[2])
     );
 
     requestAnimationFrame(animationLoop);

@@ -17,3 +17,21 @@ export function drawCircle(ctx, x, y, r, color) {
     ctx.arc(x, y, r, 0, 2 * Math.PI);
     ctx.fill();
 }
+
+export function getCssHexColor(color) {
+    return '#' + color.toString('16').padStart(6, '0');
+}
+
+
+export class PalettesSelector {
+    constructor(selectElement) {
+        this.selectElement = selectElement;
+    }
+    get value() {
+        return JSON.parse(this.selectElement.value);
+    }
+
+    addEventListener(event, callback) {
+        this.selectElement.addEventListener(event, callback);
+    }
+}

@@ -1,4 +1,4 @@
-import { hexToRgb, rgbArrayToHex, PalettesSelector } from "../../utils.mjs";
+import { hexToRgb, rgbArrayToHex, PalettesSelector } from "../utils.mjs";
 
 const image = document.getElementById('image');
 const canvas = document.getElementById('canvas');

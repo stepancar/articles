@@ -4,12 +4,54 @@
         <title>
             Color channel mapping
         </title>
-        
     </head>
 
+    <style>
+        iframe {
+            display: inline-block;
+            margin: 10px;
+            border: 0;
+            width: 100%;
+        }
+    </style>
+
     <body>
-        <iframe src="./code-based-animation/index.html" width="400" height="400"></iframe>
-        <iframe src="./svg-based-animation/index.html" width="400" height="400"></iframe>
-        <iframe src="./video-based-animation/image/index.html" width="400" height="400"></iframe>
+        <pre>
+            <code class="language-html">
+                
+            </code>
+        </pre>
+
+        <iframe src="./code-based-animation/index.html"></iframe>
+        <iframe src="./svg-based-animation/index.html"></iframe>
+        <iframe src="./solid-color-remapping/index.html"></iframe>
+
+        <script>
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.onload = () => {
+                    function resizeIframe() {
+                        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20+ 'px';
+                    }
+
+                    iframe.height = iframe.contentWindow.document.body.scrollHeight;
+                    const iframeDocument = iframe.contentWindow.document;
+
+                    resizeIframe(); // Initial resize after content load
+
+                    // Create a MutationObserver to watch for changes in the content
+                    const observer = new MutationObserver(() => {
+                        resizeIframe();
+                    });
+
+                    // Configure the observer to watch for changes to child nodes and subtree
+                    observer.observe(iframeDocument.body, {
+                        childList: true,
+                        subtree: true
+                    });
+                };
+            });
+        
+        </script>
     </body>
 </html>

@@ -21,8 +21,6 @@ image.decode().then(() => {
         ctx.putImageData(originalImageData, 0, 0);
     });
 
-    debugger;
-
     // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
 });

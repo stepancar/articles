@@ -23,15 +23,27 @@ export function getCssHexColor(color) {
 }
 
 
-export class PalettesSelector {
+export class PalettesSelector extends EventTarget {
+    #value = null
     constructor(selectElement) {
+        super();
         this.selectElement = selectElement;
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'changeTheme') {
+                const themePalette = event.data.value;
+
+                this.#value = themePalette;
+
+                this.dispatchEvent(new Event('change'));
+                // Apply the theme palette
+            }
+        });
+
+        this.selectElement.addEventListener('change', () => {
+            this.dispatchEvent(new Event('change'));
+        });
     }
     get value() {
-        return JSON.parse(this.selectElement.value);
-    }
-
-    addEventListener(event, callback) {
-        this.selectElement.addEventListener(event, callback);
+        return this.#value || JSON.parse(this.selectElement.value);
     }
 }

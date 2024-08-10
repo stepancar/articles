@@ -1,0 +1,17 @@
+{
+  "name": "color-channel-mapping",
+  "version": "1.0.0",
+  "description": "В этой статье я постараюсь рассказать о задаче перекрашивания медиа ресурса в цвета палитры. И об одном из возможных решений этой задачи, называющимся color channel mapping.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node ./build/build-html.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "front-matter": "^4.0.2",
+    "mustache": "^4.2.0",
+    "showdown": "^2.1.0"
+  }
+}

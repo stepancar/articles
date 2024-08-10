@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id="></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', '');
+	</script>
+
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="styles.css" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans" rel="stylesheet">
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+	<meta name="viewport" content="width=device-width" />
+
+	<!-- Favicon magic -->
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#ffc40d">
+	<meta name="theme-color" content="#ffffff">
+
+	<!-- Stuff for Facebook/Twitter -->
+	<meta property="og:url"                content="http://www.stepancar.com/fourier" />
+	<meta property="og:type"               content="website" />
+	<meta property="og:title"              content="" />
+	<meta property="og:description"        content="" />
+	<meta property="og:image"              content="http://preview.png" />
+	<meta property="og:image:type"         content="image/png" />
+	<meta property="og:image:width"        content="1200" />
+	<meta property="og:image:height"       content="630" />
+	<meta name="twitter:card"              content="summary_large_image" />
+	<meta name="twitter:site"              content="@stepancar" />
+	<meta property="fb:app_id"             content="" />
+</head>
+<body>
+<header>
+	<canvas id="header-background" class="header-background"></canvas>
+	<h1></h1>
+	<p>Stepan Mikhailiuk</p>
+	
+</header>
+
+<main id="content">
+	<style>
+    iframe {
+        display: inline-block;
+        margin: 10px;
+        border: 0;
+        width: 100%;
+    }
+
+    .global-theme-select {
+        position: fixed;
+        top: 50%;
+        left: 0;
+        z-index: 1000;
+        font-size: 20px
+    }
+    .global-theme-select select {
+        font-size: 50px;
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        margin: 0 auto;
+        margin-left: 200px;
+
+        max-width: 1200px;
+    }
+</style>
+<p><body></p>
+<pre>
+    <code class="language-html"></code>
+</pre>
+<div class="global-theme-select">
+    <select id="themeSelect" >
+        <option value="[16711680, 65280, 255]">original</option>
+        <option value="[5785334, 2369583, 10463935]">lumen5</option>
+        <option value="[4359668, 16497669, 3450963]">google</option>
+        <option value="[1603570, 16777215, 15790837]">facebook</option>
+        <option value="[16750848, 0, 16777215]">amazon</option>
+        <option value="[2236191, 16777215, 15010068]">netflix</option>
+    </select>
+</div>
+<h2 id="colorchannelmapping">Color channel mapping</h2>
+<p>In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
+And about one of the possible solutions to this problem, called color channel mapping.</p>
+<p>Let's imagine that we are creating an application for creating video presentations.
+For each slide, the user can choose an animation that will be displayed in the background.</p>
+<p>besides the animation itself, the user can choose a color palette.
+For simplicity, let's assume that the palette consists of 3 colors, the animation itself consists of several objects, at the stage of creating the animation, the designer sets the color number from the palette for each object.
+The question arises, how can we color the animation in the colors of the user's palette?</p>
+<p>Those animations can be implemented in different ways, however, we will consider 3 main ones:</p>
+<div class="container">
+    <iframe src="../src/code-based-animation/index.html"></iframe>
+    <iframe src="../src/svg-based-animation/index.html"></iframe>
+    <iframe src="../src/solid-color-remapping/index.html"></iframe>
+</div>
+<pre><code class="javascript language-javascript">const themeSelect = document.getElementById('themeSelect');
+</code></pre>
+<script src="./src/index.mjs" type="module"></script>
+<script>
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        iframe.onload = () => {
+            function resizeIframe() {
+                iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20+ 'px';
+            }
+
+            iframe.height = iframe.contentWindow.document.body.scrollHeight;
+            const iframeDocument = iframe.contentWindow.document;
+
+            resizeIframe(); // Initial resize after content load
+
+            // Create a MutationObserver to watch for changes in the content
+            const observer = new MutationObserver(() => {
+                resizeIframe();
+            });
+
+            // Configure the observer to watch for changes to child nodes and subtree
+            observer.observe(iframeDocument.body, {
+                childList: true,
+                subtree: true
+            });
+        };
+    });
+</script>
+</main>
+<script src="main.bundle.js"></script>
+</body>
+</html>

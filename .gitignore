@@ -1,2 +1,3 @@
 *.rbc
 *.fyc
+*/node_modules/

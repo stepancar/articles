@@ -34,8 +34,6 @@ export class PalettesSelector extends EventTarget {
 
                 this.#value = themePalette;
 
-                this.selectElement.style.display = 'none';
-
                 this.dispatchEvent(new Event('change'));
             }
         });
@@ -43,8 +41,16 @@ export class PalettesSelector extends EventTarget {
         this.selectElement.addEventListener('change', () => {
             this.dispatchEvent(new Event('change'));
         });
+        if (isIframe()) {
+            this.selectElement.style.display = 'none';
+        }
     }
     get value() {
         return this.#value || JSON.parse(this.selectElement.value);
     }
+}
+
+
+function isIframe() {
+    return window.self !== window.top;
 }

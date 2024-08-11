@@ -25,10 +25,10 @@ title: Color channel mapping
 
 </style>
 
-## Color channel mapping
-
-In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
-And about one of the possible solutions to this problem, called color channel mapping.
+<p class="lead">
+    In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
+    And about one of the possible solutions to this problem, called color channel mapping.
+</p>
 
 
 Let's imagine that we are creating an application for creating video presentations.

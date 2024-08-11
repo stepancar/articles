@@ -45,7 +45,6 @@
 	<canvas id="header-background" class="header-background"></canvas>
 	<h1></h1>
 	<p>Stepan Mikhailiuk</p>
-	
 </header>
 
 <main id="content">
@@ -58,11 +57,12 @@
     }
 
     .global-theme-select {
-        position: fixed;
-        top: 50%;
+        position: sticky;
+        top: 0;
         left: 0;
         z-index: 1000;
         font-size: 20px
+        width: 100%;
     }
     .global-theme-select select {
         font-size: 50px;
@@ -79,10 +79,13 @@
         max-width: 1200px;
     }
 </style>
-<p><body></p>
-<pre>
-    <code class="language-html"></code>
-</pre>
+<h2 id="colorchannelmapping">Color channel mapping</h2>
+<p>In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
+And about one of the possible solutions to this problem, called color channel mapping.</p>
+<p>Let's imagine that we are creating an application for creating video presentations.
+For each slide, the user can choose an animation that will be displayed in the background.</p>
+<p>besides the animation itself, the user can choose a color palette.
+For simplicity, let's assume that the palette consists of 3 colors.</p>
 <div class="global-theme-select">
     <select id="themeSelect" >
         <option value="[16711680, 65280, 255]">original</option>
@@ -93,22 +96,24 @@
         <option value="[2236191, 16777215, 15010068]">netflix</option>
     </select>
 </div>
-<h2 id="colorchannelmapping">Color channel mapping</h2>
-<p>In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
-And about one of the possible solutions to this problem, called color channel mapping.</p>
-<p>Let's imagine that we are creating an application for creating video presentations.
-For each slide, the user can choose an animation that will be displayed in the background.</p>
-<p>besides the animation itself, the user can choose a color palette.
-For simplicity, let's assume that the palette consists of 3 colors, the animation itself consists of several objects, at the stage of creating the animation, the designer sets the color number from the palette for each object.
+<p>the animation itself consists of several objects, at the stage of creating the animation, the designer sets the color number from the palette for each object.
 The question arises, how can we color the animation in the colors of the user's palette?</p>
 <p>Those animations can be implemented in different ways, however, we will consider 3 main ones:</p>
-<div class="container">
-    <iframe src="../src/code-based-animation/index.html"></iframe>
-    <iframe src="../src/svg-based-animation/index.html"></iframe>
-    <iframe src="../src/solid-color-remapping/index.html"></iframe>
-</div>
-<pre><code class="javascript language-javascript">const themeSelect = document.getElementById('themeSelect');
-</code></pre>
+<ul>
+<li>Code-based animation</li>
+<li>SVG-based animation</li>
+<li>Solid color remapping</li>
+</ul>
+<p>Let's consider each of them in more detail.</p>
+<h2 id="codebasedanimation">Code-based animation</h2>
+<iframe src="../src/code-based-animation/index.html"></iframe>
+<p><kek>
+    const themeSelect = document.getElementById('themeSelect');
+</kek></p>
+<h2 id="svgbasedanimation">SVG-based animation</h2>
+<iframe src="../src/svg-based-animation/index.html"></iframe>
+<h2 id="solidcolorremapping">Solid color remapping</h2>
+<iframe src="../src/solid-color-remapping/index.html"></iframe>
 <script src="./src/index.mjs" type="module"></script>
 <script>
     const iframes = document.querySelectorAll('iframe');

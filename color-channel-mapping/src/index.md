@@ -7,43 +7,18 @@
     }
 
     .global-theme-select {
-        position: fixed;
-        top: 50%;
+        position: sticky;
+        top: 0;
         left: 0;
         z-index: 1000;
         font-size: 20px
+        width: 100%;
     }
     .global-theme-select select {
         font-size: 50px;
     }
 
-    .container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-
-        margin: 0 auto;
-        margin-left: 200px;
-
-        max-width: 1200px;
-    }
 </style>
-
-<body>
-<pre>
-    <code class="language-html"></code>
-</pre>
-
-<div class="global-theme-select">
-    <select id="themeSelect" >
-        <option value="[16711680, 65280, 255]">original</option>
-        <option value="[5785334, 2369583, 10463935]">lumen5</option>
-        <option value="[4359668, 16497669, 3450963]">google</option>
-        <option value="[1603570, 16777215, 15790837]">facebook</option>
-        <option value="[16750848, 0, 16777215]">amazon</option>
-        <option value="[2236191, 16777215, 15010068]">netflix</option>
-    </select>
-</div>
 
 ## Color channel mapping
 
@@ -56,21 +31,46 @@ For each slide, the user can choose an animation that will be displayed in the b
 
 
 besides the animation itself, the user can choose a color palette.
-For simplicity, let's assume that the palette consists of 3 colors, the animation itself consists of several objects, at the stage of creating the animation, the designer sets the color number from the palette for each object.
+For simplicity, let's assume that the palette consists of 3 colors.
+
+<div class="global-theme-select">
+    <select id="themeSelect" >
+        <option value="[16711680, 65280, 255]">original</option>
+        <option value="[5785334, 2369583, 10463935]">lumen5</option>
+        <option value="[4359668, 16497669, 3450963]">google</option>
+        <option value="[1603570, 16777215, 15790837]">facebook</option>
+        <option value="[16750848, 0, 16777215]">amazon</option>
+        <option value="[2236191, 16777215, 15010068]">netflix</option>
+    </select>
+</div>
+
+the animation itself consists of several objects, at the stage of creating the animation, the designer sets the color number from the palette for each object.
 The question arises, how can we color the animation in the colors of the user's palette?
 
 
 Those animations can be implemented in different ways, however, we will consider 3 main ones:
 
-<div class="container">
-    <iframe src="../src/code-based-animation/index.html"></iframe>
-    <iframe src="../src/svg-based-animation/index.html"></iframe>
-    <iframe src="../src/solid-color-remapping/index.html"></iframe>
-</div>
+- Code-based animation
+- SVG-based animation
+- Solid color remapping
 
-```javascript
-const themeSelect = document.getElementById('themeSelect');
-```
+Let's consider each of them in more detail.
+
+## Code-based animation
+
+<iframe src="../src/code-based-animation/index.html"></iframe>
+
+<kek>
+    const themeSelect = document.getElementById('themeSelect');
+</kek>
+
+## SVG-based animation
+
+<iframe src="../src/svg-based-animation/index.html"></iframe>
+
+## Solid color remapping
+
+<iframe src="../src/solid-color-remapping/index.html"></iframe>
 
 <script src="./src/index.mjs" type="module"></script>
 <script>

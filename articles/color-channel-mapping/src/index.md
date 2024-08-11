@@ -25,19 +25,6 @@ title: Color channel mapping
 
 </style>
 
-<p class="lead">
-    In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
-    And about one of the possible solutions to this problem, called color channel mapping.
-</p>
-
-
-Let's imagine that we are creating an application for creating video presentations.
-For each slide, the user can choose an animation that will be displayed in the background.
-
-
-besides the animation itself, the user can choose a color palette.
-For simplicity, let's assume that the palette consists of 3 colors.
-
 <div class="global-theme-select">
     <select id="themeSelect" >
         <option value="[16711680, 65280, 255]">original</option>
@@ -47,7 +34,27 @@ For simplicity, let's assume that the palette consists of 3 colors.
         <option value="[16750848, 0, 16777215]">amazon</option>
         <option value="[2236191, 16777215, 15010068]">netflix</option>
     </select>
+    <div>
+        <div style="background-color: red; width: 100px; height: 100px; display: inline-block"></div>
+        <div style="background-color: green; width: 100px; height: 100px; display: inline-block"></div>
+        <div style="background-color: blue; width: 100px; height: 100px; display: inline-block"></div>
+    </div>
 </div>
+
+<p class="lead">
+    In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
+    And about one of the possible solutions to this problem, called color channel mapping.
+</p>
+
+
+
+
+Let's imagine that we are creating an application for creating video presentations.
+For each slide, the user can choose an animation that will be displayed in the background.
+
+
+besides the animation itself, the user can choose a color palette.
+For simplicity, let's assume that the palette consists of 3 colors.
 
 the animation itself consists of several objects, at the stage of creating the animation, the designer sets the color number from the palette for each object.
 The question arises, how can we color the animation in the colors of the user's palette?
@@ -185,28 +192,5 @@ function getNewColor(old, colorPalette) {
 
 <script src="./index.mjs" type="module"></script>
 <script>
-    const iframes = document.querySelectorAll('iframe');
-    iframes.forEach(iframe => {
-        iframe.onload = () => {
-            function resizeIframe() {
-                iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20+ 'px';
-            }
-
-            iframe.height = iframe.contentWindow.document.body.scrollHeight;
-            const iframeDocument = iframe.contentWindow.document;
-
-            resizeIframe(); // Initial resize after content load
-
-            // Create a MutationObserver to watch for changes in the content
-            const observer = new MutationObserver(() => {
-                resizeIframe();
-            });
-
-            // Configure the observer to watch for changes to child nodes and subtree
-            observer.observe(iframeDocument.body, {
-                childList: true,
-                subtree: true
-            });
-        };
-    });
+    
 </script>

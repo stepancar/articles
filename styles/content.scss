@@ -1,3 +1,6 @@
+@import './mixins';
+@import './variables';
+
 :root {
     --color-bg: #ffffff;
     --color-bg-offset: #f7f7f9;
@@ -13,6 +16,9 @@
     --font-family-base: 'Times', sans-serif;
 }
 
+html h1 {
+    background-color: red
+}
 
 html {
     font-size: 100%;

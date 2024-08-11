@@ -10,3 +10,19 @@ paleteSelector.addEventListener('change', () => {
         }, '*');
     });
 });
+
+const iframes = document.querySelectorAll('iframe');
+
+iframes.forEach(iframe => {
+    function resizeIframe() {
+        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20+ 'px';
+    }
+
+    iframe.onload = () => {
+        resizeIframe(); // Initial resize after content load
+    };
+
+    setTimeout(() => {
+        resizeIframe();
+    }, 1000);
+});

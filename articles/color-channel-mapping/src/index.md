@@ -184,6 +184,3 @@ function getNewColor(old, colorPalette) {
 <iframe src="./solid-color-remapping/index.html"></iframe>
 
 <script src="./index.mjs" type="module"></script>
-<script>
-    
-</script>

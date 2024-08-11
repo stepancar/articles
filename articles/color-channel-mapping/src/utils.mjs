@@ -37,7 +37,6 @@ export class PalettesSelector extends EventTarget {
                 this.selectElement.style.display = 'none';
 
                 this.dispatchEvent(new Event('change'));
-                // Apply the theme palette
             }
         });
 

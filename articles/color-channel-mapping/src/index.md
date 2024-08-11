@@ -1,5 +1,5 @@
 ---
-layout: main.njk
+layout: article.njk
 title: Color channel mapping
 ---
 
@@ -22,7 +22,6 @@ title: Color channel mapping
     .global-theme-select select {
         font-size: 50px;
     }
-
 </style>
 
 <div class="global-theme-select">

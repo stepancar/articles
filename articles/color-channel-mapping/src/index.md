@@ -4,20 +4,14 @@ title: Color channel mapping
 ---
 
 <style>
-    iframe {
-        display: inline-block;
-        margin: 10px;
-        border: 0;
-        width: 100%;
-    }
-
     .global-theme-select {
         position: sticky;
         top: 0;
         left: 0;
         z-index: 1000;
-        font-size: 20px
+        font-size: 20px;
         width: 100%;
+        background-color: white;
     }
     .global-theme-select select {
         font-size: 50px;
@@ -116,7 +110,7 @@ For example, like this:
 </svg>
 ```
 
-тогда функция, которая может перекрасить наш svg в нужные цвета может выглядеть так:
+Then the function that can recolor our svg in the desired colors can look like this:
 
 ```typescript
 function recolorSVG(svg, colorPalette: [string, string, string]) {

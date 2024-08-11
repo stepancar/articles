@@ -2,6 +2,7 @@ const markdownIt = require("markdown-it");
 const hljs = require('highlight.js');
 const sass = require("sass");
 const path = require("node:path");
+const pluginSyntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
 
 module.exports = function(eleventyConfig) {
     eleventyConfig.addTemplateFormats("scss");
@@ -30,23 +31,5 @@ module.exports = function(eleventyConfig) {
       }
     });
 
-  let options = {
-    html: true,
-    breaks: true,
-    linkify: true,
-    highlight: function (str, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-          try {
-            return hljs.highlight(str, { language: lang }).value;
-          } catch (__) {}
-        }
-    
-        return ''; // use external default escaping
-    },
-	};
-
-  
-
-	eleventyConfig.setLibrary("md", markdownIt(options));
-
+    eleventyConfig.addPlugin(pluginSyntaxHighlight)
 };

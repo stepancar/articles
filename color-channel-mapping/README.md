@@ -20,31 +20,6 @@
 
 <iframe src="./src/index.html"></iframe>
 
-Давайте представим что анимация сделана с помощью кода, который рисует на канвасе.
-Например такая:
-
-```typescript
-function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  ctx.beginPath();
-  ctx.fillStyle = 'red';
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fill();
-}
-```
-
-Чтобы сделать анимацию перекрашиваемой, мы можем передавать палитру в функцию, а в коде использовать индексы цветов из палитры.
-Например так:
-
-```typescript
-function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, colorPalette: [string, string, string]) {
-  ctx.beginPath();
-  ctx.fillStyle = colorPalette[0];
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fill();
-}
-```
-
-Проблема таких анимаций в том, что их может создать только разработчик, без навыка программирования не обойтись.
 
 ### SVG
 

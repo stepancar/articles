@@ -1,3 +1,8 @@
+---
+layout: main.njk
+title: eleventy example | home
+---
+
 <style>
     iframe {
         display: inline-block;
@@ -58,11 +63,39 @@ Let's consider each of them in more detail.
 
 ## Code-based animation
 
+
+Let's imagine that the animation is made using code that draws on the canvas.
+For example, like this:
+
+```typescript
+function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
+  ctx.beginPath();
+  ctx.fillStyle = 'red';
+  ctx.arc(x, y, r, 0, 2 * Math.PI);
+  ctx.fill();
+}
+```
+
 <iframe src="../src/code-based-animation/index.html"></iframe>
 
-<kek>
-    const themeSelect = document.getElementById('themeSelect');
-</kek>
+
+To make the animation recolorable, we can pass the palette
+to the function and use the color indexes from the palette in the code.
+For example like this:
+
+
+```typescript
+function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, colorPalette: [string, string, string]) {
+  ctx.beginPath();
+  ctx.fillStyle = colorPalette[0];
+  ctx.arc(x, y, r, 0, 2 * Math.PI);
+  ctx.fill();
+}
+```
+
+Проблема таких анимаций в том, что их может создать только разработчик, без навыка программирования не обойтись.
+
+
 
 ## SVG-based animation
 

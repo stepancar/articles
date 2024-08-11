@@ -1,6 +1,6 @@
 ---
 layout: main.njk
-title: eleventy example | home
+title: Color channel mapping
 ---
 
 <style>
@@ -93,15 +93,93 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
 }
 ```
 
-Проблема таких анимаций в том, что их может создать только разработчик, без навыка программирования не обойтись.
-
+The problem with such animations is that only a developer can create them, without programming skills, it is impossible.
 
 
 ## SVG-based animation
 
+
+Let's imagine that the animation is made using svg.
+For example, like this:
+
+```xml
+<?xml version="1.0"?>
+<svg viewBox="0 0 60 60" version="1.1"
+  xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="50"/>
+</svg>
+```
+
+тогда функция, которая может перекрасить наш svg в нужные цвета может выглядеть так:
+
+```typescript
+function recolorSVG(svg, colorPalette: [string, string, string]) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svg, "image/svg+xml");
+  const elements = doc.querySelectorAll('[fill]');
+  elements.forEach((element) => {
+    const colorIndex = element.getAttribute('fill');
+    element.setAttribute('fill', colors[colorIndex]);
+  });
+  return doc.documentElement.outerHTML;
+}
+```
+
 <iframe src="./svg-based-animation/index.html"></iframe>
 
+
+Designers can mark elements so that we can know which color number from the palette corresponds to each element.
+For example like this:
+
+```xml
+<?xml version="1.0"?>
+<svg viewBox="0 0 60 60" version="1.1"
+  xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="50" fill="1"/>
+</svg>
+```
+
+
+Unfortunatelly, despite the fact that the SVG ANIMAtuib standard exists for a long time, not many design tools can boast the ability to export animations to SVG.
+Which means that in fact, the designer also needs to have programming skills.
+
 ## Solid color remapping
+
+For designers, it is easiest to create an animation in a tool that is convenient for him and export it as a video.
+All animation creation tools allow this.
+
+It rises the question, how can the designer mark elements in this video so that we can recolor them?
+Designers can create a video with 3 colors - RGB
+
+This video can look like this:
+
+How can we recolor this video in the colors of the palette?
+
+```javascript
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+function drawFrame(video) {
+    ctx.drawImage(vide);
+
+    const imageData = ctx.getImageData();
+    replaceColors(imageData, colorPalette);
+
+    ctx.putImageData(imageData)
+}
+
+function relaceColors(imageData, colorPalette) {
+    for (let i = 0; i < imageData.length; i+=3) {
+        const image = imageData[i];
+        const r = imageData[i];
+        const g = imageData[i+1];
+        const b = imageData[i+2];
+    }
+}
+
+function getNewColor(old, colorPalette) {
+   return old;
+}
+```
 
 <iframe src="./solid-color-remapping/index.html"></iframe>
 

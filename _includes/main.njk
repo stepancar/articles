@@ -10,9 +10,21 @@
     <link rel="stylesheet" href="/css/style.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="/styles/highlight.css" />
     <link rel="stylesheet" href="/styles/content.css" />
+    <link rel="stylesheet" href="/styles/markdown.css" />
   </head>
 
   <body>
-    {{ content | safe }}
+    <layout>
+      <header>
+        {{ title }}
+      </header>
+      <main>
+        <article class="markdown">
+          <div class="content">
+            {{ content | safe }}
+          </div>
+        </article>
+      </main>
+    </layout>
   </body>
 </html>

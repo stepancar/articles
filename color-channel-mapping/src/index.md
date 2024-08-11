@@ -66,13 +66,13 @@ Let's consider each of them in more detail.
 
 ## SVG-based animation
 
-<iframe src="../src/svg-based-animation/index.html"></iframe>
+<iframe src="./svg-based-animation/index.html"></iframe>
 
 ## Solid color remapping
 
-<iframe src="../src/solid-color-remapping/index.html"></iframe>
+<iframe src="./solid-color-remapping/index.html"></iframe>
 
-<script src="./src/index.mjs" type="module"></script>
+<script src="./index.mjs" type="module"></script>
 <script>
     const iframes = document.querySelectorAll('iframe');
     iframes.forEach(iframe => {

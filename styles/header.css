@@ -1,0 +1,13 @@
+header {
+  position: relative;
+  text-align: center;
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+header h1 {
+  position: relative;
+  margin: 0;
+  padding: 0 20px;
+  color: black;
+}

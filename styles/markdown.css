@@ -1,0 +1,183 @@
+.markdown {
+  font-size: 1.125rem;
+  line-height: 1.65;
+  /* Vertical Rythm */
+  /* In-Text Links */
+  /* Images */
+  /* Video */
+  /* Rules */
+  /* Headings */
+  /* Lists */
+  /* Code blocks */
+  /* Inline code */
+  /* Signup Form */
+  /* Extends */
+}
+@media (min-width: 670px) {
+  .markdown {
+    font-size: 1.375rem;
+  }
+}
+.markdown > * {
+  margin-bottom: 2rem;
+}
+.markdown a {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.markdown p a:not(.btn),
+.markdown li a:not(.btn),
+.markdown blockquote a:not(.btn) {
+  box-shadow: inset 0 -2px 0 0 currentColor;
+  border-bottom: 1px solid currentColor;
+}
+.markdown p a:not(.btn):hover, .markdown p a:not(.btn):focus,
+.markdown li a:not(.btn):hover,
+.markdown li a:not(.btn):focus,
+.markdown blockquote a:not(.btn):hover,
+.markdown blockquote a:not(.btn):focus {
+  color: #fff;
+  box-shadow: inset 0 -1.25em 0 0 var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  outline: none;
+}
+.markdown img,
+.markdown video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 2rem;
+  color: var(--color-text-offset);
+  font-style: italic;
+  text-align: center;
+}
+.markdown figure {
+  max-width: none;
+  margin: 2rem auto;
+  text-align: center;
+}
+.markdown figure img {
+  margin-bottom: 0;
+}
+.markdown figcaption {
+  padding-top: 0.75rem;
+  font-style: italic;
+  font-size: 1rem;
+}
+.markdown video {
+  max-width: 100%;
+  height: auto;
+}
+.markdown hr {
+  text-align: center;
+  width: 240px;
+  height: 1px;
+  margin: 4rem auto;
+  border: 0px solid var(--color-border);
+  background-color: var(--color-border);
+}
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  position: relative;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.markdown h2:first-child,
+.markdown h3:first-child,
+.markdown h4:first-child {
+  margin-top: 0;
+}
+.markdown h2:hover > .heading-anchor, .markdown h2:focus > .heading-anchor,
+.markdown h3:hover > .heading-anchor,
+.markdown h3:focus > .heading-anchor,
+.markdown h4:hover > .heading-anchor,
+.markdown h4:focus > .heading-anchor {
+  opacity: 0.75;
+}
+.markdown .heading-anchor {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: -1em;
+  width: 1em;
+  opacity: 0;
+}
+.markdown .heading-anchor:hover, .markdown .heading-anchor:focus {
+  opacity: 1 !important;
+}
+@media (min-width: 670px) {
+  .markdown .heading-anchor {
+    display: block;
+  }
+}
+.markdown ul,
+.markdown ol {
+  list-style-position: outside;
+  padding-left: 1em;
+}
+.markdown ul li:not(:last-child),
+.markdown ol li:not(:last-child) {
+  margin-bottom: 0.25em;
+}
+.markdown ul {
+  list-style-type: disc;
+}
+.markdown ol {
+  list-style-type: decimal;
+}
+.markdown blockquote {
+  margin: 2rem 0 2rem -35px;
+  padding-left: 35px;
+  border-left: 3px solid var(--color-secondary);
+}
+.markdown mark {
+  color: var(--color-text);
+  background-color: var(--color-border);
+}
+.markdown pre[class*=language-] {
+  display: block;
+  font-size: 1rem;
+  overflow-x: auto;
+}
+.post .markdown pre[class*=language-] {
+  margin: 2rem calc(50% - 50vw);
+}
+.note .markdown pre[class*=language-] {
+  border-radius: 0.5rem;
+}
+.markdown pre[class*=language-] > code {
+  width: 100%;
+  max-width: 41rem;
+  max-width: var(--content-max-width, 41rem);
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+@media screen and (min-width: 1040px) {
+  .post .markdown pre[class*=language-] {
+    margin-left: -180px;
+    margin-right: -180px;
+    border-radius: 0.5rem;
+  }
+}
+.markdown :not(pre) > code {
+  display: inline-block;
+  font-family: "Fira Code", Menlo, Monaco, Consolas, "Andale Mono", "Courier New", monospace;
+  background-color: var(--color-bg-offset);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 2px 4px;
+  margin: 0 2px;
+  font-size: 75%;
+}
+.markdown .signup {
+  box-shadow: 14px 14px 30px -10px rgba(0, 0, 0, 0.1);
+}
+@media (min-width: 940px) {
+  .markdown .extend {
+    margin-left: -3rem;
+    margin-right: -3rem;
+  }
+}

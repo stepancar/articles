@@ -82,6 +82,12 @@ main {
     max-width: 1200px;
 }
 
+@media screen and (min-width: 0) {
+    main {
+        width: 100%;
+    }
+}
+
 
 h1,
 h2,

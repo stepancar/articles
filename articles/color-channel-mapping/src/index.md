@@ -12,6 +12,7 @@ title: Color channel mapping
         font-size: 20px;
         width: 100%;
         background-color: white;
+        padding-bottom: 10px;
     }
     .global-theme-select select {
         font-size: 50px;
@@ -19,19 +20,7 @@ title: Color channel mapping
 </style>
 
 <div class="global-theme-select">
-    <select id="themeSelect" >
-        <option value="[16711680, 65280, 255]">original</option>
-        <option value="[5785334, 2369583, 10463935]">lumen5</option>
-        <option value="[4359668, 16497669, 3450963]">google</option>
-        <option value="[1603570, 16777215, 15790837]">facebook</option>
-        <option value="[16750848, 0, 16777215]">amazon</option>
-        <option value="[2236191, 16777215, 15010068]">netflix</option>
-    </select>
-    <div>
-        <div style="background-color: red; width: 100px; height: 100px; display: inline-block"></div>
-        <div style="background-color: green; width: 100px; height: 100px; display: inline-block"></div>
-        <div style="background-color: blue; width: 100px; height: 100px; display: inline-block"></div>
-    </div>
+    <theme-selector></theme-selector>
 </div>
 
 <p class="lead">

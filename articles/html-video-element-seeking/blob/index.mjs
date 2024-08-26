@@ -55,9 +55,9 @@ function range(start, end, step = 1) {
 // parallel
 const test_mp4 = async() => {
     const globalStartTime = new Date().getTime();
-    const filename = 'https://storage.googleapis.com/lumen5-prod-video/video-seek-test.mp4';
+    const filename = 'https://nickdesaulniers.github.io/netfix/demo/frag_bunny.mp4';
     return Promise.all([
-        seekForMe(0, range(0, 5, 0.04), filename)])
+        seekForMe(0, range(0, 7, 33.4 / 1000), filename)])
         .then((result) => {
             console.log('- mp4 as blob');
             console.log('average seek time', average(result[0]));

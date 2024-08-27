@@ -2,9 +2,36 @@
 <html>
     <head>
         <title>HTML Video Element Seeking</title>
+        <style>
+            .section {
+                margin: 20px 0;
+            }
+
+            .section .title {
+                font-weight: bold;
+                font-size: 1.2em;
+            }
+        </style>
     </head>
     <body>
-        <h1>HTML Video Element Seeking</h1>
-        <script src="index.mjs"></script>
+        <h1>HTML Video Element Frame By Frame Seeking Performance</h1>
+
+        <div class="section">
+            <span class="title">
+                Source of video
+            </span>
+            <video-source-selector class="section"></video-source-selector>
+        </div>
+
+        <div class="section">
+            <span class="title">
+                Timestamps to seek
+            </span>
+            <timestamps-selector></timestamps-selector>
+        </div>
+
+        <button id="runTests">Run tests</button>
+
+        <script src="index.mjs" type="module"></script>
     </body>
 </html>

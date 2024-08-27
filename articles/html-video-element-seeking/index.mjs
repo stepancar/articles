@@ -65,3 +65,23 @@ const test_mp4 = async() => {
 
 test_mp4()
     .catch((e) => { console.error(e); });
+
+
+
+// custom element which allows to upload video and create object url
+class VideoUploader extends HTMLElement {
+    constructor() {
+        super();
+        this.input = document.createElement('input');
+        this.input.type = 'file';
+        this.input.accept = 'video/*';
+        this.input.onchange = async() => {
+            const file = this.input.files[0];
+            this.src = URL.createObjectURL(file);
+            this.dispatchEvent(new Event('change'));
+        };
+        this.appendChild(this.input);
+    }
+}
+
+customElements.define('video-uploader', VideoUploader);

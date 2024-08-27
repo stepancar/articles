@@ -11,6 +11,10 @@
                 font-weight: bold;
                 font-size: 1.2em;
             }
+
+            .previews video {
+                max-width: 400px;
+            }
         </style>
     </head>
     <body>
@@ -20,7 +24,10 @@
             <span class="title">
                 Source of video
             </span>
-            <video-source-selector class="section"></video-source-selector>
+            <div class="sources">
+                <video-source-selector class="section"></video-source-selector>
+            </div>
+            <button id="addSource">add source</button>
         </div>
 
         <div class="section">
@@ -28,6 +35,18 @@
                 Timestamps to seek
             </span>
             <timestamps-selector></timestamps-selector>
+        </div>
+
+        <div>
+            <label for="showPreview">Show preview (potentially can slow down seeking)</label>
+            <input type="checkbox" name="showPreview" checked>
+
+            <div class="previews"></div>
+        </div>
+
+        <div>
+            <label for="runInParallel">Run in parallel</label>
+            <input type="checkbox" name="runInParallel">
         </div>
 
         <button id="runTests">Run tests</button>

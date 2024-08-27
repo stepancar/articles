@@ -3,34 +3,65 @@ import { seek, average, range, fetchBuffer, waitVideoIsLoaded, seekVideoSequenti
 
 activateCustomControls();
 
+document.querySelector('#addSource').addEventListener('click', () => {
+    document.querySelector('.sources').appendChild(document.createElement('video-source-selector'));
+});
+
 async function test() {
     this.disabled = true;
     this.innerText = 'Running...';
     
+    const previews = document.querySelector('.previews');
+    previews.innerHTML = '';
 
-    const mediaUrl = document.querySelector('video-source-selector').value;
-    const videoElement = document.createElement('video');
-
-    document.body.appendChild(videoElement);
-
+    const showPreview = document.querySelector('[name=showPreview]').checked;
     const timestamps = document.querySelector('timestamps-selector').value;
+    const runInParallel = document.querySelector('[name=runInParallel]').checked;
+    const videoSourcesToCompare = document.querySelectorAll('video-source-selector');
     
-    videoElement.src = mediaUrl;
-    await waitVideoIsLoaded(videoElement);
-    // await attachMediaSource(videoElement, mediaUrl);
 
-    const globalStartTime = new Date().getTime();
-    const result = await seekVideoSequentiallyToTimestamps(videoElement, timestamps);
+    async function getSeekingPerformanceStatsForVideoSource(videoSourceElement, timestamps, showPreview) {
+        const mediaUrl = videoSourceElement.value;
+        const videoElement = document.createElement('video');
+
+        if (showPreview) {
+            previews.appendChild(videoElement);
+        }
+
+        videoElement.src = mediaUrl;
+
+        await waitVideoIsLoaded(videoElement);
+
+        const globalStartTime = new Date().getTime();
+        const result = await seekVideoSequentiallyToTimestamps(videoElement, timestamps);
+
+        const averageFrameSeekTime = average(result);
+        const totalSeekTime = new Date().getTime() - globalStartTime;
+        return {
+            mediaUrl: mediaUrl,
+            averageFrameSeekTime,
+            totalSeekTime,
+            framesCount: timestamps.length
+        }
+    }
+
+    // if in parallel
+    let results = [];
+    if (runInParallel) {
+        results = await Promise.all(Array.from(videoSourcesToCompare).map(async (videoSourceElement) => {
+            return getSeekingPerformanceStatsForVideoSource(videoSourceElement, timestamps, showPreview);
+        }));
+    } else {
+        for (let i = 0; i < videoSourcesToCompare.length; i++) {
+            const videoSourceElement = videoSourcesToCompare[i];
+            const result = await getSeekingPerformanceStatsForVideoSource(videoSourceElement, timestamps, showPreview);
+            results.push(result);
+        }
+    }
     
     this.innerText = 'Run tests';
     this.disabled = false;
 
-    const averageFrameSeekTime = average(result);
-    const totalSeekTime = new Date().getTime() - globalStartTime;
-    const results = {
-        averageFrameSeekTime,
-        totalSeekTime,
-    }
     console.log(results);
 };
 

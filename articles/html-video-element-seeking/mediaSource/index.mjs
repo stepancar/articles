@@ -14,23 +14,22 @@ async function test() {
     const previews = document.querySelector('.previews');
     previews.innerHTML = '';
 
+    document.querySelector('.results').innerText = '';
+
     const showPreview = document.querySelector('[name=showPreview]').checked;
     const timestamps = document.querySelector('timestamps-selector').value;
     const runInParallel = document.querySelector('[name=runInParallel]').checked;
     const videoSourcesToCompare = document.querySelectorAll('video-source-selector');
     
-
-    async function getSeekingPerformanceStatsForVideoSource(videoSourceElement, timestamps, showPreview) {
-        const mediaUrl = videoSourceElement.value;
+    async function initializeVideoElement(mediaUrl) {
         const videoElement = document.createElement('video');
+        
+        return videoElement;
+    }
+        
 
-        if (showPreview) {
-            previews.appendChild(videoElement);
-        }
-
-        videoElement.src = mediaUrl;
-
-        await waitVideoIsLoaded(videoElement);
+    async function getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, mediaUrl) {
+        
 
         const globalStartTime = new Date().getTime();
         const result = await seekVideoSequentiallyToTimestamps(videoElement, timestamps);
@@ -38,23 +37,40 @@ async function test() {
         const averageFrameSeekTime = average(result);
         const totalSeekTime = new Date().getTime() - globalStartTime;
         return {
-            mediaUrl: mediaUrl,
+            mediaUrl,
             averageFrameSeekTime,
             totalSeekTime,
             framesCount: timestamps.length
         }
     }
 
-    // if in parallel
+    const videoElements = await Promise.all(Array.from(videoSourcesToCompare).map(async (videoSourceElement) => {
+        const mediaUrl = videoSourceElement.value;
+        const videoElement = document.createElement('video');
+        videoElement.src = mediaUrl;
+
+        await waitVideoIsLoaded(videoElement);
+
+        return videoElement;
+    }));
+
+
     let results = [];
+    const startTime = performance.now();
     if (runInParallel) {
-        results = await Promise.all(Array.from(videoSourcesToCompare).map(async (videoSourceElement) => {
-            return getSeekingPerformanceStatsForVideoSource(videoSourceElement, timestamps, showPreview);
+        results = await Promise.all(Array.from(videoElements).map(async (videoElement) => {
+            if (showPreview) {
+                previews.appendChild(videoElement);
+            }
+            return getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, videoElement.src);
         }));
     } else {
-        for (let i = 0; i < videoSourcesToCompare.length; i++) {
-            const videoSourceElement = videoSourcesToCompare[i];
-            const result = await getSeekingPerformanceStatsForVideoSource(videoSourceElement, timestamps, showPreview);
+        for (let i = 0; i < videoElements.length; i++) {
+            const videoElement = videoElements[i];
+            if (showPreview) {
+                previews.appendChild(videoElement);
+            }
+            const result = await getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, videoElement.src);
             results.push(result);
         }
     }
@@ -62,40 +78,17 @@ async function test() {
     this.innerText = 'Run tests';
     this.disabled = false;
 
-    console.log(results);
+    const totalTime = performance.now() - startTime;
+    const totalFramesGenerated = timestamps.length * videoSourcesToCompare.length;
+    const report = {
+        totalFramesGenerated,
+        totalTime,
+        seekingTimePerFrame: totalTime / totalFramesGenerated,
+        seekingFPS: 1000 / (totalTime / totalFramesGenerated),
+        results,
+    }
+
+    document.querySelector('.results').innerText = JSON.stringify(report, null, 2);
 };
 
-
 document.querySelector('#runTests').addEventListener('click', test);
-
-
-async function attachMediaSource(htmlVideoElement, mediaUrl) {
-    const mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-
-    if ('MediaSource' in window && MediaSource.isTypeSupported(mimeCodec)) {
-        var mediaSource = new MediaSource;
-        //console.log(mediaSource.readyState); // closed
-        htmlVideoElement.src = URL.createObjectURL(mediaSource);
-
-        return new Promise((resolve) => {
-
-            mediaSource.addEventListener('sourceopen', sourceOpen);
-        
-
-            async function sourceOpen (_) {
-                var mediaSource = this;
-                var sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
-                const buf = await fetchBuffer(mediaUrl);
-                
-                sourceBuffer.addEventListener('updateend', function (_) {
-                    mediaSource.endOfStream();
-                    resolve();
-                });
-                sourceBuffer.appendBuffer(buf);
-            };
-        })
-        
-    } else {
-        console.error('Unsupported MIME type or codec: ', mimeCodec);
-    }
-}

@@ -54,3 +54,35 @@ export function range(start, end, step = 1) {
     const len = Math.floor((end - start) / step) + 1;
     return Array(len).fill().map((_, idx) => start + (idx * step));
 }
+
+
+// TODO
+async function attachMediaSource(htmlVideoElement, mediaUrl) {
+    const mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+
+    if ('MediaSource' in window && MediaSource.isTypeSupported(mimeCodec)) {
+        var mediaSource = new MediaSource;
+        htmlVideoElement.src = URL.createObjectURL(mediaSource);
+
+        return new Promise((resolve) => {
+
+            mediaSource.addEventListener('sourceopen', sourceOpen);
+        
+
+            async function sourceOpen (_) {
+                var mediaSource = this;
+                var sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+                const buf = await fetchBuffer(mediaUrl);
+                
+                sourceBuffer.addEventListener('updateend', function (_) {
+                    mediaSource.endOfStream();
+                    resolve();
+                });
+                sourceBuffer.appendBuffer(buf);
+            };
+        })
+        
+    } else {
+        console.error('Unsupported MIME type or codec: ', mimeCodec);
+    }
+}

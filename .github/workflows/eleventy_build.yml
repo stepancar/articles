@@ -10,6 +10,7 @@ jobs:
         uses: TartanLlama/actions-eleventy@v1.3
         with:
           install_dependencies: true
+          pathprefix: 'articles'
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:

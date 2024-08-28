@@ -3,8 +3,10 @@ const hljs = require('highlight.js');
 const sass = require("sass");
 const path = require("node:path");
 const pluginSyntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
+const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 
 module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
     eleventyConfig.addTemplateFormats("scss");
     eleventyConfig.addPassthroughCopy("./articles/**/*.mjs");
     eleventyConfig.addPassthroughCopy("./articles/**/*.css");

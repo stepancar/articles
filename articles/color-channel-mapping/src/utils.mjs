@@ -2,14 +2,31 @@ export function rgbArrayToHex(rgbArray) {
     return (rgbArray[0] << 16) + (rgbArray[1] << 8) + rgbArray[2]
 }
 
-export function hexToRgb(hex) {
-    const b = hex % 256;
-    hex /= 256;
-    const g = hex % 256;
-    hex /= 256;
-    const r = hex % 256;
-    return [r, g, b]
+export function hexToRgb(color) {
+    // const b = hex % 256;
+    // hex /= 256;
+    // const g = hex % 256;
+    // hex /= 256;
+    // const r = hex % 256;
+    // return [r, g, b]
+
+    const red = (color >> 16) & 0xFF;
+    const green = (color >> 8) & 0xFF;
+    const blue = color & 0xFF;
+    return [red, green, blue]
 }
+
+export function hexToVector3(hex) {
+    return hexToRgb(hex).map(v => v / 255);
+}
+
+function splitColorToRGB(color) {
+    const red = (color >> 16) & 0xFF;
+    const green = (color >> 8) & 0xFF;
+    const blue = color & 0xFF;
+    return [red, green, blue]
+}
+
 
 export function drawCircle(ctx, x, y, r, color) {
     ctx.beginPath();

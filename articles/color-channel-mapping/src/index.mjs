@@ -153,6 +153,14 @@ paleteSelector.addEventListener('change', () => {
         }, '*');
     });
 });
+
+document.querySelectorAll('iframe').forEach((iframe) => {
+    iframe.addEventListener('load', () => {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        iframeDoc.body.style.margin = '0';
+    });
+});
+
 setTimeout(() => {
     themeSelector.setAttribute('palettes', JSON.stringify(palettes));
 }, 1000);

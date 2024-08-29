@@ -25,19 +25,6 @@ paleteSelector.addEventListener('change', () => {
    replaceColors();
 });
 
-function red(number) {
-    return number & 0xff;
-}
-
-function green(number) {
-    return (number >> 8) & 0xff;
-}
-
-function blue(number) {
-    return (number >> 16) & 0xff;
-}
-
-
 
 function splitColorToRGB(color) {
     const red = (color >> 16) & 0xFF;

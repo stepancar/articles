@@ -1,6 +1,7 @@
 ---
 layout: article.njk
 title: Color channel mapping
+shortDescription: This article introduces the concept of recoloring a media resource using a palette and explores one solution to this problem - color channel mapping
 ---
 
 <style>
@@ -23,38 +24,36 @@ title: Color channel mapping
     <theme-selector></theme-selector>
 </div>
 
-<p class="lead">
-    In this article, I will try to tell you about the task of recoloring a media resource in the colors of the palette.
-    And about one of the possible solutions to this problem, called color channel mapping.
+<p class="note">
+    This article contains interactive demos that respond to the selected color palette. Feel free to experiment with different palettes to see how the demos react.
+</p>
+
+<p class="note">
+    Each demo is essentially an iframe pointing to a separate folder with its source code. You can open any of them in a debugger to explore how they work without interfering with other demos.
+
+    All demos are written in plain JavaScript without any build tools
 </p>
 
 
+Let's imagine we're building an application for creating video presentations. For each slide, the user can choose an animation that will be displayed in the background.
 
+In addition to selecting the animation, the user can choose a color palette. For simplicity, let's assume the palette consists of three colors.
 
-Let's imagine that we are creating an application for creating video presentations.
-For each slide, the user can choose an animation that will be displayed in the background.
+The animation itself is made up of several objects, and during the creation process, the designer assigns each object a color from the palette. The question is: how can we apply the user's selected palette to the animation?
 
+There are several ways to implement these animations, but we'll focus on three main approaches:
 
-besides the animation itself, the user can choose a color palette.
-For simplicity, let's assume that the palette consists of 3 colors.
-
-the animation itself consists of several objects, at the stage of creating the animation, the designer sets the color number from the palette for each object.
-The question arises, how can we color the animation in the colors of the user's palette?
-
-
-Those animations can be implemented in different ways, however, we will consider 3 main ones:
 
 - Code-based animation
 - SVG-based animation
 - Solid color remapping
 
-Let's consider each of them in more detail.
+Let's dive into each approach.
 
 ## Code-based animation
 
 
-Let's imagine that the animation is made using code that draws on the canvas.
-For example, like this:
+Imagine the animation is created using code that draws on a canvas. For example:
 
 ```typescript
 function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
@@ -68,9 +67,7 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
 <iframe src="../src/code-based-animation/index.html"></iframe>
 
 
-To make the animation recolorable, we can pass the palette
-to the function and use the color indexes from the palette in the code.
-For example like this:
+To make the animation recolorable, we can pass the palette to the function and use the colors from it in the code, like this:
 
 
 ```typescript
@@ -82,14 +79,12 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
 }
 ```
 
-The problem with such animations is that only a developer can create them, without programming skills, it is impossible.
+The downside of this approach is that only developers can create such animations; without programming skills, it's impossible.
 
 
 ## SVG-based animation
 
-
-Let's imagine that the animation is made using svg.
-For example, like this:
+Now, let's imagine the animation is created using SVG. For example:
 
 ```xml
 <?xml version="1.0"?>
@@ -99,7 +94,7 @@ For example, like this:
 </svg>
 ```
 
-Then the function that can recolor our svg in the desired colors can look like this:
+We can then create a function to recolor the SVG based on the desired palette:
 
 ```typescript
 function recolorSVG(svg, colorPalette: [string, string, string]) {
@@ -117,8 +112,7 @@ function recolorSVG(svg, colorPalette: [string, string, string]) {
 <iframe src="./svg-based-animation/index.html"></iframe>
 
 
-Designers can mark elements so that we can know which color number from the palette corresponds to each element.
-For example like this:
+Designers can mark elements so that we know which color from the palette corresponds to each element. For example:
 
 ```xml
 <?xml version="1.0"?>
@@ -128,21 +122,17 @@ For example like this:
 </svg>
 ```
 
-
-Unfortunatelly, despite the fact that the SVG ANIMAtuib standard exists for a long time, not many design tools can boast the ability to export animations to SVG.
-Which means that in fact, the designer also needs to have programming skills.
+Unfortunately, despite the long-standing existence of the SVG animation standard, not many design tools can export animations to SVG. This means designers often still need some programming skills.
 
 ## Solid color remapping
 
-For designers, it is easiest to create an animation in a tool that is convenient for him and export it as a video.
-All animation creation tools allow this.
+For designers, it is often easiest to create an animation in a tool of their choice and export it as a video. Most animation tools support this.
 
-It rises the question, how can the designer mark elements in this video so that we can recolor them?
-Designers can create a video with 3 colors - RGB
+But how can the designer mark elements in the video so we can recolor them? One solution is for the designer to create a video with three colors—RGB.
 
-This video can look like this:
+This video might look like this:
 
-How can we recolor this video in the colors of the palette?
+How can we recolor this video using the chosen palette?
 
 ```javascript
 const canvas = document.createElement('canvas');
@@ -173,21 +163,19 @@ function getNewColor(old, colorPalette) {
 <iframe src="./solid-color-remapping/index.html"></iframe>
 
 
-In this example it's hard to see, but you should notice that border of the circle has a different color.
-It happens because the color of the border is not a solid color, but a gradient, because antialiasing is used.
+In this example, it's hard to notice, but the border of the circle has a slightly different color. This happens because the border's color is not a solid color but a gradient due to anti-aliasing.
 
-More obvious example is replacing the color of the image with gradient:
+A more obvious example is replacing the color of an image with a gradient:
 
 <iframe src="./gradient-color-remapping/index.html"></iframe>
 
-You can see this is not what we expected. On final image We would expect to see only colors from palette, but we see some additional colors.
-You can also notice that gradient is not smooth anymore.
+As you can see, this is not what we expected. The final image should only contain colors from the palette, but we see additional colors. You might also notice that the gradient is no longer smooth.
 
-This is where we need to use color channel mapping.
+This is where color channel mapping comes in.
 
 ## Color channel mapping
 
-Basically, the idea is to create a matrix that will map the original color to the target color.
+The basic idea is to create a matrix that maps the original color to the target color.
 
 <p>
 \[
@@ -211,7 +199,7 @@ Basically, the idea is to create a matrix that will map the original color to th
 \]
 </p>
 
-Let's change our code to use this matrix:
+Let's modify our code to use this matrix:
 
 ```javascript
 function replaceImageData(imageData, currentImageData) {
@@ -236,28 +224,29 @@ function replaceImageData(imageData, currentImageData) {
 }
 ```
 
+Let's see it in action:
+
 <iframe src="./canvas-color-channel-remapping/index.html"></iframe>
 
 It works!
 
-Notice also that when we select theme pallete with red green and blue colors we get the original image, as we expected.
+Notice that when we select a theme palette with red, green, and blue colors, we get the original image, as expected.
 
-The problem with this solution is that we are processing every pixel in the image, which is very slow.
+The problem with this approach is that we're processing every pixel in the image, which is very slow.
 
-it has complexity of $O(w \times h)$, where $w$ is width and $h$ is height of the image.
+The complexity is $O(w \times h)$, where $w$ is the width and $h$ is the height of the image.
 
-For 1920x1080 image it's ~2 073 600 operations.
+For a 1920x1080 image, that's about 2,073,600 operations.
 
-For 4k image it's ~8 294 400 operations.
+For a 4k image, it's about 8,294,400 operations.
 
-On my mac book pro with m1 pro processor it takes 50ms to process full hd image.
-this is not acceptable for real time video processing.
+On my MacBook Pro with an M1 Pro processor, it takes about 50ms to process a full HD image, which is not acceptable for real-time video processing.
 
-But matrix multiplication is what gpu is good at.
+But matrix multiplication is something the GPU excels at.
 
-We can use webgl to do this operation on gpu.
+We can use WebGL to perform this operation on the GPU.
 
-Actually, canvas 2d context also uses gpu, and it has filter property which actually do matrix multiplication under the hood. But it's not very flexible.
+Actually, the canvas 2D context also uses the GPU, and it has a filter property that performs matrix multiplication under the hood, but it's not very flexible.
 
 
 <iframe src="./webgl-channel-map-filter/index.html"></iframe>

@@ -24,17 +24,15 @@ shortDescription: This article introduces the concept of recoloring a media reso
     <theme-selector></theme-selector>
 </div>
 
-<p class="note">
-    This article contains interactive demos that respond to the selected color palette. Feel free to experiment with different palettes to see how the demos react.
-</p>
 
-<p class="note">
-    Each demo is essentially an iframe pointing to a separate folder with its source code. You can open any of them in a debugger to explore how they work without interfering with other demos.
-
-    All demos are written in plain JavaScript without any build tools
-</p>
+> This article contains interactive demos that respond to the selected color palette. Feel free to experiment with different palettes to see how the demos react.
 
 
+> Each demo is essentially an iframe pointing to a separate folder with its source code. You can open any of them in a debugger to explore how they work without interfering with other demos.
+All demos are written in plain JavaScript without any build tools
+
+
+## Introduction
 Let's imagine we're building an application for creating video presentations. For each slide, the user can choose an animation that will be displayed in the background.
 
 In addition to selecting the animation, the user can choose a color palette. For simplicity, let's assume the palette consists of three colors.

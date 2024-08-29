@@ -172,4 +172,95 @@ function getNewColor(old, colorPalette) {
 
 <iframe src="./solid-color-remapping/index.html"></iframe>
 
+
+In this example it's hard to see, but you should notice that border of the circle has a different color.
+It happens because the color of the border is not a solid color, but a gradient, because antialiasing is used.
+
+More obvious example is replacing the color of the image with gradient:
+
+<iframe src="./gradient-color-remapping/index.html"></iframe>
+
+You can see this is not what we expected. On final image We would expect to see only colors from palette, but we see some additional colors.
+You can also notice that gradient is not smooth anymore.
+
+This is where we need to use color channel mapping.
+
+## Color channel mapping
+
+Basically, the idea is to create a matrix that will map the original color to the target color.
+
+<p>
+\[
+\begin{bmatrix}
+\text{finalR} \\
+\text{finalG} \\
+\text{finalB}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\text{target1R} & \text{target2R} & \text{target3R} \\
+\text{target1G} & \text{target2G} & \text{target3G} \\
+\text{target1B} & \text{target2B} & \text{target3B}
+\end{bmatrix}
+\times
+\begin{bmatrix}
+\text{originalR} \\
+\text{originalG} \\
+\text{originalB}
+\end{bmatrix}
+\]
+</p>
+
+Let's change our code to use this matrix:
+
+```javascript
+function replaceImageData(imageData, currentImageData) {
+    for (let i = 0; i< imageData.length; i+=4) {
+        const originalR = imageData[i];
+        const originalG = imageData[i+1];
+        const originalB = imageData[i+2];
+
+        const [target1R, target1G, target1B] = splitColorToRGB(paleteSelector.value[0]);
+        const [target2R, target2G, target2B] = splitColorToRGB(paleteSelector.value[1]);
+        const [target3R, target3G, target3B] = splitColorToRGB(paleteSelector.value[2]);
+
+        // Matrix multiplication
+        const finalR = target1R * originalR + target2R * originalG + target3R * originalB;
+        const finalG = target1G * originalR + target2G * originalG + target3G * originalB;
+        const finalB = target1B * originalR + target2B * originalG + target3B * originalB;
+
+        currentImageData[i] = Math.round(finalR/256);
+        currentImageData[i+1] = Math.round(finalG/256);
+        currentImageData[i+2] = Math.round(finalB/256);
+    }
+}
+```
+
+<iframe src="./canvas-color-channel-remapping/index.html"></iframe>
+
+It works!
+
+Notice also that when we select theme pallete with red green and blue colors we get the original image, as we expected.
+
+The problem with this solution is that we are processing every pixel in the image, which is very slow.
+
+it has complexity of $O(w \times h)$, where $w$ is width and $h$ is height of the image.
+
+For 1920x1080 image it's ~2 073 600 operations.
+
+For 4k image it's ~8 294 400 operations.
+
+On my mac book pro with m1 pro processor it takes 50ms to process full hd image.
+this is not acceptable for real time video processing.
+
+But matrix multiplication is what gpu is good at.
+
+We can use webgl to do this operation on gpu.
+
+Actually, canvas 2d context also uses gpu, and it has filter property which actually do matrix multiplication under the hood. But it's not very flexible.
+
+
+<iframe src="./webgl-channel-map-filter/index.html"></iframe>
+
+
 <script src="./index.mjs" type="module"></script>

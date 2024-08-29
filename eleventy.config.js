@@ -4,9 +4,11 @@ const sass = require("sass");
 const path = require("node:path");
 const pluginSyntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
+const mathjaxPlugin = require("eleventy-plugin-mathjax");
 
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
+  eleventyConfig.addPlugin(mathjaxPlugin);
     eleventyConfig.addTemplateFormats("scss");
     eleventyConfig.addPassthroughCopy("./articles/**/*.mjs");
     eleventyConfig.addPassthroughCopy("./articles/**/*.css");

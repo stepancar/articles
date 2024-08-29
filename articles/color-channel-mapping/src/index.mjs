@@ -37,6 +37,12 @@ class ThemeSelector extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'palettes') {
             this.render();
+            const palettes = JSON.parse(this.getAttribute('palettes') || '[]');
+            this.dispatchEvent(new CustomEvent('change', {
+                value: {
+                    theme: palettes[1].colors
+                }
+            }));
         }
     }
 
@@ -81,8 +87,8 @@ class ThemeSelector extends HTMLElement {
                 }
             </style>
             <ul class="theme-list">
-                ${palettes.map(palette => `
-                    <li class="theme-item" data-theme='${JSON.stringify(palette.colors)}'>
+                ${palettes.map((palette, index )=> `
+                    <li class="theme-item ${index=== 1 ? 'selected': ''}" data-theme='${JSON.stringify(palette.colors)}' >
                         <span>${palette.name}</span>
                         <div class="colors">
                             ${palette.colors.map(color => `
@@ -136,14 +142,7 @@ const palettes = [
     { name: "amazon", colors: [16750848, 16777215, 0] },
     { name: "netflix", colors: [2236191, 16777215, 15010068] }
 ];
-
 const themeSelector = document.querySelector('theme-selector');
-themeSelector.setAttribute('palettes', JSON.stringify(palettes));
-
-themeSelector.addEventListener('themeChange', (e) => {
-    console.log('Theme selected:', e.detail.theme);
-});
-
 const paleteSelector = new PalettesSelector(themeSelector);
 
 paleteSelector.addEventListener('change', () => {
@@ -154,3 +153,6 @@ paleteSelector.addEventListener('change', () => {
         }, '*');
     });
 });
+setTimeout(() => {
+    themeSelector.setAttribute('palettes', JSON.stringify(palettes));
+}, 1000);

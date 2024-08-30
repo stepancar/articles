@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ./build/build-html.mjs"
+    "build": "node ./build/build-html.mjs",
+    "start": "npx http-server"
   },
   "author": "",
   "license": "ISC",

@@ -180,6 +180,8 @@ function getNewColor(old, colorPalette) {
 
 In this example, it's hard to notice, but the border of the circle has a slightly different color. This happens because the border's color is not a solid color but a gradient due to anti-aliasing.
 
+[![Gradient border](./solid-color-remapping/antialiasing.png)](./solid-color-remapping/antialiasing.png)
+
 A more obvious example is replacing the color of an image with a gradient:
 
 <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/gradient-color-remapping/index.mjs&initialPath=/src/gradient-color-remapping/index.html&startScript=start" target="_blank">

@@ -62,7 +62,7 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
 }
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/code-based-animation/index.mjs&initialPath=/src/code-based-animation/index.html&startScript=start)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/code-based-animation/index.mjs&initialPath=/src/code-based-animation/index.html&startScript=start){:target="_blank"}
 <iframe src="../src/code-based-animation/index.html"></iframe>
 
 

@@ -62,7 +62,12 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
 }
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/code-based-animation/index.mjs&initialPath=/src/code-based-animation/index.html&startScript=start){:target="_blank"}
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/code-based-animation/index.mjs&initialPath=/src/code-based-animation/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
 <iframe src="../src/code-based-animation/index.html"></iframe>
 
 
@@ -113,7 +118,6 @@ function recolorSVG(svg, colorPalette: [string, string, string]) {
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
   />
 </a>
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/svg-based-animation/index.mjs&initialPath=/src/svg-based-animation/index.html&startScript=start){:target="_blank"}
 <iframe src="./svg-based-animation/index.html"></iframe>
 
 
@@ -165,6 +169,12 @@ function getNewColor(old, colorPalette) {
 }
 ```
 
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/solid-color-remapping/index.mjs&initialPath=/src/solid-color-remapping/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
 <iframe src="./solid-color-remapping/index.html"></iframe>
 
 
@@ -172,6 +182,12 @@ In this example, it's hard to notice, but the border of the circle has a slightl
 
 A more obvious example is replacing the color of an image with a gradient:
 
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/gradient-color-remapping/index.mjs&initialPath=/src/gradient-color-remapping/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
 <iframe src="./gradient-color-remapping/index.html"></iframe>
 
 As you can see, this is not what we expected. The final image should only contain colors from the palette, but we see additional colors. You might also notice that the gradient is no longer smooth.
@@ -231,6 +247,12 @@ function replaceImageData(imageData, currentImageData) {
 
 Let's see it in action:
 
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/canvas-color-channel-remapping/index.mjs&initialPath=/src/canvas-color-channel-remapping/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
 <iframe src="./canvas-color-channel-remapping/index.html"></iframe>
 
 It works!
@@ -254,6 +276,12 @@ We can use WebGL to perform this operation on the GPU.
 Actually, the canvas 2D context also uses the GPU, and it has a filter property that performs matrix multiplication under the hood, but it's not very flexible.
 
 
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/index.mjs&initialPath=/src/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
 <iframe src="./webgl-channel-map-filter/index.html"></iframe>
 
 

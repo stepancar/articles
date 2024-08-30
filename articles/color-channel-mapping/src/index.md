@@ -107,6 +107,12 @@ function recolorSVG(svg, colorPalette: [string, string, string]) {
   return doc.documentElement.outerHTML;
 }
 ```
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/svg-based-animation/index.mjs&initialPath=/src/svg-based-animation/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/svg-based-animation/index.mjs&initialPath=/src/svg-based-animation/index.html&startScript=start){:target="_blank"}
 <iframe src="./svg-based-animation/index.html"></iframe>
 

@@ -224,23 +224,23 @@ Let's modify our code to use this matrix:
 
 ```javascript
 function replaceImageData(imageData, currentImageData) {
+    const [target1R, target1G, target1B] = splitColorToRGB(paleteSelector.value[0]);
+    const [target2R, target2G, target2B] = splitColorToRGB(paleteSelector.value[1]);
+    const [target3R, target3G, target3B] = splitColorToRGB(paleteSelector.value[2]);
+
     for (let i = 0; i< imageData.length; i+=4) {
         const originalR = imageData[i];
         const originalG = imageData[i+1];
         const originalB = imageData[i+2];
-
-        const [target1R, target1G, target1B] = splitColorToRGB(paleteSelector.value[0]);
-        const [target2R, target2G, target2B] = splitColorToRGB(paleteSelector.value[1]);
-        const [target3R, target3G, target3B] = splitColorToRGB(paleteSelector.value[2]);
 
         // Matrix multiplication
         const finalR = target1R * originalR + target2R * originalG + target3R * originalB;
         const finalG = target1G * originalR + target2G * originalG + target3G * originalB;
         const finalB = target1B * originalR + target2B * originalG + target3B * originalB;
 
-        currentImageData[i] = Math.round(finalR/256);
-        currentImageData[i+1] = Math.round(finalG/256);
-        currentImageData[i+2] = Math.round(finalB/256);
+        currentImageData[i] = Math.round(finalR/255);
+        currentImageData[i+1] = Math.round(finalG/255);
+        currentImageData[i+2] = Math.round(finalB/255);
     }
 }
 ```

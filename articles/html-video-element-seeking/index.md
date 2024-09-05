@@ -52,5 +52,13 @@ await seek(video, 10);
 
 In this demo you can chose video you like, edit timestamps and run the test.
 
+There are links to standard video files, but you can also upload your own video.
+
+For tests we will use big buck bunny video files with different resolutions and frame rates.
+http://bbb3d.renderfarming.net/download.html
+
+Info about the video files:
+
+{% include "./mediaSource/test-videos/video_info.md" %}
 
 <iframe src="./mediaSource/index.html"></iframe>

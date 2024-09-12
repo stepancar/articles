@@ -3,13 +3,6 @@ export function rgbArrayToHex(rgbArray) {
 }
 
 export function hexToRgb(color) {
-    // const b = hex % 256;
-    // hex /= 256;
-    // const g = hex % 256;
-    // hex /= 256;
-    // const r = hex % 256;
-    // return [r, g, b]
-
     const red = (color >> 16) & 0xFF;
     const green = (color >> 8) & 0xFF;
     const blue = color & 0xFF;

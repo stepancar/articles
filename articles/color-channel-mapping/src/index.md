@@ -277,6 +277,313 @@ We can use WebGL to perform this operation on the GPU.
 
 Actually, the canvas 2D context also uses the GPU, and it has a filter property that performs matrix multiplication under the hood, but it's not very flexible.
 
+## WebGL implementation
+
+Lets's create a webgl application.
+In this article I don't explain how webgl works. The same time, because here we are trying to implement the same feature like for 2d canvas - this can be a good first dive into webgl.
+
+First step is to draw image on a webgl canvas. In case you know webgl - jump here to see the shader code.
+If you have never touched webgl you will be impressed how much code it requires to just render an image
+
+We need to add 2 utilitu\y functions to simplify our code
+
+let's instantiate gl co
+
+```javascript
+const image = document.getElementById("image");
+const canvas = document.getElementById("canvas");
+const gl = canvas.getContext("webgl");
+```
+
+```javascript
+function createShader(gl, type, source) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error("Shader compile failed with: " + gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
+  }
+  return shader;
+}
+
+function createProgram(gl, vertexShader, fragmentShader) {
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error("Program link failed with: " + gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
+    return null;
+  }
+  return program;
+}
+```
+
+
+vertex shader
+
+```glsl
+attribute vec2 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+
+void main() {
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_texCoord = a_texCoord;
+}
+```
+
+fragment shader
+
+```glsl
+precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D u_texture;
+
+void main() {
+    gl_FragColor = texture2D(u_texture, v_texCoord);
+}
+```
+
+then we can instantiate shaders and 
+
+```javascript
+const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSrc);
+const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSrc);
+const program = createProgram(gl, vertexShader, fragmentShader);
+
+// Set up rectangle covering the whole canvas
+const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+const texCoords = new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]);
+
+const positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+const texCoordBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
+
+gl.useProgram(program);
+
+const aPosition = gl.getAttribLocation(program, "a_position");
+gl.enableVertexAttribArray(aPosition);
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+const aTexCoord = gl.getAttribLocation(program, "a_texCoord");
+gl.enableVertexAttribArray(aTexCoord);
+gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
+```
+
+as soon as image loads we can upload texture to webgl
+
+```javascript
+await image.decode();
+
+const texture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, texture);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+```
+
+and now we can draw it
+
+```javascript
+gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+```
+
+Now we can implement color channel map filter.
+
+let's create an abstract filter it will be responsible for applying effects to existing texture.
+Such filter will need parameters. Let's create an abstract class
+
+```javascript
+class Filter {
+  constructor(gl, vertexShaderSource, fragmentShaderSource) {
+    this.gl = gl;
+    const vertexShader = createShader(
+      this.gl,
+      this.gl.VERTEX_SHADER,
+      vertexShaderSource
+    );
+    const fragmentShader = createShader(
+      this.gl,
+      this.gl.FRAGMENT_SHADER,
+      fragmentShaderSource
+    );
+    this.program = createProgram(
+        gl,
+        vertexShader,
+        fragmentShader,
+    );
+    this.uniformLocations = {};
+  }
+
+  use() {
+    this.gl.useProgram(this.program);
+  }
+
+  setUniform(name, value) {
+    if (!(name in this.uniformLocations)) {
+      this.uniformLocations[name] = this.gl.getUniformLocation(
+        this.program,
+        name
+      );
+    }
+
+    const location = this.uniformLocations[name];
+    if (location === -1) {
+      console.warn(`Uniform ${name} not found in shader.`);
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      if (value.length === 1) {
+        this.gl.uniform1f(location, value[0]);
+      } else if (value.length === 2) {
+        this.gl.uniform2fv(location, value);
+      } else if (value.length === 3) {
+        this.gl.uniform3fv(location, value);
+      } else if (value.length === 4) {
+        this.gl.uniform4fv(location, value);
+      }
+    } else if (typeof value === "number") {
+      this.gl.uniform1f(location, value);
+    } else if (typeof value === "boolean") {
+      this.gl.uniform1i(location, value ? 1 : 0);
+    } else {
+      console.error("Unsupported uniform type.");
+    }
+  }
+
+  render() {
+    // Ensure the program is being used
+    this.use();
+
+    // Bind attributes, set uniforms, bind textures, etc. here before drawing
+    // This will depend on how you've set up your WebGL context outside of this class
+
+    // Example: Drawing a quad
+    this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
+  }
+}
+```
+
+
+[![image](./webgl-channel-map-filter/image.png)](./webgl-channel-map-filter/image.png)
+
+Now let's
+
+implement a fragment shader. So, basically fragment shader is a programm which executes for every pixels.
+It's exactly what we did for 2d canvas iterating through all bytes in uint8Array but it will be running on gpu in parallel.
+
+It's logic consists of 3 steps
+- reading parameters (target colors, we will pass it from javascript)
+- calculating final color of pixel based on it's current color and logic we will apply
+- drawing pixel with calculated color
+
+```glsl
+precision mediump float;
+varying vec2 vTextureCoord;
+uniform sampler2D uSampler;
+# read params
+uniform vec3 redChannelTargetColor;
+uniform vec3 greenChannelTargetColor;
+uniform vec3 blueChannelTargetColor;
+
+void main(void) {
+    vec4 currentColor = texture2D(uSampler, vTextureCoord);
+
+    float R_s = currentColor.r;
+    float G_s = currentColor.g;
+    float B_s = currentColor.b;
+
+    float R_t1 = redChannelTargetColor.r;
+    float G_t1 = redChannelTargetColor.g;
+    float B_t1 = redChannelTargetColor.b;
+
+    float R_t2 = greenChannelTargetColor.r;
+    float G_t2 = greenChannelTargetColor.g;
+    float B_t2 = greenChannelTargetColor.b;
+
+    float R_t3 = blueChannelTargetColor.r;
+    float G_t3 = blueChannelTargetColor.g;
+    float B_t3 = blueChannelTargetColor.b;
+
+    float A_f = currentColor.a;
+
+    float R_f = (R_t1 * R_s) + (R_t2 * G_s) + (R_t3 * B_s);
+    float G_f = (G_t1 * R_s) + (G_t2 * G_s) + (G_t3 * B_s);
+    float B_f = (B_t1 * R_s) + (B_t2 * G_s) + (B_t3 * B_s);
+
+    vec4 col = vec4(R_f, G_f, B_f, A_f);
+    gl_FragColor = vec4(col.rgb * col.a, col.a);
+}
+```
+
+now lets create a filter which will use this shader
+
+```javascript
+class ColorChannelMappingFilter extends Filter {
+  static #vertexShaderSource = `...shader code`;
+
+  static #fragmentShaderSource = ``
+  constructor(gl) {
+    super(
+      gl,
+      ColorChannelMappingFilter.#vertexShaderSource,
+      ColorChannelMappingFilter.#fragmentShaderSource
+    );
+  }
+
+  setRedChannelTargetColor(color) {
+    this.setUniform("redChannelTargetColor", color);
+  }
+
+  setGreenChannelTargetColor(color) {
+    this.setUniform("greenChannelTargetColor", color);
+  }
+
+  setBlueChannelTargetColor(color) {
+    this.setUniform("blueChannelTargetColor", color);
+  }
+}
+```
+
+now we are read to use it!
+
+```javascript
+const filter = new ColorChannelMappingFilter(gl);
+
+filter.use();
+filter.setRedChannelTargetColor(hexToVector3(0xe50914));
+filter.setGreenChannelTargetColor(hexToVector3(0x1877f2));
+filter.setBlueChannelTargetColor(hexToVector3(0x34a853));
+filter.render();
+```
+
+[![mapping](./webgl-channel-map-filter/0xe50914_0x1877f2_0x34a853.png)](./webgl-channel-map-filter/0xe50914_0x1877f2_0x34a853.png)
+
+let bind it to our theme selector
+```javascript
+paleteSelector.addEventListener("change", () => {
+    filter.use();
+    filter.setRedChannelTargetColor(hexToVector3(paleteSelector.value[0]));
+    filter.setGreenChannelTargetColor(hexToVector3(paleteSelector.value[1]));
+    filter.setBlueChannelTargetColor(hexToVector3(paleteSelector.value[2]));
+    filter.render();
+});
+```
+
+and now, you can play with theme selector
 
 <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/index.mjs&initialPath=/src/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
   <img
@@ -285,6 +592,9 @@ Actually, the canvas 2D context also uses the GPU, and it has a filter property 
   />
 </a>
 <iframe src="./webgl-channel-map-filter/index.html"></iframe>
+
+
+<iframe src="./webgl-channel-map-filter/video/index.html"></iframe>
 
 
 <script src="./index.mjs" type="module"></script>

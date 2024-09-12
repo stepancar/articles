@@ -3,13 +3,13 @@ import {
   rgbArrayToHex,
   PalettesSelector,
   hexToVector3,
-} from "../utils.mjs";
+} from "../../utils.mjs";
 
 const paleteSelector = new PalettesSelector(
   document.getElementById("themeSelect")
 );
 
-const image = document.getElementById("image");
+const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const gl = canvas.getContext("webgl");
 
@@ -90,18 +90,6 @@ gl.enableVertexAttribArray(aTexCoord);
 gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
 gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
 
-image.decode().then(() => {
-  const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-});
-
 class Filter {
   constructor(gl, vertexShaderSource, fragmentShaderSource) {
     this.gl = gl;
@@ -115,11 +103,7 @@ class Filter {
       this.gl.FRAGMENT_SHADER,
       fragmentShaderSource
     );
-    this.program = createProgram(
-        gl,
-        vertexShader,
-        fragmentShader,
-    );
+    this.program = createProgram(gl, vertexShader, fragmentShader);
     this.uniformLocations = {};
   }
 
@@ -246,10 +230,35 @@ class ColorChannelMappingFilter extends Filter {
 
 const filter = new ColorChannelMappingFilter(gl);
 
-paleteSelector.addEventListener("change", () => {
-    filter.use();
-    filter.setRedChannelTargetColor(hexToVector3(paleteSelector.value[0]));
-    filter.setGreenChannelTargetColor(hexToVector3(paleteSelector.value[1]));
-    filter.setBlueChannelTargetColor(hexToVector3(paleteSelector.value[2]));
-    filter.render();
+const texture = gl.createTexture();
+
+
+function render() {
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  // debugger
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  // filter.use();
+
+  // filter.setRedChannelTargetColor(hexToVector3(paleteSelector.value[0]));
+  // filter.setGreenChannelTargetColor(hexToVector3(paleteSelector.value[1]));
+  // filter.setBlueChannelTargetColor(hexToVector3(paleteSelector.value[2]));
+  // filter.render();
+
+  // gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+  requestAnimationFrame(render)
+}
+
+video.addEventListener('loadedmetadata', () => {
+  video.loop = true;
+  // video.play();
+  render()
 });
+
+

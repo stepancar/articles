@@ -47,10 +47,15 @@ async function test() {
     const videoElements = await Promise.all(Array.from(videoSourcesToCompare).map(async (videoSourceElement) => {
         const mediaUrl = videoSourceElement.value;
         const videoElement = document.createElement('video');
-        videoElement.src = mediaUrl;
+        const sourceElement = document.createElement('source');
+        sourceElement.type = 'video/mp4;codecs="hev1.1.6.L120.90"';
+        videoElement.appendChild(sourceElement);
+        sourceElement.src = mediaUrl;
 
         await waitVideoIsLoaded(videoElement);
 
+        // console.log(videoElement.canPlayType('video/mp4;codecs="hev1.1.6.L120.90"'));
+        console.log('lol')
         return videoElement;
     }));
 

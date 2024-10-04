@@ -1,0 +1,1 @@
+Хороший доклад https://www.youtube.com/watch?v=Ps8CzdeMrQ8

@@ -285,9 +285,9 @@ In this article I don't explain how webgl works. The same time, because here we 
 First step is to draw image on a webgl canvas. In case you know webgl - jump here to see the shader code.
 If you have never touched webgl you will be impressed how much code it requires to just render an image
 
-We need to add 2 utilitu\y functions to simplify our code
+We need to add 2 utility functions to simplify our code
 
-let's instantiate gl co
+Let's instantiate gl code:
 
 ```javascript
 const image = document.getElementById("image");

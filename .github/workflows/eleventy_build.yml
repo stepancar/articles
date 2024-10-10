@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Build
-        uses: TartanLlama/actions-eleventy@v1.3
+        uses: stepancar/actions-eleventy@v1.3
         with:
           install_dependencies: true
           args: --pathprefix articles

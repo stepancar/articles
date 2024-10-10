@@ -11,7 +11,7 @@ const paleteSelector = new PalettesSelector(
 
 const image = document.getElementById("image");
 const canvas = document.getElementById("canvas");
-const gl = canvas.getContext("webgl");
+const gl = canvas.getContext("webgl2");
 
 // Vertex shader source
 const vertexShaderSrc = `

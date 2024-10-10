@@ -585,16 +585,24 @@ paleteSelector.addEventListener("change", () => {
 
 and now, you can play with theme selector
 
+
+<iframe src="./webgl-channel-map-filter/index.html"></iframe>
 <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/index.mjs&initialPath=/src/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
   />
 </a>
-<iframe src="./webgl-channel-map-filter/index.html"></iframe>
 
 
 <iframe src="./webgl-channel-map-filter/video/index.html"></iframe>
+
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/video/index.mjs&initialPath=/src/webgl-channel-map-filter/video/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
 
 
 <script src="./index.mjs" type="module"></script>

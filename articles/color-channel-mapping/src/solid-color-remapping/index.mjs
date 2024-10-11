@@ -19,10 +19,8 @@ image.decode().then(() => {
         }
         replaceImageData(originalImageData.data, currentImageData.data, colorMappings);
         ctx.putImageData(originalImageData, 0, 0);
-    });
-
-    // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    
+        frame.close();
+    });    
 });
 
 paleteSelector.addEventListener('change', () => {

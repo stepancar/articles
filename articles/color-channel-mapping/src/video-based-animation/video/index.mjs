@@ -20,6 +20,7 @@ video.addEventListener('load', () => {
         }
         replaceImageData(originalImageData.data, currentImageData.data, colorMappings);
         ctx.putImageData(originalImageData, 0, 0);
+        frame.close();
     });    
 });
 

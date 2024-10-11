@@ -336,8 +336,8 @@ All demos are written in plain JavaScript without any build tools</p>
 In this article I don't explain how webgl works. The same time, because here we are trying to implement the same feature like for 2d canvas - this can be a good first dive into webgl.</p>
 <p>First step is to draw image on a webgl canvas. In case you know webgl - jump here to see the shader code.
 If you have never touched webgl you will be impressed how much code it requires to just render an image</p>
-<p>We need to add 2 utilitu\y functions to simplify our code</p>
-<p>let's instantiate gl co</p>
+<p>We need to add 2 utility functions to simplify our code</p>
+<p>Let's instantiate gl code:</p>
 <pre class="language-javascript"><code class="language-javascript"><span class="token keyword">const</span> image <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"image"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> canvas <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"canvas"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> gl <span class="token operator">=</span> canvas<span class="token punctuation">.</span><span class="token function">getContext</span><span class="token punctuation">(</span><span class="token string">"webgl"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
@@ -583,11 +583,14 @@ filter<span class="token punctuation">.</span><span class="token function">rende
     filter<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 <p>and now, you can play with theme selector</p>
+<iframe src="webgl-channel-map-filter/index.html"></iframe>
 <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/index.mjs&initialPath=/src/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
-<iframe src="webgl-channel-map-filter/index.html"></iframe>
 <iframe src="webgl-channel-map-filter/video/index.html"></iframe>
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/video/index.mjs&initialPath=/src/webgl-channel-map-filter/video/index.html&startScript=start" target="_blank">
+  <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
+</a>
 <script src="index.mjs" type="module"></script>
 
           </div>

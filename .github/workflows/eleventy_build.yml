@@ -6,11 +6,16 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@master
-      - name: Build
-        uses: stepancar/actions-eleventy@v1.3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          install_dependencies: true
-          args: --pathprefix articles
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:

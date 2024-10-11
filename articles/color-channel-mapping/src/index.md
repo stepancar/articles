@@ -572,7 +572,7 @@ filter.render();
 
 [![mapping](./webgl-channel-map-filter/0xe50914_0x1877f2_0x34a853.png)](./webgl-channel-map-filter/0xe50914_0x1877f2_0x34a853.png)
 
-let bind it to our theme selector
+let's bind it to our theme selector
 ```javascript
 paleteSelector.addEventListener("change", () => {
     filter.use();
@@ -594,6 +594,48 @@ and now, you can play with theme selector
   />
 </a>
 
+
+Now, let's apply this filter to a video.
+
+Firstly, we need to initialize video
+
+```html
+<video
+   style="width: 50%;"
+   id="video"
+   src="https://media.githubusercontent.com/media/stepancar/articles/main/articles/color-channel-mapping/src/webgl-channel-map-filter/video/video2.mp4"
+   crossorigin="anonymous"
+   loop autoplay muted
+>
+</video>
+```
+
+then, you need to modify render so it would update texture with video frame
+and it should be called every frame:
+
+```javascript
+function render() {
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video); // pass htmlVideoElement
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+  filter.use();
+  filter.setRedChannelTargetColor(hexToVector3(paleteSelector.value[0]));
+  filter.setGreenChannelTargetColor(hexToVector3(paleteSelector.value[1]));
+  filter.setBlueChannelTargetColor(hexToVector3(paleteSelector.value[2]));
+  filter.render();
+
+  requestAnimationFrame(render);
+}
+
+render();
+```
+
+Here is the final result:
 
 <iframe src="./webgl-channel-map-filter/video/index.html"></iframe>
 

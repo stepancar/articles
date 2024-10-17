@@ -6,7 +6,7 @@ shortDescription: This article demonstrates how to use a web worker to offload t
 
 <iframe src="./src/index.html"></iframe>
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/canvas-webworker/?file=src/index.mjs&initialPath=/src/index.mjs&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/canvas-webworker/?file=src/index.html&initialPath=/src/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"

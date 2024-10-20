@@ -1,0 +1,63 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>webcodecs-libavjs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/css/style.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          webcodecs-libavjs
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2>This article demonstrates how to use webcodecs with libav.js to decode a video file</h2>
+          <div class="content">
+            <iframe src="src/index.html"></iframe>
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/webcodecs-libavjs/?file=src/index.html&initialPath=/src/index.html&startScript=start" target="_blank">
+  <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
+</a>
+<script src="index.mjs" type="module"></script>
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+      const iframes = document.querySelectorAll('iframe');
+
+      iframes.forEach(iframe => {
+          function resizeIframe() {
+              const oldHeight = parseInt(iframe.style.height);
+              const newHeight = iframe.contentWindow.document.body.scrollHeight + 20
+              if (oldHeight !== newHeight) {  
+                console.log('resize')
+                iframe.style.height = newHeight + 'px';
+              }
+          }
+
+          iframe.onload = () => {
+              resizeIframe(); // Initial resize after content load
+          };
+
+          setInterval(() => {
+              resizeIframe();
+          }, 100);
+      });
+    </script>
+  </body>
+</html>

@@ -5,3 +5,5 @@
 [html-video-element-seeking](https://stepancar.github.io/articles/articles/html-video-element-seeking/src/)
 
 [canvas-webworker](https://stepancar.github.io/articles/articles/canvas-webworker/)
+
+[webcodecs-libavjs](https://stepancar.github.io/articles/articles/webcodecs-libavjs/)

@@ -42,11 +42,11 @@
 
       iframes.forEach(iframe => {
           function resizeIframe() {
-              const oldHeight = parseInt(iframe.style.height);
-              const newHeight = iframe.contentWindow.document.body.scrollHeight + 20
-              if (oldHeight !== newHeight) {  
+              const height = parseInt(iframe.style.height);
+              const scrollHeight = iframe.contentWindow.document.body.scrollHeight
+              if (height < scrollHeight) {  
                 console.log('resize')
-                iframe.style.height = newHeight + 'px';
+                iframe.style.height = scrollHeight + 20 + 'px';
               }
           }
 

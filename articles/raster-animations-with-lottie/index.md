@@ -18,10 +18,11 @@ shortDescription: This article explores the downsides of using Lottie for raster
 
 Lottie is a library that allows you to render animations in real-time using JSON files. It's a great tool for creating animations that are easy to share across different platforms. However, there are some downsides to using Lottie that you should be aware of. This article explains just one of them.
 
+Before reading this article, you should be familiar with the details of Lottie format and how it works. If you're new to Lottie, you can learn more about it [here](https://dev.to/stepancar/lottie-under-the-hood-4gik).
 
 ## Vector vs Raster animations
 
-Let's consider this animation:
+Let's consider this animation with a bouncing heart
 
 <demo-with-playground
     file="demos/bouncing-heart-large/index.html"
@@ -29,8 +30,7 @@ Let's consider this animation:
 />
 
 You can see the source of this animation [here](./assets/bouncing-heart-large.json)
-
-In this animation you can see a simple bouncing heart. The animation is created using Lottie.
+It looks like this
 
 ```json
 {
@@ -72,7 +72,40 @@ In this animation you can see a simple bouncing heart. The animation is created 
 }
 ```
 
-As you can see, animation contains 24 images. Each image is a base64 encoded PNG. This is a huge overhead for the animation. The size of the JSON file is 1.5MB. This is a lot for a simple animation.
+As you can see, animation contains 24 images. Each image is a base64 encoded PNG.
+When animation is played, lottie player loads each image separately and displays it.
+So, without lottie we would write code like this
+
+```js
+const response = await fetch('../../assets/bouncing-heart-large.json');
+const data = await response.json();
+const {assets} = data;
+
+const image = document.createElement('img');
+document.getElementById('animation').appendChild(image);
+
+let counter = 0;
+
+function render() {
+    const activeImage = assets[counter % assets.length];
+    image.src = activeImage.p;
+
+    counter++;
+    requestAnimationFrame(render);
+}
+
+render();
+```
+
+<demo-with-playground
+    file="demos/bouncing-heart-images-switch/index.html"
+    initialPath="./demos/bouncing-heart-images-switch/index.html"
+/>
+
+or, instead we could create images for every frame in the animation and display them one by one.
+So, you can play more with your custom player for this animation, trying to optimize it
+
+You probably noticed that this is a huge overhead for the animation. The size of the JSON file is 1.5MB. This is a lot for such a simple animation.
 
 this happened because the designer exported the animation as a sequence of images. This is a common mistake when working with Lottie. Instead of exporting the animation as a sequence of images, the designer should export it as a vector animation. This will reduce the size of the JSON file and improve the performance of the animation.
 

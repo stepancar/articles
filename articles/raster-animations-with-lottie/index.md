@@ -28,16 +28,6 @@ Let's consider this animation:
     initialPath="./demos/bouncing-heart-large/index.html"
 />
 
-
-<iframe src="./demos/bouncing-heart-large/index.html"></iframe>
-
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/raster-animations-with-lottie/?file=/demos/bouncing-heart-large/index.html&initialPath=/demos/bouncing-heart-large/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
-
 You can see the source of this animation [here](./assets/bouncing-heart-large.json)
 
 In this animation you can see a simple bouncing heart. The animation is created using Lottie.
@@ -293,14 +283,10 @@ Look at [this animation](./assets/compressed-heart-animation.json)
 
 As you can see, visually it looks similar to the previous animation, but the size of the JSON file is 30 times smaller. This is a huge improvement.
 
-<iframe src="./demos/bouncing-heart-optimized/index.html"></iframe>
-
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/raster-animations-with-lottie/?file=/demos/bouncing-heart-large/index.html&initialPath=/demos/bouncing-heart-large/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
+<demo-with-playground
+    file="demos/bouncing-heart-optimized/index.html"
+    initialPath="./demos/bouncing-heart-optimized/index.html"
+/>
 
 You can compare them visually side by side
 

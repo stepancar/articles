@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <title>Bouncing heart large animation example</title>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.7.4/build/player/lottie_light.min.js"></script>
+    </head>
+    <body>
+        <div id="animation"></div>
+        <script>
+            const animation = lottie.loadAnimation({
+                container: document.getElementById('animation'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: '../../assets/bouncing-heart-large.json'
+            });
+        </script>
+    </body>
+</html>

@@ -46,11 +46,13 @@
 
     <script>
       const iframes = document.querySelectorAll('iframe');
-
+      debugger;
       iframes.forEach(iframe => {
           function resizeIframe() {
               const height = parseInt(iframe.style.height);
-              const scrollHeight = iframe.contentWindow.document.body.scrollHeight
+              const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+              iframe.style.height = scrollHeight + 'px';
+              console.log(height, scrollHeight)
               if (height < scrollHeight) {  
                 console.log('resize')
                 iframe.style.height = scrollHeight + 20 + 'px';

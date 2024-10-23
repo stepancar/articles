@@ -26,11 +26,25 @@
         <article class="markdown">
           <h2>This article explores the downsides of using Lottie for raster animations</h2>
           <div class="content">
-            <h2>Introduction</h2>
+            <style>
+    .side-by-side {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+
+    .side-by-side iframe {
+        width: 50%;
+    }
+</style>
 <p>Lottie is a library that allows you to render animations in real-time using JSON files. It's a great tool for creating animations that are easy to share across different platforms. However, there are some downsides to using Lottie that you should be aware of. This article explains just one of them.</p>
 <h2>Vector vs Raster animations</h2>
-<p>Let's consider</p>
-<p><a href="assets/large-heart-animation.json">bouncing hear lottie animation</a></p>
+<p>Let's consider this animation:</p>
+<iframe src="demos/bouncing-heart-large/index.html"></iframe>
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/raster-animations-with-lottie/?file=/demos/bouncing-heart-large/index.html&initialPath=/demos/bouncing-heart-large/index.html&startScript=start" target="_blank">
+  <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
+</a>
+<p>You can see the source of this animation <a href="assets/bouncing-heart-large.json">here</a></p>
 <p>In this animation you can see a simple bouncing heart. The animation is created using Lottie.</p>
 <pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
   <span class="token property">"v"</span><span class="token operator">:</span> <span class="token string">"5.11.0"</span><span class="token punctuation">,</span>
@@ -82,190 +96,199 @@ Ideally, it should be a feature of lottie itself.</p>
 <p>The only thing we can do is to educate designers to create animations in vector format instead of raster format. This will reduce the size of the JSON file and improve the performance of the animation.</p>
 <p>for example, in this specific case, the designer could use just one raster frame and animate it's scale property.</p>
 <p>Look at <a href="assets/compressed-heart-animation.json">this animation</a></p>
-<pre><code>{
-    "v": "5.11.0",
-    "fr": 25,
-    "ip": 0,
-    "op": 31,
-    "w": 335,
-    "h": 240,
-    "nm": "Alfa Red Heart extra low",
-    "ddd": 0,
-    "assets": [
-        {
-            "id": "image_0",
-            "w": 410,
-            "h": 364,
-            "u": "",
-            "p": "data:image/png;base64,...",
-        }
-    ],
-    "layers": [
-        {
-            "ddd": 0,
-            "ind": 1,
-            "ty": 2,
-            "nm": "HEART_main_page_00011.png",
-            "cl": "png",
-            "refId": "image_0", // reference to image asset
-            "sr": 1,
-            "ks": {
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+    <span class="token property">"v"</span><span class="token operator">:</span> <span class="token string">"5.11.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"fr"</span><span class="token operator">:</span> <span class="token number">25</span><span class="token punctuation">,</span>
+    <span class="token property">"ip"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token property">"op"</span><span class="token operator">:</span> <span class="token number">31</span><span class="token punctuation">,</span>
+    <span class="token property">"w"</span><span class="token operator">:</span> <span class="token number">335</span><span class="token punctuation">,</span>
+    <span class="token property">"h"</span><span class="token operator">:</span> <span class="token number">240</span><span class="token punctuation">,</span>
+    <span class="token property">"nm"</span><span class="token operator">:</span> <span class="token string">"Alfa Red Heart extra low"</span><span class="token punctuation">,</span>
+    <span class="token property">"ddd"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token property">"assets"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+            <span class="token property">"id"</span><span class="token operator">:</span> <span class="token string">"image_0"</span><span class="token punctuation">,</span>
+            <span class="token property">"w"</span><span class="token operator">:</span> <span class="token number">410</span><span class="token punctuation">,</span>
+            <span class="token property">"h"</span><span class="token operator">:</span> <span class="token number">364</span><span class="token punctuation">,</span>
+            <span class="token property">"u"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+            <span class="token property">"p"</span><span class="token operator">:</span> <span class="token string">"data:image/png;base64,..."</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"layers"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+            <span class="token property">"ddd"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+            <span class="token property">"ind"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+            <span class="token property">"ty"</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+            <span class="token property">"nm"</span><span class="token operator">:</span> <span class="token string">"HEART_main_page_00011.png"</span><span class="token punctuation">,</span>
+            <span class="token property">"cl"</span><span class="token operator">:</span> <span class="token string">"png"</span><span class="token punctuation">,</span>
+            <span class="token property">"refId"</span><span class="token operator">:</span> <span class="token string">"image_0"</span><span class="token punctuation">,</span> <span class="token comment">// reference to image asset</span>
+            <span class="token property">"sr"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+            <span class="token property">"ks"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
                 ...
-                "s": { // scale key frames
-                    "a": 1,
-                    "k": [
-                        {
-                            "i": {
-                                "x": [
-                                    0.08,
-                                    0.08,
-                                    0.25
-                                ],
-                                "y": [
-                                    1.022,
-                                    1.024,
-                                    1
-                                ]
-                            },
-                            "o": {
-                                "x": [
-                                    0.31,
-                                    0.31,
-                                    0.75
-                                ],
-                                "y": [
-                                    0,
-                                    0,
-                                    0
-                                ]
-                            },
-                            "t": 0,
-                            "s": [
-                                68.8,
-                                68.8,
-                                100
-                            ]
-                        },
-                        {
-                            "i": {
-                                "x": [
-                                    0.188,
-                                    0.188,
-                                    0.25
-                                ],
-                                "y": [
-                                    1,
-                                    1,
-                                    1
-                                ]
-                            },
-                            "o": {
-                                "x": [
-                                    0.5,
-                                    0.5,
-                                    0.75
-                                ],
-                                "y": [
-                                    0.003,
-                                    0.004,
-                                    0
-                                ]
-                            },
-                            "t": 6,
-                            "s": [
-                                56.8,
-                                57.8,
-                                100
-                            ]
-                        },
-                        {
-                            "i": {
-                                "x": [
-                                    0.399,
-                                    0.399,
-                                    0.25
-                                ],
-                                "y": [
-                                    0.997,
-                                    0.997,
-                                    1
-                                ]
-                            },
-                            "o": {
-                                "x": [
-                                    0.5,
-                                    0.5,
-                                    0.75
-                                ],
-                                "y": [
-                                    0,
-                                    0,
-                                    0
-                                ]
-                            },
-                            "t": 11,
-                            "s": [
-                                68.8,
-                                68.8,
-                                100
-                            ]
-                        },
-                        {
-                            "i": {
-                                "x": [
-                                    0.163,
-                                    0.163,
-                                    0.25
-                                ],
-                                "y": [
-                                    0.8,
-                                    0.777,
-                                    1
-                                ]
-                            },
-                            "o": {
-                                "x": [
-                                    0.2,
-                                    0.2,
-                                    0.75
-                                ],
-                                "y": [
-                                    0.005,
-                                    0.005,
-                                    0
-                                ]
-                            },
-                            "t": 16,
-                            "s": [
-                                58.8,
-                                59.8,
-                                100
-                            ]
-                        },
-                        {
-                            "t": 30,
-                            "s": [
-                                68.8,
-                                68.8,
-                                100
-                            ]
-                        }
-                    ],
-                    "ix": 6,
-                    "l": 2
-                }
-            },
-            "ao": 0,
-            "ip": 0,
-            "op": 31,
-            "st": 0,
-            "bm": 0
-        }
-    ],
-    "markers": [],
-    "props": {},
-}
-</code></pre>
+                <span class="token property">"s"</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token comment">// scale key frames</span>
+                    <span class="token property">"a"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+                    <span class="token property">"k"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                        <span class="token punctuation">{</span>
+                            <span class="token property">"i"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.08</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.08</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.25</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">1.022</span><span class="token punctuation">,</span>
+                                    <span class="token number">1.024</span><span class="token punctuation">,</span>
+                                    <span class="token number">1</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"o"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.31</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.31</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.75</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0</span><span class="token punctuation">,</span>
+                                    <span class="token number">0</span><span class="token punctuation">,</span>
+                                    <span class="token number">0</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"t"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+                            <span class="token property">"s"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                <span class="token number">68.8</span><span class="token punctuation">,</span>
+                                <span class="token number">68.8</span><span class="token punctuation">,</span>
+                                <span class="token number">100</span>
+                            <span class="token punctuation">]</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            <span class="token property">"i"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.188</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.188</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.25</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">1</span><span class="token punctuation">,</span>
+                                    <span class="token number">1</span><span class="token punctuation">,</span>
+                                    <span class="token number">1</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"o"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.5</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.5</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.75</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.003</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.004</span><span class="token punctuation">,</span>
+                                    <span class="token number">0</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"t"</span><span class="token operator">:</span> <span class="token number">6</span><span class="token punctuation">,</span>
+                            <span class="token property">"s"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                <span class="token number">56.8</span><span class="token punctuation">,</span>
+                                <span class="token number">57.8</span><span class="token punctuation">,</span>
+                                <span class="token number">100</span>
+                            <span class="token punctuation">]</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            <span class="token property">"i"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.399</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.399</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.25</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.997</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.997</span><span class="token punctuation">,</span>
+                                    <span class="token number">1</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"o"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.5</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.5</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.75</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0</span><span class="token punctuation">,</span>
+                                    <span class="token number">0</span><span class="token punctuation">,</span>
+                                    <span class="token number">0</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"t"</span><span class="token operator">:</span> <span class="token number">11</span><span class="token punctuation">,</span>
+                            <span class="token property">"s"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                <span class="token number">68.8</span><span class="token punctuation">,</span>
+                                <span class="token number">68.8</span><span class="token punctuation">,</span>
+                                <span class="token number">100</span>
+                            <span class="token punctuation">]</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            <span class="token property">"i"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.163</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.163</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.25</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.8</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.777</span><span class="token punctuation">,</span>
+                                    <span class="token number">1</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"o"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                                <span class="token property">"x"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.2</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.2</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.75</span>
+                                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                                <span class="token property">"y"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                    <span class="token number">0.005</span><span class="token punctuation">,</span>
+                                    <span class="token number">0.005</span><span class="token punctuation">,</span>
+                                    <span class="token number">0</span>
+                                <span class="token punctuation">]</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                            <span class="token property">"t"</span><span class="token operator">:</span> <span class="token number">16</span><span class="token punctuation">,</span>
+                            <span class="token property">"s"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                <span class="token number">58.8</span><span class="token punctuation">,</span>
+                                <span class="token number">59.8</span><span class="token punctuation">,</span>
+                                <span class="token number">100</span>
+                            <span class="token punctuation">]</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            <span class="token property">"t"</span><span class="token operator">:</span> <span class="token number">30</span><span class="token punctuation">,</span>
+                            <span class="token property">"s"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                                <span class="token number">68.8</span><span class="token punctuation">,</span>
+                                <span class="token number">68.8</span><span class="token punctuation">,</span>
+                                <span class="token number">100</span>
+                            <span class="token punctuation">]</span>
+                        <span class="token punctuation">}</span>
+                    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                    <span class="token property">"ix"</span><span class="token operator">:</span> <span class="token number">6</span><span class="token punctuation">,</span>
+                    <span class="token property">"l"</span><span class="token operator">:</span> <span class="token number">2</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token property">"ao"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+            <span class="token property">"ip"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+            <span class="token property">"op"</span><span class="token operator">:</span> <span class="token number">31</span><span class="token punctuation">,</span>
+            <span class="token property">"st"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+            <span class="token property">"bm"</span><span class="token operator">:</span> <span class="token number">0</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"markers"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"props"</span><span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span></code></pre>
+<p>As you can see, visually it looks similar to the previous animation, but the size of the JSON file is 30 times smaller. This is a huge improvement.</p>
+<iframe src="demos/bouncing-heart-optimized/index.html"></iframe>
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/raster-animations-with-lottie/?file=/demos/bouncing-heart-large/index.html&initialPath=/demos/bouncing-heart-large/index.html&startScript=start" target="_blank">
+  <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
+</a>
+<p>You can compare them visually side by side</p>
+<div class="side-by-side">
+    <iframe src="demos/bouncing-heart-large/index.html"></iframe>
+    <iframe src="demos/bouncing-heart-optimized/index.html"></iframe>
+</div>
 
           </div>
         </article>
@@ -275,11 +298,13 @@ Ideally, it should be a feature of lottie itself.</p>
 
     <script>
       const iframes = document.querySelectorAll('iframe');
-
+      debugger;
       iframes.forEach(iframe => {
           function resizeIframe() {
               const height = parseInt(iframe.style.height);
-              const scrollHeight = iframe.contentWindow.document.body.scrollHeight
+              const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+              iframe.style.height = scrollHeight + 'px';
+              console.log(height, scrollHeight)
               if (height < scrollHeight) {  
                 console.log('resize')
                 iframe.style.height = scrollHeight + 20 + 'px';

@@ -296,7 +296,7 @@ http://bbb3d.renderfarming.net/download.html</p>
 
     class DemoWithPlayground extends HTMLElement {
       static get observedAttributes() {
-        return ['initialpath', 'file'];
+        return ['initialPath', 'file'];
       }
 
       constructor() {
@@ -313,7 +313,7 @@ http://bbb3d.renderfarming.net/download.html</p>
           }
 
           render() {
-              const initialPath = this.getAttribute('initialpath') || '';
+              const initialPath = this.getAttribute('initialPath') || '';
               const file = this.getAttribute('file') || '';
           
           this.innerHTML = `

@@ -59,7 +59,7 @@
 
     class DemoWithPlayground extends HTMLElement {
       static get observedAttributes() {
-        return ['initialpath', 'file'];
+        return ['initialPath', 'file'];
       }
 
       constructor() {
@@ -76,7 +76,7 @@
           }
 
           render() {
-              const initialPath = this.getAttribute('initialpath') || '';
+              const initialPath = this.getAttribute('initialPath') || '';
               const file = this.getAttribute('file') || '';
           
           this.innerHTML = `

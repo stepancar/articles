@@ -319,7 +319,7 @@ Ideally, it should be a feature of lottie itself.</p>
 
     class DemoWithPlayground extends HTMLElement {
       static get observedAttributes() {
-        return ['initialpath', 'file'];
+        return ['initialPath', 'file'];
       }
 
       constructor() {
@@ -336,7 +336,7 @@ Ideally, it should be a feature of lottie itself.</p>
           }
 
           render() {
-              const initialPath = this.getAttribute('initialpath') || '';
+              const initialPath = this.getAttribute('initialPath') || '';
               const file = this.getAttribute('file') || '';
           
           this.innerHTML = `

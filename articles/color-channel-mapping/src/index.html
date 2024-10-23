@@ -653,7 +653,7 @@ and it should be called every frame:</p>
 
     class DemoWithPlayground extends HTMLElement {
       static get observedAttributes() {
-        return ['initialpath', 'file'];
+        return ['initialPath', 'file'];
       }
 
       constructor() {
@@ -670,7 +670,7 @@ and it should be called every frame:</p>
           }
 
           render() {
-              const initialPath = this.getAttribute('initialpath') || '';
+              const initialPath = this.getAttribute('initialPath') || '';
               const file = this.getAttribute('file') || '';
           
           this.innerHTML = `

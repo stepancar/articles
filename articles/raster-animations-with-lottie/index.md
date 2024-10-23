@@ -4,16 +4,36 @@ title: Downside of raster animations in Lottie
 shortDescription: This article explores the downsides of using Lottie for raster animations
 ---
 
-## Introduction
+<style>
+    .side-by-side {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+
+    .side-by-side iframe {
+        width: 50%;
+    }
+</style>
 
 Lottie is a library that allows you to render animations in real-time using JSON files. It's a great tool for creating animations that are easy to share across different platforms. However, there are some downsides to using Lottie that you should be aware of. This article explains just one of them.
 
 
 ## Vector vs Raster animations
 
-Let's consider
+Let's consider this animation:
 
-[bouncing hear lottie animation](./assets/large-heart-animation.json)
+
+<iframe src="./demos/bouncing-heart-large/index.html"></iframe>
+
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/raster-animations-with-lottie/?file=/demos/bouncing-heart-large/index.html&initialPath=/demos/bouncing-heart-large/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
+
+You can see the source of this animation [here](./assets/bouncing-heart-large.json)
 
 In this animation you can see a simple bouncing heart. The animation is created using Lottie.
 
@@ -80,7 +100,7 @@ for example, in this specific case, the designer could use just one raster frame
 
 Look at [this animation](./assets/compressed-heart-animation.json)
 
-```
+```json
 {
     "v": "5.11.0",
     "fr": 25,
@@ -265,3 +285,21 @@ Look at [this animation](./assets/compressed-heart-animation.json)
     "props": {},
 }
 ```
+
+As you can see, visually it looks similar to the previous animation, but the size of the JSON file is 30 times smaller. This is a huge improvement.
+
+<iframe src="./demos/bouncing-heart-optimized/index.html"></iframe>
+
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/raster-animations-with-lottie/?file=/demos/bouncing-heart-large/index.html&initialPath=/demos/bouncing-heart-large/index.html&startScript=start" target="_blank">
+  <img
+    alt="Open in StackBlitz"
+    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+  />
+</a>
+
+You can compare them visually side by side
+
+<div class="side-by-side">
+    <iframe src="./demos/bouncing-heart-large/index.html"></iframe>
+    <iframe src="./demos/bouncing-heart-optimized/index.html"></iframe>
+</div>

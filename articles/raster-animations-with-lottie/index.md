@@ -23,6 +23,11 @@ Lottie is a library that allows you to render animations in real-time using JSON
 
 Let's consider this animation:
 
+<demo-with-playground
+    file="./demos/bouncing-heart-large/index.html"
+    initialpath="./demos/bouncing-heart-large/index.html"
+/>
+
 
 <iframe src="./demos/bouncing-heart-large/index.html"></iframe>
 

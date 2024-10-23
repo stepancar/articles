@@ -7,3 +7,5 @@
 [canvas-webworker](https://stepancar.github.io/articles/articles/canvas-webworker/)
 
 [webcodecs-libavjs](https://stepancar.github.io/articles/articles/webcodecs-libavjs/)
+
+[raster-animation-with-lottie](https://stepancar.github.io/articles/articles/raster-animations-with-lottie/)

@@ -92,6 +92,7 @@ gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
 
 image.decode().then(() => {
   const texture = gl.createTexture();
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 

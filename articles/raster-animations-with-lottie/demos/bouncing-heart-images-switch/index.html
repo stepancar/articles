@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <title>Bouncing heart images switch demo</title>
+    <head></head><body>
+        <div id="animation"></div>
+        <script>
+            async function runAnimation() {
+                const response = await fetch('../../assets/bouncing-heart-large.json');
+                const data = await response.json();
+                const {assets} = data;
+                const sequentialImages = assets.filter(asset => asset.t === 'seq');
+
+                const image = document.createElement('img');
+                document.getElementById('animation').appendChild(image);
+
+                let counter = 0;
+
+                function render() {
+                    const activeImage = sequentialImages[counter % sequentialImages.length];
+                    image.src = activeImage.p;
+
+                    counter++;
+                    requestAnimationFrame(render);
+                }
+
+                render();
+            }
+
+            runAnimation();
+        </script>
+    </body>
+</html>

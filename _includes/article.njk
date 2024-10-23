@@ -34,28 +34,63 @@
     </layout>
 
     <script>
-      const iframes = document.querySelectorAll('iframe');
-      debugger;
-      iframes.forEach(iframe => {
-          function resizeIframe() {
-              const height = parseInt(iframe.style.height);
-              const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
-              iframe.style.height = scrollHeight + 'px';
-              console.log(height, scrollHeight)
-              if (height < scrollHeight) {  
-                console.log('resize')
-                iframe.style.height = scrollHeight + 20 + 'px';
-              }
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialpath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
           }
 
-          iframe.onload = () => {
-              resizeIframe(); // Initial resize after content load
-          };
+          connectedCallback() {
+              this.render();
+          }
 
-          setInterval(() => {
-              resizeIframe();
-          }, 100);
-      });
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialpath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main{{ page.url }}?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
     </script>
   </body>
 </html>

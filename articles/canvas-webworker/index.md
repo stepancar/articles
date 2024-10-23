@@ -2,6 +2,7 @@
 layout: article.njk
 title: Canvas in web worker
 shortDescription: This article demonstrates how to use a web worker to offload the main thread when working with canvas
+creationDate: 2024-10-05
 ---
 
 <iframe src="./src/index.html"></iframe>

@@ -1,6 +1,7 @@
 ---
 layout: article.njk
 title: HTML Video Element Seeking Performance
+creationDate: 2024-09-27
 ---
 
 <p class="lead">

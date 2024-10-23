@@ -2,6 +2,7 @@
 layout: article.njk
 title: webcodecs-libavjs
 shortDescription: This article demonstrates how to use webcodecs with libav.js to decode a video file
+creationDate: 2024-10-15
 ---
 
 Lets consider decoding and draw example

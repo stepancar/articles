@@ -2,6 +2,7 @@
 layout: article.njk
 title: Color channel mapping
 shortDescription: This article introduces the concept of recoloring a media resource using a palette and explores one solution to this problem - color channel mapping
+creationDate: 2024-08-23
 ---
 
 <style>

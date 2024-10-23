@@ -2,6 +2,7 @@
 layout: article.njk
 title: Downside of raster animations in Lottie
 shortDescription: This article explores the downsides of using Lottie for raster animations
+creationDate: 2024-10-23
 ---
 
 <style>

@@ -48,7 +48,7 @@ async function test() {
         const mediaUrl = videoSourceElement.value;
         const videoElement = document.createElement('video');
         const sourceElement = document.createElement('source');
-        sourceElement.type = 'video/mp4;codecs="hev1.1.6.L120.90"';
+        // sourceElement.type = 'video/mp4;codecs="hev1.1.6.L120.90"';
         videoElement.appendChild(sourceElement);
         sourceElement.src = mediaUrl;
 

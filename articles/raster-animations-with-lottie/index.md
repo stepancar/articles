@@ -17,21 +17,20 @@ creationDate: 2024-10-23
     }
 </style>
 
-Lottie is a library that allows you to render animations in real-time using JSON files. It's a great tool for creating animations that are easy to share across different platforms. However, there are some downsides to using Lottie that you should be aware of. This article explains just one of them.
+Lottie is a powerful library that enables real-time rendering of animations using JSON files. It's an excellent tool for creating animations that are easily shareable across various platforms. However, like any technology, Lottie has its drawbacks. This article focuses on one particular issue: the potential downsides of using raster animations in Lottie.
 
-Before reading this article, you should be familiar with the details of Lottie format and how it works. If you're new to Lottie, you can learn more about it [here](https://dev.to/stepancar/lottie-under-the-hood-4gik).
+Before diving in, it's important to have a basic understanding of the Lottie format and how it works. If you're new to Lottie, check out [this comprehensive guide](https://dev.to/stepancar/lottie-under-the-hood-4gik) to get up to speed.
 
-## Vector vs Raster animations
+## Vector vs Raster Animations in Lottie
 
-Let's consider this animation with a bouncing heart
+Let's examine this bouncing heart animation:
 
 <demo-with-playground
     file="demos/bouncing-heart-large/index.html"
     initialPath="./demos/bouncing-heart-large/index.html"
 />
 
-You can see the source of this animation [here](./assets/bouncing-heart-large.json)
-It looks like this
+You can view the source of this animation [here](./assets/bouncing-heart-large.json). Here's a snippet of what it looks like:
 
 ```json
 {
@@ -73,9 +72,7 @@ It looks like this
 }
 ```
 
-As you can see, animation contains 24 images. Each image is a base64 encoded PNG.
-When animation is played, lottie player loads each image separately and displays it.
-So, without lottie we would write code like this
+This animation consists of 24 separate images, each encoded as a base64 PNG. When the animation plays, the Lottie player loads and displays each image in sequence. Without Lottie, we could achieve a similar effect with JavaScript like this:
 
 ```js
 const response = await fetch('../../assets/bouncing-heart-large.json');
@@ -103,33 +100,21 @@ render();
     initialPath="./demos/bouncing-heart-images-switch/index.html"
 />
 
-or, instead we could create images for every frame in the animation and display them one by one.
-So, you can play more with your custom player for this animation, trying to optimize it.
+Alternatively, we could create separate image elements for each frame and display them sequentially. Feel free to experiment with optimizing this custom player.
 
-You probably noticed that this is a huge overhead for the animation. The size of the JSON file is 1.5MB. This is a lot for such a simple animation.
+The major drawback here is the file size: at 1.5MB, it's extremely large for such a simple animation. This bloat occurs because the designer exported the animation as a sequence of raster images instead of a vector animation. While this approach can sometimes be necessary for complex effects like 3D, it often leads to performance issues and oversized files.
 
-this happened because the designer exported the animation as a sequence of images. This is a common mistake when working with Lottie. Instead of exporting the animation as a sequence of images, the designer should export it as a vector animation. This will reduce the size of the JSON file and improve the performance of the animation.
+Ideally, Lottie would support storing image sequences in a compressed format, similar to video files. This would significantly reduce file sizes and improve performance. Unfortunately, Lottie doesn't currently offer this feature.
 
-The problem is that in this specific case designer created this animation as raster animation explicitly, because it's hard to create animation with 3D effects in vector format. This is a common problem when working with Lottie. Designers often create animations in raster format because it's easier and faster, and on client side lottie player can handle both vector and raster animations with the same code base.
-However, this can lead to performance issues and large file sizes.
+There's an alternative called [dotlottie](https://dotlottie.io/) that claims to be more efficient due to its binary format. However, it's a proprietary solution and not widely supported. Ideally, this kind of optimization would be built into Lottie itself.
 
-This problem could be solved if lottie could store sequence of images in compressed format, like frames are stored in video files. This would reduce the size of the JSON file and improve the performance of the animation.
+## What Can Developers Do?
 
-At this moment, lottie does not support this feature.
+The best approach is to work closely with designers, encouraging them to create vector animations whenever possible. This naturally leads to smaller file sizes and better performance.
 
-There is another library and format called [dotlottie](https://dotlottie.io/). They say that their format size is more efficient because it use binary format. But binary format would not help if we store all images independently. So, they actually can compress sequence of images.
-The problem is that this is a custom, not free format. So, it's not widely supported.
-Ideally, it should be a feature of lottie itself.
+When vector animations aren't feasible, look for creative compromises. In this case, we can achieve a similar effect using a single raster frame and animating its scale property:
 
-## What can we do as developers?
-
-The only thing we can do is to educate designers to create animations in vector format instead of raster format. This will reduce the size of the JSON file and improve the performance of the animation.
-
-But, as I said, it is not always easy, so you should help your designer to find a trade-off solution.
-
-for example, in this specific case, the designer could use just one raster frame and animate it's scale property.
-
-Look at [this animation](./assets/compressed-heart-animation.json)
+Look at [this optimized animation](./assets/compressed-heart-animation.json):
 
 ```json
 {
@@ -317,18 +302,18 @@ Look at [this animation](./assets/compressed-heart-animation.json)
 }
 ```
 
-As you can see, visually it looks similar to the previous animation, but the size of the JSON file is 30 times smaller. This is a huge improvement.
+This optimized version achieves a visually similar result, but the JSON file is now 30 times smaller – a massive improvement in efficiency.
 
 <demo-with-playground
     file="demos/bouncing-heart-optimized/index.html"
     initialPath="./demos/bouncing-heart-optimized/index.html"
 />
 
-You can compare them visually side by side
+Here's a side-by-side comparison of the original and optimized animations:
 
 <div class="side-by-side">
     <iframe src="./demos/bouncing-heart-large/index.html"></iframe>
     <iframe src="./demos/bouncing-heart-optimized/index.html"></iframe>
 </div>
 
-
+By making smart choices about how we create and export animations for Lottie, we can significantly improve performance without sacrificing visual quality.

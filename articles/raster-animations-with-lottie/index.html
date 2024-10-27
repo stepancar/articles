@@ -104,7 +104,7 @@ document<span class="token punctuation">.</span><span class="token function">get
 <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 <p><demo-with-playground file="demos/bouncing-heart-images-switch/index.html" initialPath="./demos/bouncing-heart-images-switch/index.html"></demo-with-playground></p>
 <p>or, instead we could create images for every frame in the animation and display them one by one.
-So, you can play more with your custom player for this animation, trying to optimize it</p>
+So, you can play more with your custom player for this animation, trying to optimize it.</p>
 <p>You probably noticed that this is a huge overhead for the animation. The size of the JSON file is 1.5MB. This is a lot for such a simple animation.</p>
 <p>this happened because the designer exported the animation as a sequence of images. This is a common mistake when working with Lottie. Instead of exporting the animation as a sequence of images, the designer should export it as a vector animation. This will reduce the size of the JSON file and improve the performance of the animation.</p>
 <p>The problem is that in this specific case designer created this animation as raster animation explicitly, because it's hard to create animation with 3D effects in vector format. This is a common problem when working with Lottie. Designers often create animations in raster format because it's easier and faster, and on client side lottie player can handle both vector and raster animations with the same code base.
@@ -114,8 +114,9 @@ However, this can lead to performance issues and large file sizes.</p>
 <p>There is another library and format called <a href="https://dotlottie.io/">dotlottie</a>. They say that their format size is more efficient because it use binary format. But binary format would not help if we store all images independently. So, they actually can compress sequence of images.
 The problem is that this is a custom, not free format. So, it's not widely supported.
 Ideally, it should be a feature of lottie itself.</p>
-<h2>What can we do?</h2>
+<h2>What can we do as developers?</h2>
 <p>The only thing we can do is to educate designers to create animations in vector format instead of raster format. This will reduce the size of the JSON file and improve the performance of the animation.</p>
+<p>But, as I said, it is not always easy, so you should help your designer to find a trade-off solution.</p>
 <p>for example, in this specific case, the designer could use just one raster frame and animate it's scale property.</p>
 <p>Look at <a href="assets/compressed-heart-animation.json">this animation</a></p>
 <pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>

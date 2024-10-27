@@ -104,7 +104,7 @@ render();
 />
 
 or, instead we could create images for every frame in the animation and display them one by one.
-So, you can play more with your custom player for this animation, trying to optimize it
+So, you can play more with your custom player for this animation, trying to optimize it.
 
 You probably noticed that this is a huge overhead for the animation. The size of the JSON file is 1.5MB. This is a lot for such a simple animation.
 
@@ -121,9 +121,11 @@ There is another library and format called [dotlottie](https://dotlottie.io/). T
 The problem is that this is a custom, not free format. So, it's not widely supported.
 Ideally, it should be a feature of lottie itself.
 
-## What can we do?
+## What can we do as developers?
 
 The only thing we can do is to educate designers to create animations in vector format instead of raster format. This will reduce the size of the JSON file and improve the performance of the animation.
+
+But, as I said, it is not always easy, so you should help your designer to find a trade-off solution.
 
 for example, in this specific case, the designer could use just one raster frame and animate it's scale property.
 
@@ -328,3 +330,5 @@ You can compare them visually side by side
     <iframe src="./demos/bouncing-heart-large/index.html"></iframe>
     <iframe src="./demos/bouncing-heart-optimized/index.html"></iframe>
 </div>
+
+

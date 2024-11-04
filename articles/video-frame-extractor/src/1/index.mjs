@@ -27,7 +27,7 @@ function startRendering(ctx, image) {
     render();
 }
 
-async function run() {
+(async function () {
     const image = await createImageResource('../image.webp');
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -36,6 +36,4 @@ async function run() {
     canvas.height = image.height;
 
     startRendering(ctx, image);
-}
-
-run();
+}());

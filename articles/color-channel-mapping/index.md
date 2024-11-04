@@ -63,13 +63,13 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
 }
 ```
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/code-based-animation/index.mjs&initialPath=/src/code-based-animation/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=code-based-animation/index.mjs&initialPath=/code-based-animation/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
   />
 </a>
-<iframe src="../src/code-based-animation/index.html"></iframe>
+<iframe src="../code-based-animation/index.html"></iframe>
 
 
 To make the animation recolorable, we can pass the palette to the function and use the colors from it in the code, like this:
@@ -113,7 +113,7 @@ function recolorSVG(svg, colorPalette: [string, string, string]) {
   return doc.documentElement.outerHTML;
 }
 ```
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/svg-based-animation/index.mjs&initialPath=/src/svg-based-animation/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=svg-based-animation/index.mjs&initialPath=/svg-based-animation/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
@@ -170,7 +170,7 @@ function getNewColor(old, colorPalette) {
 }
 ```
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/solid-color-remapping/index.mjs&initialPath=/src/solid-color-remapping/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=solid-color-remapping/index.mjs&initialPath=/solid-color-remapping/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
@@ -185,7 +185,7 @@ In this example, it's hard to notice, but the border of the circle has a slightl
 
 A more obvious example is replacing the color of an image with a gradient:
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/gradient-color-remapping/index.mjs&initialPath=/src/gradient-color-remapping/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=gradient-color-remapping/index.mjs&initialPath=/gradient-color-remapping/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
@@ -250,7 +250,7 @@ function replaceImageData(imageData, currentImageData) {
 
 Let's see it in action:
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/canvas-color-channel-remapping/index.mjs&initialPath=/src/canvas-color-channel-remapping/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=canvas-color-channel-remapping/index.mjs&initialPath=/canvas-color-channel-remapping/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
@@ -588,7 +588,7 @@ and now, you can play with theme selector
 
 
 <iframe src="./webgl-channel-map-filter/index.html"></iframe>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/index.mjs&initialPath=/src/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=webgl-channel-map-filter/index.mjs&initialPath=/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
@@ -604,7 +604,7 @@ Firstly, we need to initialize video
 <video
    style="width: 50%;"
    id="video"
-   src="https://media.githubusercontent.com/media/stepancar/articles/main/articles/color-channel-mapping/src/webgl-channel-map-filter/video/video2.mp4"
+   src="https://media.githubusercontent.com/media/stepancar/articles/main/articles/color-channel-mapping/webgl-channel-map-filter/video/video2.mp4"
    crossorigin="anonymous"
    loop autoplay muted
 >
@@ -640,7 +640,7 @@ Here is the final result:
 
 <iframe src="./webgl-channel-map-filter/video/index.html"></iframe>
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/video/index.mjs&initialPath=/src/webgl-channel-map-filter/video/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=webgl-channel-map-filter/video/index.mjs&initialPath=/webgl-channel-map-filter/video/index.html&startScript=start" target="_blank">
   <img
     alt="Open in StackBlitz"
     src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"

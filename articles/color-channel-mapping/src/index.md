@@ -647,5 +647,56 @@ Here is the final result:
   />
 </a>
 
+## Svg filter on Canvas
+
+We can express the same logic using SVG filters. This is a more declarative way to express the same logic.
+
+```xml
+<svg
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+    <defs>
+        <filter id="colorChannelMapFilter">
+            <feColorMatrix
+                in="SourceGraphic"
+                type="matrix"
+                values="
+                    0 1 0 0 0 
+                    1 0 0 0 0 
+                    1 0 0 0 0 
+                    0 0 0 1 0"
+                />
+        </filter>
+    </defs>
+</svg>
+```
+
+When we select new theme, we can update the filter values:
+
+```javascript
+function replaceColors() {
+    const feColorMatrix = document.querySelector('#colorChannelMapFilter feColorMatrix');
+    const [target1R, target1G, target1B] = splitColorToRGB(paleteSelector.value[0]);
+    const [target2R, target2G, target2B] = splitColorToRGB(paleteSelector.value[1]);
+    const [target3R, target3G, target3B] = splitColorToRGB(paleteSelector.value[2]);
+    const filterValues = `
+        ${target1R} ${target2R} ${target3R} 0 0
+        ${target1G} ${target2G} ${target3G} 0 0
+        ${target1B} ${target2B} ${target3B} 0 0
+        0 0 0 1 0
+    `;
+
+    feColorMatrix.setAttribute('values', filterValues);
+    ctx.filter = "url(#colorChannelMapFilter)";
+    ctx.drawImage(image, 0, 0);
+}
+```
+
+<demo-with-playground
+    file="./canvas-svg-filter-color-channel-remapping/index.html"
+    initialPath="./canvas-svg-filter-color-channel-remapping/index.mjs"
+/>
 
 <script src="./index.mjs" type="module"></script>

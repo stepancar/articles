@@ -11,6 +11,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(mathjaxPlugin);
     eleventyConfig.addTemplateFormats("scss");
     eleventyConfig.addPassthroughCopy("./articles/**/*.mjs");
+    eleventyConfig.addPassthroughCopy("./articles/**/*.webp");
     eleventyConfig.addPassthroughCopy("./articles/**/*.json");
     eleventyConfig.addPassthroughCopy("./articles/**/*.js");
     eleventyConfig.addPassthroughCopy("./articles/**/*.wasm");

@@ -208,10 +208,10 @@ All demos are written in plain JavaScript without any build tools</p>
   ctx<span class="token punctuation">.</span><span class="token function">arc</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> r<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span> <span class="token operator">*</span> Math<span class="token punctuation">.</span><span class="token constant">PI</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   ctx<span class="token punctuation">.</span><span class="token function">fill</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/code-based-animation/index.mjs&initialPath=/src/code-based-animation/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=code-based-animation/index.mjs&initialPath=/code-based-animation/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
-<iframe src="../src/code-based-animation/index.html"></iframe>
+<iframe src="../code-based-animation/index.html"></iframe>
 <p>To make the animation recolorable, we can pass the palette to the function and use the colors from it in the code, like this:</p>
 <pre class="language-typescript"><code class="language-typescript"><span class="token keyword">function</span> <span class="token function">drawCircle</span><span class="token punctuation">(</span>ctx<span class="token operator">:</span> CanvasRenderingContext2D<span class="token punctuation">,</span> x<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> y<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> r<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> colorPalette<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token builtin">string</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   ctx<span class="token punctuation">.</span><span class="token function">beginPath</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -238,7 +238,7 @@ All demos are written in plain JavaScript without any build tools</p>
   <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   <span class="token keyword">return</span> doc<span class="token punctuation">.</span>documentElement<span class="token punctuation">.</span>outerHTML<span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/svg-based-animation/index.mjs&initialPath=/src/svg-based-animation/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=svg-based-animation/index.mjs&initialPath=/svg-based-animation/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
 <iframe src="svg-based-animation/index.html"></iframe>
@@ -277,14 +277,14 @@ All demos are written in plain JavaScript without any build tools</p>
 <span class="token keyword">function</span> <span class="token function">getNewColor</span><span class="token punctuation">(</span><span class="token parameter">old<span class="token punctuation">,</span> colorPalette</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
    <span class="token keyword">return</span> old<span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/solid-color-remapping/index.mjs&initialPath=/src/solid-color-remapping/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=solid-color-remapping/index.mjs&initialPath=/solid-color-remapping/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
 <iframe src="solid-color-remapping/index.html"></iframe>
 <p>In this example, it's hard to notice, but the border of the circle has a slightly different color. This happens because the border's color is not a solid color but a gradient due to anti-aliasing.</p>
 <p><a href="solid-color-remapping/antialiasing.png"><img src="solid-color-remapping/antialiasing.png" alt="Gradient border"></a></p>
 <p>A more obvious example is replacing the color of an image with a gradient:</p>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/gradient-color-remapping/index.mjs&initialPath=/src/gradient-color-remapping/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=gradient-color-remapping/index.mjs&initialPath=/gradient-color-remapping/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
 <iframe src="gradient-color-remapping/index.html"></iframe>
@@ -317,7 +317,7 @@ All demos are written in plain JavaScript without any build tools</p>
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
 <p>Let's see it in action:</p>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/canvas-color-channel-remapping/index.mjs&initialPath=/src/canvas-color-channel-remapping/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=canvas-color-channel-remapping/index.mjs&initialPath=/canvas-color-channel-remapping/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
 <iframe src="canvas-color-channel-remapping/index.html"></iframe>
@@ -584,7 +584,7 @@ filter<span class="token punctuation">.</span><span class="token function">rende
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 <p>and now, you can play with theme selector</p>
 <iframe src="webgl-channel-map-filter/index.html"></iframe>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/index.mjs&initialPath=/src/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=webgl-channel-map-filter/index.mjs&initialPath=/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
 <p>Now, let's apply this filter to a video.</p>
@@ -592,7 +592,7 @@ filter<span class="token punctuation">.</span><span class="token function">rende
 <pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>video</span>
    <span class="token special-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token value css language-css"><span class="token property">width</span><span class="token punctuation">:</span> 50%<span class="token punctuation">;</span></span><span class="token punctuation">"</span></span></span>
    <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>video<span class="token punctuation">"</span></span>
-   <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://media.githubusercontent.com/media/stepancar/articles/main/articles/color-channel-mapping/src/webgl-channel-map-filter/video/video2.mp4<span class="token punctuation">"</span></span>
+   <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://media.githubusercontent.com/media/stepancar/articles/main/articles/color-channel-mapping/webgl-channel-map-filter/video/video2.mp4<span class="token punctuation">"</span></span>
    <span class="token attr-name">crossorigin</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>anonymous<span class="token punctuation">"</span></span>
    <span class="token attr-name">loop</span> <span class="token attr-name">autoplay</span> <span class="token attr-name">muted</span>
 <span class="token punctuation">&gt;</span></span>
@@ -620,7 +620,7 @@ and it should be called every frame:</p>
 <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 <p>Here is the final result:</p>
 <iframe src="webgl-channel-map-filter/video/index.html"></iframe>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=src/webgl-channel-map-filter/video/index.mjs&initialPath=/src/webgl-channel-map-filter/video/index.html&startScript=start" target="_blank">
+<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=webgl-channel-map-filter/video/index.mjs&initialPath=/webgl-channel-map-filter/video/index.html&startScript=start" target="_blank">
   <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
 </a>
 <h2>Svg filter on Canvas</h2>
@@ -715,7 +715,7 @@ and it should be called every frame:</p>
           <div>
               <iframe src="./${initialPath}"></iframe>
 
-              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/src/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
               <img
                   alt="Open in StackBlitz"
                   src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"

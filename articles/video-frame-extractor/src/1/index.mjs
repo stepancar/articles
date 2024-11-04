@@ -1,5 +1,5 @@
 import { drawClockArrows, drawClockFace } from '../graphics.mjs';
-
+import { createImageResource } from '../resources.mjs';
 
 /**
  * 
@@ -24,7 +24,7 @@ function startRendering(ctx, image) {
         requestAnimationFrame(render);
     }
 
-    requestAnimationFrame(render);   
+    render();
 }
 
 async function run() {
@@ -39,10 +39,3 @@ async function run() {
 }
 
 run();
-
-async function createImageResource(src) {
-    const image = document.createElement('img');
-    image.src = src;
-    await image.decode();
-    return image;
-}

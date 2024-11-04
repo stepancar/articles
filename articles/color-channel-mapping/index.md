@@ -681,11 +681,12 @@ function replaceColors() {
     const [target1R, target1G, target1B] = splitColorToRGB(paleteSelector.value[0]);
     const [target2R, target2G, target2B] = splitColorToRGB(paleteSelector.value[1]);
     const [target3R, target3G, target3B] = splitColorToRGB(paleteSelector.value[2]);
-    const filterValues = createMatrix(
-      target1R, target1G, target1B,
-      target2R, target2G, target2B,
-      target3R, target3G, target3B
-    );
+    const filterValues = `
+        ${target1R} ${target2R} ${target3R} 0 0
+        ${target1G} ${target2G} ${target3G} 0 0
+        ${target1B} ${target2B} ${target3B} 0 0
+        0 0 0 1 0
+    `;
 
     feColorMatrix.setAttribute('values', filterValues);
     ctx.filter = "url(#colorChannelMapFilter)";
@@ -693,16 +694,9 @@ function replaceColors() {
 }
 ```
 
-```
-${target1R} ${target2R} ${target3R} 0 0
-${target1G} ${target2G} ${target3G} 0 0
-${target1B} ${target2B} ${target3B} 0 0
-0 0 0 1 0
-```
-
 <demo-with-playground
     file="./canvas-svg-filter-color-channel-remapping/index.html"
-    initialPath="./canvas-svg-filter-color-channel-remapping/index.mjs"
+    initialPath="./canvas-svg-filter-color-channel-remapping/index.html"
 />
 
 <script src="./index.mjs" type="module"></script>

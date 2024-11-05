@@ -63,14 +63,10 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
 }
 ```
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=code-based-animation/index.mjs&initialPath=/code-based-animation/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
-<iframe src="../code-based-animation/index.html"></iframe>
-
+<demo-with-playground
+    file="./code-based-animation/index.mjs"
+    initialPath="./code-based-animation/index.html"
+/>
 
 To make the animation recolorable, we can pass the palette to the function and use the colors from it in the code, like this:
 
@@ -113,14 +109,11 @@ function recolorSVG(svg, colorPalette: [string, string, string]) {
   return doc.documentElement.outerHTML;
 }
 ```
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=svg-based-animation/index.mjs&initialPath=/svg-based-animation/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
-<iframe src="./svg-based-animation/index.html"></iframe>
 
+<demo-with-playground
+    file="./svg-based-animation/index.mjs"
+    initialPath="./svg-based-animation/index.html"
+/>
 
 Designers can mark elements so that we know which color from the palette corresponds to each element. For example:
 
@@ -170,14 +163,10 @@ function getNewColor(old, colorPalette) {
 }
 ```
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=solid-color-remapping/index.mjs&initialPath=/solid-color-remapping/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
-<iframe src="./solid-color-remapping/index.html"></iframe>
-
+<demo-with-playground
+    file="./solid-color-remapping/index.mjs"
+    initialPath="./solid-color-remapping/index.html"
+/>
 
 In this example, it's hard to notice, but the border of the circle has a slightly different color. This happens because the border's color is not a solid color but a gradient due to anti-aliasing.
 
@@ -185,13 +174,10 @@ In this example, it's hard to notice, but the border of the circle has a slightl
 
 A more obvious example is replacing the color of an image with a gradient:
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=gradient-color-remapping/index.mjs&initialPath=/gradient-color-remapping/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
-<iframe src="./gradient-color-remapping/index.html"></iframe>
+<demo-with-playground
+    file="./gradient-color-remapping/index.mjs"
+    initialPath="./gradient-color-remapping/index.html"
+/>
 
 As you can see, this is not what we expected. The final image should only contain colors from the palette, but we see additional colors. You might also notice that the gradient is no longer smooth.
 
@@ -250,13 +236,10 @@ function replaceImageData(imageData, currentImageData) {
 
 Let's see it in action:
 
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=canvas-color-channel-remapping/index.mjs&initialPath=/canvas-color-channel-remapping/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
-<iframe src="./canvas-color-channel-remapping/index.html"></iframe>
+<demo-with-playground
+    file="./canvas-color-channel-remapping/index.mjs"
+    initialPath="./canvas-color-channel-remapping/index.html"
+/>
 
 It works!
 
@@ -586,15 +569,10 @@ paleteSelector.addEventListener("change", () => {
 
 and now, you can play with theme selector
 
-
-<iframe src="./webgl-channel-map-filter/index.html"></iframe>
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=webgl-channel-map-filter/index.mjs&initialPath=/webgl-channel-map-filter/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
-
+<demo-with-playground
+    file="./webgl-channel-map-filter/index.mjs"
+    initialPath="./webgl-channel-map-filter/index.html"
+/>
 
 Now, let's apply this filter to a video.
 
@@ -638,14 +616,10 @@ render();
 
 Here is the final result:
 
-<iframe src="./webgl-channel-map-filter/video/index.html"></iframe>
-
-<a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/color-channel-mapping/?file=webgl-channel-map-filter/video/index.mjs&initialPath=/webgl-channel-map-filter/video/index.html&startScript=start" target="_blank">
-  <img
-    alt="Open in StackBlitz"
-    src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-  />
-</a>
+<demo-with-playground
+    file="./webgl-channel-map-filter/video/index.mjs"
+    initialPath="./webgl-channel-map-filter/video/index.html"
+/>
 
 ## Svg filter on Canvas
 

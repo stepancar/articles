@@ -73,6 +73,11 @@ export class MP4Demuxer {
       );
     }
   }
+
+  get duration() {
+    
+    return this.#file.moov.mvhd.duration / this.#file.moov.mvhd.timescale;
+  }
 }
 
 // Wraps an MP4Box File as a WritableStream underlying sink.

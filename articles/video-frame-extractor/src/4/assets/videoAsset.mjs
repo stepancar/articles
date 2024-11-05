@@ -11,11 +11,19 @@ export class VideoAsset extends BaseAsset {
     }
 
     draw(ctx) {
+        if (!this.video.currenFrame) {
+            return;
+        }
         ctx.drawImage(this.video.currenFrame, this.position.x, this.position.y, this.bounds.width, this.bounds.height);
     }
 
     async seek(time) {
-        this.video.currentTime = time / 1000;
+        const newTime = time / 1000;
+        if (newTime > this.video.duration) {
+            this.video.currentTime = newTime % this.video.duration;
+        } else {
+            this.video.currentTime = newTime;
+        }
 
         return new Promise((resolve) => {
             this.video.addEventListener('seeked', () => {
@@ -72,6 +80,9 @@ class HtmlVideoElement extends EventTarget {
     }
 
     async #seek() {
+        this.#frames.forEach((frame) => {
+            frame.close();
+        });
         this.#frames = [];
         this.#decoder.flush();
         const timestamp = this.#secondsToTimestamp(this.#currentTime)
@@ -88,7 +99,7 @@ class HtmlVideoElement extends EventTarget {
         const chunk = this.#chunksBuffer[chunkForTimestampIndex];
         if (chunk.type === 'key' && chunk.timestamp === timestamp) {
             const startIndex = chunkForTimestampIndex;
-            await this.doDecodingUntilTimestamp(startIndex, timestamp);
+            await this.doDecodingUntilTimestamp(startIndex);
         } else {
             let startIndex = chunkForTimestampIndex - 1;
 
@@ -104,12 +115,12 @@ class HtmlVideoElement extends EventTarget {
         this.dispatchEvent(new CustomEvent('seeked'));
     }
 
-    async doDecodingUntilTimestamp(startIndex, timestamp) {
+    async doDecodingUntilTimestamp(startIndex) {
         
         let index = startIndex;
         const decoder = this.#decoder;
 
-        while (!this.#frames[this.#frames.length - 1] || this.#frames[this.#frames.length - 1].timestamp < timestamp) {
+        while (!this.currenFrame) {
             const chunk = this.#chunksBuffer[index];
             if (!chunk) {
                 return;
@@ -148,9 +159,22 @@ class HtmlVideoElement extends EventTarget {
     }
 
     get currenFrame() {
-        if (this.#frames.length === 0) {
+        const timestamp = this.#secondsToTimestamp(this.#currentTime);
+        const frame = this.#frames.find((frame) => {
+            return frame.timestamp <= timestamp && frame.timestamp + frame.duration >= timestamp;
+        });
+
+        if (!frame) {
+            if (timestamp === 0) {
+                return this.#frames[0];
+            }
             return null;
         }
-        return this.#frames[this.#frames.length - 1];
+
+        return frame;
+    }
+
+    get duration() {
+        return this.#demuxer.duration;
     }
 }

@@ -14,7 +14,7 @@ async function startRendering(ctx) {
     const scene = new Scene();
     
     scene.assets.push(...[
-        new BackgroundAsset('../image.webp'),
+        new BackgroundAsset({ src: '../image.webp' }),
         new ClockAsset({ position: { x: 525, y: 125 } }),
         new TextAsset({ text: 'Hello, Holyjs!', position: { x: 50, y: 50 } }),
         new VideoAsset({
@@ -27,14 +27,12 @@ async function startRendering(ctx) {
 
     await scene.waitWhenResourceReady();
 
-    scene.play();
-
     async function drawAtTime(time) {
-        // await scene.seek(time);
+        await scene.seek(time);
         scene.draw(ctx);
     }
 
-    const startTime = 45000;
+    const startTime = 0;
 
     async function render(timestamp) {
         const currentTime = timestamp + startTime;

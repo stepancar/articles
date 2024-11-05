@@ -1,10 +1,9 @@
 import { BaseAsset } from './baseAsset.mjs';
 
 export class TextAsset extends BaseAsset {
-    constructor({ text, position }) {
-        super();
+    constructor({ text, ...settings }) {
+        super(settings);
         this.text = text;
-        this.position = position;
     }
 
     draw(ctx) {

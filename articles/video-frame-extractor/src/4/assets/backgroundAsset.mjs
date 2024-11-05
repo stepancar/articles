@@ -1,8 +1,8 @@
 import {BaseAsset} from './baseAsset.mjs';
 
 export class BackgroundAsset extends BaseAsset {
-    constructor(src) {
-        super();
+    constructor({ src, ...settings }) {
+        super(settings);
         this.image = document.createElement('img');
         this.image.src = src;
     }

@@ -20,7 +20,8 @@ async function startRendering(ctx) {
         new ImageAsset({ src: '../image.jpg', bounds: { x: 80, y: 15, width: 130, height: 200 } }),
         new VideoAsset({
             // src: 'https://nickdesaulniers.github.io/netfix/demo/frag_bunny.mp4',
-            src: 'https://storage.googleapis.com/lumen5-prod-video/video-seek-test.mp4',
+            // src: 'https://storage.googleapis.com/lumen5-prod-video/video-seek-test.mp4',
+            src: '../stepan_holy_nodejs.mov',
             position: { x: 290, y: 252 },
             bounds: { width: 510, height: 300 },
         }),

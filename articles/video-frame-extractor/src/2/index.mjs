@@ -10,30 +10,17 @@ import { TextAsset } from './assets/textAsset.mjs';
  * @param {HTMLImageElement} image 
  */
 async function startRendering(ctx) {
-    const scene = new Scene();
+    const scene = new Scene(ctx);
     
     scene.assets.push(...[
-        new BackgroundAsset('../image.webp'),
-        new ClockAsset({ position: { x: 525, y: 125 } }),
-        new TextAsset({ text: 'Hello, Holyjs!', position: { x: 50, y: 50 } }),
+        new BackgroundAsset({ src: '../image.jpg' }),
+        new ClockAsset({ position: { x: 535, y: 93 } }),
+        new TextAsset({ position: { x: 50, y: 50 }, text: 'Hello, Holyjs!',  }),
     ]);
 
     await scene.waitWhenResourceReady();
 
-    function drawAtTime(time) {
-        scene.seek(time);
-        scene.draw(ctx);
-    }
-
-    const startTime = 0;
-
-    function render(timestamp) {
-        const currentTime = timestamp + startTime;
-        drawAtTime(currentTime);
-        requestAnimationFrame(render);
-    }
-
-    render();
+    scene.play();
 }
 
 async function run() {

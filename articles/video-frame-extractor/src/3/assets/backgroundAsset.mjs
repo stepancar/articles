@@ -1,9 +1,9 @@
-import {BaseAsset} from './baseAsset.mjs';
+import { BaseAsset } from "./baseAsset.mjs";
 
 export class BackgroundAsset extends BaseAsset {
-    constructor(src) {
-        super();
-        this.image = document.createElement('img');
+    constructor({ src, ...settings }) {
+        super(settings);
+        this.image = document.createElement("img");
         this.image.src = src;
     }
 

@@ -1,24 +1,16 @@
 import { BaseAsset } from './baseAsset.mjs';
 
 export class VideoAsset extends BaseAsset {
-    constructor({ position, src, bounds }) {
-        super();
+    constructor({ src, ...settings }) {
+        super(settings);
         this.video = document.createElement('video');
         this.video.muted = true;
         this.video.loop = true;
-        this.position = position;
         this.video.src = src;
-        this.bounds = bounds;
     }
-
 
     draw(ctx) {
         ctx.drawImage(this.video, this.position.x, this.position.y, this.bounds.width, this.bounds.height);
-    }
-
-    async seek(time) {
-        await super.seek(time);
-        this.video.currentTime = (this.currentTime / 1000) % this.video.duration;
     }
 
     async waitWhenResourceReady() {

@@ -8,7 +8,7 @@ export class TextAsset extends BaseAsset {
 
     draw(ctx) {
         const animationDuration = 3000;
-        const fontSize = 80 + 5 * (this.currentTime * 5 % animationDuration) / animationDuration;
+        const fontSize = 80 + 5 * (this.currentTime % animationDuration) / animationDuration;
         ctx.fillStyle = "black";
         ctx.font = `${fontSize}px Arial`;
         const textMetrix = ctx.measureText(this.text);

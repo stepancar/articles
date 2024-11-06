@@ -30,3 +30,10 @@ every asset extends from BaseAsset which defines basic interface
     initialPath="./src/2/index.html"
 />
 
+
+Let's add video element to our scene.
+
+<demo-with-playground
+    file="./src/3/index.html"
+    initialPath="./src/3/index.html"
+/>

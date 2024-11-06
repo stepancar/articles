@@ -5,8 +5,9 @@ export class MP4Demuxer {
   #onChunk = null;
   #setStatus = null;
   #file = null;
+  #onFinish = null;
 
-  constructor(uri, { onConfig, onChunk, setStatus }) {
+  constructor(uri, { onConfig, onChunk, setStatus, onFinish }) {
     this.#onConfig = onConfig;
     this.#onChunk = onChunk;
     this.#setStatus = setStatus;
@@ -16,6 +17,7 @@ export class MP4Demuxer {
     this.#file.onError = (error) => setStatus("demux", error);
     this.#file.onReady = this.#onReady.bind(this);
     this.#file.onSamples = this.#onSamples.bind(this);
+    this.#onFinish = onFinish;
 
     // Fetch the file and pipe the data through.
     const fileSink = new MP4FileSink(this.#file, setStatus);
@@ -72,6 +74,8 @@ export class MP4Demuxer {
         })
       );
     }
+
+    this.#onFinish();
   }
 
   get duration() {

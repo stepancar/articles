@@ -48,6 +48,11 @@ We are going to draw image on canvas, draw clock and animate it.</p>
 <p><demo-with-playground file="./src/2/index.html" initialPath="./src/2/index.html"></demo-with-playground></p>
 <p>Let's add video element to our scene.</p>
 <p><demo-with-playground file="./src/3/index.html" initialPath="./src/3/index.html"></demo-with-playground></p>
+<p>We have a testing video which was recorded using macos screen recording tool which produces .mov files.</p>
+<p>lets convert it to mp4 using ffmpeg</p>
+<pre class="language-bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> stepan_holy_nodejs.mov <span class="token parameter variable">-c:v</span> libx264 <span class="token parameter variable">-g</span> <span class="token number">9999</span> <span class="token parameter variable">-keyint_min</span> <span class="token number">9999</span> <span class="token parameter variable">-sc_threshold</span> <span class="token number">0</span> <span class="token parameter variable">-c:a</span> copy stepan_holy_nodejs_single_keyframe.mp4</code></pre>
+<pre class="language-bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> stepan_holy_nodejs.mov <span class="token parameter variable">-c:v</span> libx264 <span class="token parameter variable">-g</span> <span class="token number">1</span> <span class="token parameter variable">-keyint_min</span> <span class="token number">1</span> <span class="token parameter variable">-sc_threshold</span> <span class="token number">0</span> <span class="token parameter variable">-c:a</span> copy stepan_holy_nodejs_all_keyframes.mp4</code></pre>
+<p>if you test seeking performance all keyframes video will be much faster.</p>
 
           </div>
         </article>

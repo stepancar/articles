@@ -17,6 +17,7 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addPassthroughCopy("./articles/**/*.wasm");
     eleventyConfig.addPassthroughCopy("./articles/**/*.css");
     eleventyConfig.addPassthroughCopy("./articles/**/*.png");
+    eleventyConfig.addPassthroughCopy("./articles/**/*.jpg");
     eleventyConfig.addPassthroughCopy("./articles/**/*.mp4");
     eleventyConfig.addPassthroughCopy("./styles/**/*.css");
 

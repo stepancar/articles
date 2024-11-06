@@ -12,6 +12,12 @@ export class BaseAsset {
         }
     }
 
+    play() {}
+
+    async seek(time) {
+        this.currentTime = time;
+    }
+
     draw(ctx) {}
 
     async waitWhenResourceReady() {

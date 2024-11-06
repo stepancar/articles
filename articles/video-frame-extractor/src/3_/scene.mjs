@@ -10,7 +10,8 @@ export class Scene {
     }
 
     play() {
-        
+        this.assets.forEach((asset) => asset.play());
+    
         const startTime = this.currentTime;
 
         const drawFrame = (timestamp) => {
@@ -22,7 +23,6 @@ export class Scene {
             this.assets.forEach((asset) => asset.draw(this.ctx));
             this.animationFrameRequestId = requestAnimationFrame(drawFrame);
         };
-        drawFrame(startTime);
     }
 
     stop() {
@@ -31,6 +31,13 @@ export class Scene {
 
     draw(ctx) {
         this.assets.forEach((asset) => asset.draw(ctx));
+    }
+
+    async seek(time) {
+        this.currentTime = time;
+        return Promise.all(
+            this.assets.map((asset) => asset.seek(time))
+        );
     }
 
     async waitWhenResourceReady() {

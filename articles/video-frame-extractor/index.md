@@ -37,3 +37,18 @@ Let's add video element to our scene.
     file="./src/3/index.html"
     initialPath="./src/3/index.html"
 />
+
+We have a testing video which was recorded using macos screen recording tool which produces .mov files.
+
+lets convert it to mp4 using ffmpeg
+
+```bash
+ffmpeg -i stepan_holy_nodejs.mov -c:v libx264 -g 9999 -keyint_min 9999 -sc_threshold 0 -c:a copy stepan_holy_nodejs_single_keyframe.mp4
+```
+
+```bash
+ffmpeg -i stepan_holy_nodejs.mov -c:v libx264 -g 1 -keyint_min 1 -sc_threshold 0 -c:a copy stepan_holy_nodejs_all_keyframes.mp4
+```
+
+if you test seeking performance all keyframes video will be much faster.
+

@@ -15,11 +15,10 @@ async function startRendering(ctx) {
     scene.assets.push(...[
         new BackgroundAsset({ src: '../image.jpg' }),
         new ClockAsset({ position: { x: 535, y: 93 } }),
-        new TextAsset({ position: { x: 50, y: 50 }, text: 'Hello, Holyjs!',  }),
+        new TextAsset({ position: { x: 545, y: 470 }, text: 'Hello Holyjs!',  }),
     ]);
 
     await scene.waitWhenResourceReady();
-
     scene.play();
 }
 

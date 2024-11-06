@@ -26,7 +26,29 @@
         <article class="markdown">
           <h2>This article explores details of impelmenting analog of html video element.</h2>
           <div class="content">
-            
+            <p>Lets run simple animation.
+We are going to draw image on canvas, draw clock and animate it.</p>
+<p><demo-with-playground file="./src/1/index.html" initialPath="./src/1/index.html"></demo-with-playground></p>
+<p>Lets refactor our scene so it would be easier to add more elements.</p>
+<ul>
+<li>Scene
+<ul>
+<li>ClockAsset</li>
+<li>BackgroundAsset</li>
+<li>TextAsset</li>
+</ul>
+</li>
+</ul>
+<p>every asset extends from BaseAsset which defines basic interface</p>
+<ul>
+<li>waitWhenResourceReady</li>
+<li>currentTime {get; set;}</li>
+<li>draw</li>
+</ul>
+<p><demo-with-playground file="./src/2/index.html" initialPath="./src/2/index.html"></demo-with-playground></p>
+<p>Let's add video element to our scene.</p>
+<p><demo-with-playground file="./src/3/index.html" initialPath="./src/3/index.html"></demo-with-playground></p>
+
           </div>
         </article>
       </main>

@@ -1,15 +1,18 @@
-import { BaseAsset } from './baseAsset.mjs';
+import { BaseAsset } from "./baseAsset.mjs";
 
 export class TextAsset extends BaseAsset {
-    constructor({ text, position }) {
-        super();
+    constructor({ text, ...settings }) {
+        super(settings);
         this.text = text;
-        this.position = position;
     }
 
     draw(ctx) {
-        ctx.fillStyle = 'white';
-        ctx.font = '30px Arial';
-        ctx.fillText(this.text, this.position.x, this.position.y);
+        const animationDuration = 3000;
+        const fontSize = 80 + 5 * (this.currentTime % animationDuration) / animationDuration;
+        ctx.fillStyle = "black";
+        ctx.font = `${fontSize}px Arial`;
+        const textMetrix = ctx.measureText(this.text);
+        const x = this.position.x - textMetrix.width / 2;
+        ctx.fillText(this.text, x, this.position.y);
     }
 }

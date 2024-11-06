@@ -2,7 +2,7 @@ import { BackgroundAsset } from './assets/backgroundAsset.mjs';
 import { ClockAsset } from './assets/clockAsset.mjs';
 import { Scene } from './scene.mjs';
 import { TextAsset } from './assets/textAsset.mjs'; 
-
+import { ImageAsset } from './assets/imageAsset.mjs'
 
 /**
  * 
@@ -15,11 +15,11 @@ async function startRendering(ctx) {
     scene.assets.push(...[
         new BackgroundAsset({ src: '../image.jpg' }),
         new ClockAsset({ position: { x: 535, y: 93 } }),
-        new TextAsset({ position: { x: 50, y: 50 }, text: 'Hello, Holyjs!',  }),
+        new TextAsset({ position: { x: 545, y: 470 }, text: 'Hello Holyjs!',  }),
+        new ImageAsset({ src: '../image.jpg', bounds: { x: 80, y: 15, width: 130, height: 200 } }),
     ]);
 
     await scene.waitWhenResourceReady();
-
     scene.play();
 }
 

@@ -13,3 +13,23 @@ export async function createSourceBufferForVide(src) {
     const blob = new Blob([buffer], { type: 'video/mp4' });
     return blob;
 }
+
+
+export async function record(stream, time) {
+    const mediaRecorder = new MediaRecorder(stream);
+    const chunks = [];
+    mediaRecorder.ondataavailable = (event) => {
+        chunks.push(event.data);
+    };
+    mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/mp4' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'video.mp4';
+        a.click();
+    };
+    mediaRecorder.start();
+    await new Promise((resolve) => setTimeout(resolve, time));
+    mediaRecorder.stop();
+}

@@ -19,10 +19,9 @@ export class ImageAsset extends BaseAsset {
         const aspectRatio = this.image.width / this.image.height;
         const imageWidth = Math.min(maxWidth, aspectRatio * maxHeight);
         const imageHeight = Math.min(maxHeight, maxWidth / aspectRatio);
-        const x = bounds.x + (maxWidth - imageWidth) / 2;
-        const y = bounds.y + (maxHeight - imageHeight) / 2;
+        const x = this.position.x - (imageWidth) / 2;
+        const y = this.position.y - (imageHeight) / 2;
         ctx.drawImage(this.image, x, y, imageWidth, imageHeight);
-        
     }
 
     async waitWhenResourceReady() {

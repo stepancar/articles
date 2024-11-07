@@ -17,7 +17,7 @@ async function startRendering(ctx) {
     scene.assets.push(...[
         new BackgroundAsset({ src: '../image.jpg' }),
         new ClockAsset({ position: { x: 535, y: 93 } }),
-        new ImageAsset({ src: '../image.jpg', bounds: { x: 80, y: 15, width: 130, height: 200 } }),
+        new ImageAsset({ src: '../tobey.png', bounds: { x: 80, y: 15, width: 130, height: 200 } }),
         new VideoAsset({
             // src: 'https://nickdesaulniers.github.io/netfix/demo/frag_bunny.mp4',
             // src: 'https://storage.googleapis.com/lumen5-prod-video/video-seek-test.mp4',

@@ -24,6 +24,8 @@ export async function record(stream, time) {
     mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'video/mp4' });
         const url = URL.createObjectURL(blob);
+        // open in new tab
+        // window.open(url);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'video.mp4';

@@ -10,7 +10,7 @@ export class SpiderAsset extends BaseAsset {
     draw(ctx) {
         const animationDuration = 2000;
         const y = this.position.y + 100 * Math.sin(this.currentTime % animationDuration / animationDuration * 2 * Math.PI);
-        const scale = 0.8 + 0.2 * Math.sin(this.currentTime % animationDuration / animationDuration * 2 * Math.PI);
+        const scale = 0.2;
         drawSpider(ctx, this.position.x, y, this.currentTime % animationDuration / animationDuration, scale);
     }
 }

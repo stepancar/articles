@@ -17,8 +17,8 @@ async function startRendering(ctx) {
         new BackgroundAsset({ src: '../image.jpg' }),
         new ClockAsset({ position: { x: 535, y: 93 } }),
         new TextAsset({ position: { x: 545, y: 470 }, text: 'Hello Holyjs!',  }),
-        new SpiderAsset({ position: { x: 545, y: 220 } }),
         new ImageAsset({ src: '../tobey.png', position: {y: 90, x: 160}, bounds: { width: 130, height: 200 } }),
+        new SpiderAsset({ position: { x: 140, y: 220 } }),
     ]);
 
     await scene.waitWhenResourceReady();

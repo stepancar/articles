@@ -10,29 +10,29 @@ export class Scene {
     }
 
     play() {
-        let startTime;
+        
+        let startTime = this.currentTime;
 
         const drawFrame = (timestamp) => {
-            if (startTime === undefined) {
-                startTime = timestamp;
-            }
-            const elapsed = timestamp - startTime;
-            this.currentTime = elapsed;
+            const elapsed = timestamp - this.currentTime;
+            this.currentTime = this.currentTime + elapsed;
             this.assets.forEach(
                 (asset) => (asset.currentTime = this.currentTime)
             );
             this.assets.forEach((asset) => asset.draw(this.ctx));
             this.animationFrameRequestId = requestAnimationFrame(drawFrame);
         };
-        requestAnimationFrame(drawFrame);
+        drawFrame(startTime);
+
+        this.assets.forEach((asset) => asset.play());
     }
 
     stop() {
         cancelAnimationFrame(this.animationFrameRequestId);
     }
 
-    draw(ctx) {
-        this.assets.forEach((asset) => asset.draw(ctx));
+    draw() {
+        this.assets.forEach((asset) => asset.draw(this.ctx));
     }
 
     async waitWhenResourceReady() {

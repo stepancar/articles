@@ -19,7 +19,6 @@ export class VideoAsset extends BaseAsset {
 
         return new Promise((resolve) => {
             this.video.addEventListener('seeked', () => {
-                console.log(`expected time: ${time / 1000}, actual time: ${this.video.currentTime}`);
                 resolve();
             }, { once: true });
             this.video.currentTime = this.currentTime / 1000;

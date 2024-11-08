@@ -37,7 +37,7 @@ export async function record(stream, time) {
 }
 
 
-export async function recordWebcodecs() {
+export function recordWebcodecs() {
 
     let frameIndex = 0;
     const width = 1024;

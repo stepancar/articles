@@ -1,37 +1,5 @@
 import { hexToRgb, rgbArrayToHex, PalettesSelector } from "../utils.mjs";
 
-const image = document.getElementById('image');
-const canvas = document.getElementById('canvas');
-const paleteSelector = new PalettesSelector(document.getElementById('themeSelect'));
-const ctx = canvas.getContext('2d', { antialias: false });
-let originalImageData = null;
-let currentImageData = null;
-image.decode().then(() => {
-    ctx.drawImage(image, 0, 0);
-    const frame = (new VideoFrame(image, { timestamp: 0 }));
-    originalImageData = new ImageData(frame.codedWidth, frame.codedHeight);
-    frame.copyTo(originalImageData.data).then(() => {
-        currentImageData = new ImageData(structuredClone(originalImageData.data), frame.codedWidth);
-        const colorMappings = {
-            0xff0000: paleteSelector.value[0],
-            0x00ff00: paleteSelector.value[1],
-            0x0000ff: paleteSelector.value[2],
-        }
-        replaceImageData(originalImageData.data, currentImageData.data, colorMappings);
-        ctx.putImageData(originalImageData, 0, 0);
-        frame.close();
-    });    
-});
-
-paleteSelector.addEventListener('change', () => {
-    const colorMappings = {
-        0xff0000: paleteSelector.value[0],
-        0x00ff00: paleteSelector.value[1],
-        0x0000ff: paleteSelector.value[2],
-    }
-    replaceImageData(originalImageData.data, currentImageData.data, colorMappings);
-    ctx.putImageData(currentImageData, 0, 0);
-});
 
 
 function replaceImageData(imageData, currentImageData, colorMappings) {
@@ -50,3 +18,35 @@ function replaceImageData(imageData, currentImageData, colorMappings) {
         }
     }
 }
+
+(async function() {
+    const image = document.getElementById('image');
+    const canvas = document.getElementById('canvas');
+    const paleteSelector = new PalettesSelector(document.getElementById('themeSelect'));
+    const ctx = canvas.getContext('2d', { antialias: false });
+
+    await image.decode();
+
+    ctx.drawImage(image, 0, 0);
+    const frame = (new VideoFrame(image, { timestamp: 0 }));
+    const originalImageData = new ImageData(frame.codedWidth, frame.codedHeight);
+    await frame.copyTo(originalImageData.data);
+
+    function replaceColors() {
+        const currentImageData = new ImageData(structuredClone(originalImageData.data), frame.codedWidth);
+        const colorMappings = {
+            0xff0000: paleteSelector.value[0],
+            0x00ff00: paleteSelector.value[1],
+            0x0000ff: paleteSelector.value[2],
+        }
+        replaceImageData(originalImageData.data, currentImageData.data, colorMappings);
+        ctx.putImageData(originalImageData, 0, 0);
+    }
+
+    replaceColors();
+    frame.close();
+
+    paleteSelector.addEventListener('change', () => {
+       replaceColors();
+    });
+})();

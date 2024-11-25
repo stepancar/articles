@@ -31,6 +31,7 @@ document.getElementById("subscribe").addEventListener("click", async () => {
 });
 
 try {
+    window.addEventListener("devicemotion", updateData);
     subscribe();
 } catch (e) {
     console.log(e);

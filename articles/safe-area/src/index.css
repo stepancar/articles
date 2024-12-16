@@ -1,0 +1,7 @@
+.bottomNavigation {
+    position: fixed;
+    bottom: env(safe-area-inset-bottom, 0);
+    width: 100%;
+    background: greenyellow;
+    height: 120px;
+}

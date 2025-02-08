@@ -11,19 +11,18 @@
     <body>
         <h1>Canvas Draw Image Scale Performance</h1>
         <canvas id="canvas"></canvas>
-        <script>
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            const image = new Image();
-            image.src = 'image.jpg';
-            image.onload = () => {
-                const start = performance.now();
-                for (let i = 0; i < 1000; i++) {
-                    ctx.drawImage(image, 0, 0, 100, 100, 0, 0, 1000, 1000);
-                }
-                const end = performance.now();
-                console.log(`Drawing 1000 images took ${end - start}ms`);
-            };
-        </script>
+        <table>
+            <tr>
+                <th>Image name</th>
+                <th>512x512</th>
+                <th>256x256</th>
+            </tr>
+            <tr id="loading-time">
+                <th id="image-name"></th>
+                <th id="size-512"></th>
+                <th id="size-256"></th>
+            </tr>
+        </table>
+        <script src="index.mjs"></script>
     </body>
 </html>

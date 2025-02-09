@@ -17,7 +17,7 @@ function scale_image() {
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
         ctx.drawImage(lenna.image, 0, 0, 512, 512, 0, 0, 1000, 1000);
-        ctx.scale(1, 10);
+        ctx.scale(1, 10.1);
     }
     const end = performance.now();
 
@@ -29,8 +29,6 @@ image.onload = () => {
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
         ctx.drawImage(lenna.image, 0, 0, 512, 512, 0, 0, 1000, 1000);
-        ctx.scale(1, 10);
-
     }
     const end = performance.now();
 

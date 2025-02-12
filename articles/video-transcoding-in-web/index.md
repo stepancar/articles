@@ -9,6 +9,13 @@ creationDate: 2025-02-11
 
 We are going to find best solution for video transcoding
 
+
+## Тренировка на mp4box.js
+
+Ранее проводились 
+
+
+
 ## Что такое [FFmpeg](https://www.ffmpeg.org/) 
 Комплексное кроссплатформенное опенсорс решение для записи, преобразования и потоковой передачи аудио и видео. 
 
@@ -56,4 +63,3 @@ winget install ffmpeg
 - https://habr.com/ru/companies/edison/articles/495614/
 - https://github.com/FFmpeg/web
 - https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API
-- 

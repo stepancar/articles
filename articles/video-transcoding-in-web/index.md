@@ -10,11 +10,14 @@ creationDate: 2025-02-11
 We are going to find best solution for video transcoding
 
 ## Что такое [FFmpeg](https://www.ffmpeg.org/) 
-Комплексное кроссплатформенное решение для записи, преобразования и потоковой передачи аудио и видео. 
+Комплексное кроссплатформенное опенсорс решение для записи, преобразования и потоковой передачи аудио и видео. 
 
 ```commandline
 ffmpeg -i input.mp4 output.avi
 ```
+
+Можно использовать как и утилиту командной строки, так и использовать скомпилированные библиотеки
+
 
 ## Установка ffmpeg
 FFmpeg предоставляет только исходный код. Его можно скачать с официального [сайта](https://www.ffmpeg.org/)
@@ -46,3 +49,11 @@ winget install ffmpeg
 ### Несколько источников откуда можно взять видеофайлы для расчёта метрик
 - https://www.sample-videos.com/
 - https://file-examples.com/index.php/sample-video-files/sample-mp4-files/
+
+## Полезные источники
+- https://www.w3.org/2021/03/media-production-workshop/talks/qiang-fu-video-transcoding.html#intro
+- https://github.com/leandromoreira/ffmpeg-libav-tutorial?tab=readme-ov-file#video---what-you-see
+- https://habr.com/ru/companies/edison/articles/495614/
+- https://github.com/FFmpeg/web
+- https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API
+- 

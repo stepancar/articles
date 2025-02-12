@@ -9,12 +9,18 @@ creationDate: 2025-02-11
 
 We are going to find best solution for video transcoding
 
+## Что такое [FFmpeg](https://www.ffmpeg.org/) 
+Комплексное кроссплатформенное решение для записи, преобразования и потоковой передачи аудио и видео. 
+
+```commandline
+ffmpeg -i input.mp4 output.avi
+```
+
 ## Установка ffmpeg
 FFmpeg предоставляет только исходный код. Его можно скачать с официального [сайта](https://www.ffmpeg.org/)
 
 На случай если нужны скомпилированные библиотеки, то на этот случай есть энтузиасты (ссылки на них тоже есть на официальном сайте на странице dowload).
-Ссылка с архивами релизов ffmpeg для [Linux/Windows](https://github.com/BtbN/FFmpeg-Builds/releases), для [MacOS](https://evermeet.cx/ffmpeg/)
-
+Ссылка с архивами релизов (скомпилированные библиотеки имеют пометку "-shared" в названии) ffmpeg для [Linux/Windows](https://github.com/BtbN/FFmpeg-Builds/releases), для [MacOS](https://evermeet.cx/ffmpeg/)
 
 На случай если нужны бинарники, то благо тоже есть энтузиасты.
 

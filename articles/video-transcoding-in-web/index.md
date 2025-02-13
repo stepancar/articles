@@ -16,6 +16,8 @@ We are going to find best solution for video transcoding
 
 [//]: # (Ранее проводились)
 
+<!---
+
 ```
 ┌──────────┬───────────────────────┐
 │ demuxer  │                       │ packets for stream 0
@@ -40,6 +42,10 @@ We are going to find best solution for video transcoding
      │     grabbing device, etc.
      │
 ```
+-->
+## Что такое транскодинг
+Транскодинг - 
+
 
 ## Что такое видео
 

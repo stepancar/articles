@@ -11,10 +11,15 @@ image.src = 'Lenna_512x512.png';
 const addImageButton = document.querySelector('#imageProcess');
 const clearCanvasButton = document.querySelector('#clearCanvas');
 const ResultTable = document.querySelector('.ResultTable');
+let iterationsCount = 10000;
+
+const setIterationsCount = () => { 
+    iterationsCount = document.querySelector('#iterations_cnt').value;
+}
 
 const loadImage = () => {
-    imageUrl = document.querySelector('#pic_url').value;
-    image.src = imageUrl;
+    image.src = document.querySelector('#pic_url').value;
+    setIterationsCount();
 }
 
 const clearCanas = () => {
@@ -36,7 +41,7 @@ const lenna = new Test_Image('Lenna', image);
 
 function draw_image_without_scale() {
     const start = performance.now();
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < iterationsCount; i++) {
         ctx_2.drawImage(lenna.image, 0, 0);
     }
     const end = performance.now();
@@ -47,7 +52,7 @@ function draw_image_without_scale() {
 
 function draw_image_with_scale() {
     const start = performance.now();
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < iterationsCount; i++) {
         ctx_1.drawImage(lenna.image, 0, 0);
         ctx_1.scale(2, 2);
     }
@@ -63,25 +68,22 @@ image.onload = () => {
     addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime)
 };
 
-var cnt = 1;
+let cnt = 1;
 function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
-    var newRow = ResultTable.insertRow();
+    let newRow = ResultTable.insertRow();
 
-    var cell0 = newRow.insertCell();
-    var cell1 = newRow.insertCell();
-    var cell2 = newRow.insertCell();
-
-    var picIndex = document.createTextNode(cnt++);
-    var withScaleTime = document.createTextNode(drawImageWithScaleTime);
-    var withoutScaleTime = document.createTextNode(drawImageWithoutScaleTime);
-
-    cell0.appendChild(picIndex);
-    cell1.appendChild(withScaleTime);
-    cell2.appendChild(withoutScaleTime);
+    let cell0 = newRow.insertCell();
+    let cell1 = newRow.insertCell();
+    let cell2 = newRow.insertCell();
+    let cell3 = newRow.insertCell();
+    
+    cell0.innerHTML = cnt++;
+    cell1.innerHTML = drawImageWithScaleTime;
+    cell2.innerHTML = drawImageWithoutScaleTime;
+    cell3.innerHTML = iterationsCount;
 }
 
 // 1) ссылку на картинку (по умолчаню lena, к примеру) и есть список других подготовленных картинок 
 // 2) размеры канваса
 // 3) количество итераций
 // и еще момент. Попробуйте рисовать картинку по рандомным координатам
-// отображение резов в таблу

@@ -5,7 +5,7 @@
         <style>
             canvas {
                 border: 1px solid black;
-                height: 200px;
+                height: 400px;
             }
             .table {
             	width: 50%;
@@ -29,22 +29,32 @@
         <h1>Canvas Draw Image Scale Performance</h1>
         <canvas id="canvas-1"></canvas>
         <canvas id="canvas-2"></canvas>
+        <div>
+            <button id="clearCanvas">Clear canvas</button>
+        </div>
         <table class="table">
             <thead>
                 <tr>
                     <th>Image name</th>
-                    <th>drawImage without scale</th>
                     <th>drawImage with scale</th>
+                    <th>drawImage without scale</th>
                 </tr>
             </thead>
             <tbody>
                 <tr id="loading-time">
                     <th id="image-name"></th>
-                    <th id="full-size"></th>
-                    <th id="scale"></th>
+                    <th id="drawImage_with_scale"></th>
+                    <th id="drawImage_without_scale"></th>
                 </tr>
             </tbody>
         </table>
+        <div>
+            <label for="pic_url">enter the URL of an image:</label>
+            <input type="url" id="pic_url"/>
+            <button id="imageProcess">Process the image</button>
+        </div>
+        
+
         <script src="index.mjs"></script>
     </body>
 </html>

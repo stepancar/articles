@@ -15,8 +15,6 @@ let iterationsCount = 10000;
 const setSizeOfTheCanvas = () => {
     let width = document.querySelector('#canvasWidth').value;
     let height = document.querySelector('#canvasHeight').value;
-    console.log(width);
-    console.log(height);
     canvas_1.width = width;
     canvas_1.height = height;
     canvas_2.width = width;
@@ -32,7 +30,6 @@ const loadImage = () => {
 }
 
 const takeMeasurements = () => {
-    console.log("123");
     loadImage();
     setIterationsCount();
     setSizeOfTheCanvas();
@@ -64,11 +61,12 @@ function draw_image_without_scale() {
 
 function draw_image_with_scale() {
     const start = performance.now();
+    // ctx_1.imageSmoothingQuality = 'low';
     for (let i = 0; i < iterationsCount; i++) {
         let x = Math.random() * 100;
         let y = Math.random() * 100;
         ctx_1.drawImage(lenna.image, x, y);
-        ctx_1.scale(2, 2);
+        ctx_1.scale(5, 5);
     }
     const end = performance.now();
     let time = end - start;

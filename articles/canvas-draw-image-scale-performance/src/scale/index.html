@@ -29,24 +29,30 @@
         <h1>Canvas Draw Image Scale Performance</h1>
         <canvas id="canvas-1"></canvas>
         <canvas id="canvas-2"></canvas>
-        <div>
-            <button id="clearCanvas">Clear canvas</button>
-        </div>
         <table class="ResultTable">
             <thead>
                 <tr>
-                    <th>Image name</th>
+                    <th>measurement index</th>
                     <th>drawImage with scale</th>
                     <th>drawImage without scale</th>
                     <th>iterations</th>
+                    <th>canvas size</th>
                 </tr>
             </thead>
         </table>
         <div>
             <label for="pic_url">enter the URL of an image:</label>
-            <input type="url" id="pic_url"/><br>
+            <input type="url" id="pic_url" value="https://upload.wikimedia.org/wikipedia/ru/thumb/2/24/Lenna.png/330px-Lenna.png"/><br>
+
             <label for="iterations_cnt">enter count of iterations</label>
-            <input type="number" id="iterations_cnt"><br>
+            <input type="number" id="iterations_cnt" value="10000"><br>
+
+            <label for="canvasHeight">enter the height of the canvas</label>
+            <input type="number" id="canvasHeight" value="1080"><br>
+
+            <label for="canvasWidth">enter the width of the canvas</label>
+            <input type="number" id="canvasWidth" value="1920"><br>
+
             <button id="imageProcess">Process the image</button>
         </div>
         

@@ -10,6 +10,7 @@ const image = new Image();
 image.src = 'Lenna_512x512.png';
 const addImageButton = document.querySelector('#imageProcess');
 const clearCanvasButton = document.querySelector('#clearCanvas');
+const ResultTable = document.querySelector('.ResultTable');
 
 const loadImage = () => {
     imageUrl = document.querySelector('#pic_url').value;
@@ -32,7 +33,6 @@ class Test_Image {
 }
 
 const lenna = new Test_Image('Lenna', image);
-document.querySelector('#image-name').innerHTML = lenna.name;
 
 function draw_image_without_scale() {
     const start = performance.now();
@@ -40,9 +40,9 @@ function draw_image_without_scale() {
         ctx_2.drawImage(lenna.image, 0, 0);
     }
     const end = performance.now();
-
-    document.querySelector('#drawImage_without_scale').innerHTML = end - start;
-    console.log(`Drawing and scaling 1000 images took ${end - start}ms`);
+    let time = end - start;
+    console.log(`Drawing and scaling 1000 images took ${time}ms`);
+    return time;
 }
 
 function draw_image_with_scale() {
@@ -52,12 +52,36 @@ function draw_image_with_scale() {
         ctx_1.scale(2, 2);
     }
     const end = performance.now();
-
-    document.querySelector('#drawImage_with_scale').innerHTML = end - start;
-    console.log(`Drawing 1000 images took ${end - start}ms`);
+    let time = end - start;
+    console.log(`Drawing 1000 images took ${time}ms`);
+    return time;
 }
 
 image.onload = () => {
-    draw_image_with_scale();
-    draw_image_without_scale();
+    let drawImageWithScaleTime = draw_image_with_scale();
+    let drawImageWithoutScaleTime = draw_image_without_scale();
+    addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime)
 };
+
+var cnt = 1;
+function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
+    var newRow = ResultTable.insertRow();
+
+    var cell0 = newRow.insertCell();
+    var cell1 = newRow.insertCell();
+    var cell2 = newRow.insertCell();
+
+    var picIndex = document.createTextNode(cnt++);
+    var withScaleTime = document.createTextNode(drawImageWithScaleTime);
+    var withoutScaleTime = document.createTextNode(drawImageWithoutScaleTime);
+
+    cell0.appendChild(picIndex);
+    cell1.appendChild(withScaleTime);
+    cell2.appendChild(withoutScaleTime);
+}
+
+// 1) ссылку на картинку (по умолчаню lena, к примеру) и есть список других подготовленных картинок 
+// 2) размеры канваса
+// 3) количество итераций
+// и еще момент. Попробуйте рисовать картинку по рандомным координатам
+// отображение резов в таблу

@@ -5,25 +5,58 @@
         <style>
             canvas {
                 border: 1px solid black;
+                height: 200px;
+            }
+            table {
+            	width: 50%;
+            	margin-bottom: 20px;
+            	border: 1px solid #dddddd;
+            	border-collapse: collapse; 
+            }
+            table th {
+            	font-weight: bold;
+            	padding: 5px;
+            	background: #efefef;
+            	border: 1px solid #dddddd;
+            }
+            table td {
+            	border: 1px solid #dddddd;
+            	padding: 5px;
             }
         </style>
     </head>
     <body>
         <h1>Canvas Draw Image Scale Performance</h1>
-        <canvas id="canvas"></canvas>
-        <script>
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            const image = new Image();
-            image.src = 'image.jpg';
-            image.onload = () => {
-                const start = performance.now();
-                for (let i = 0; i < 1000; i++) {
-                    ctx.drawImage(image, 0, 0, 100, 100, 0, 0, 1000, 1000);
-                }
-                const end = performance.now();
-                console.log(`Drawing 1000 images took ${end - start}ms`);
-            };
-        </script>
+        <canvas id="canvas-1"></canvas>
+        <canvas id="canvas-2"></canvas>
+        <table class="ResultTable">
+            <thead>
+                <tr>
+                    <th>measurement index</th>
+                    <th>drawImage with scale</th>
+                    <th>drawImage without scale</th>
+                    <th>iterations</th>
+                    <th>canvas size</th>
+                </tr>
+            </thead>
+        </table>
+        <div>
+            <label for="pic_url">enter the URL of an image:</label>
+            <input type="url" id="pic_url" value="https://upload.wikimedia.org/wikipedia/ru/thumb/2/24/Lenna.png/330px-Lenna.png"><br>
+
+            <label for="iterations_cnt">enter count of iterations</label>
+            <input type="number" id="iterations_cnt" value="10000"><br>
+
+            <label for="canvasHeight">enter the height of the canvas</label>
+            <input type="number" id="canvasHeight" value="1080"><br>
+
+            <label for="canvasWidth">enter the width of the canvas</label>
+            <input type="number" id="canvasWidth" value="1920"><br>
+
+            <button id="imageProcess">Process the image</button>
+        </div>
+        
+
+        <script src="index.mjs"></script>
     </body>
 </html>

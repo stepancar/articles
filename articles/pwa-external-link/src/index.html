@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1, initial-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>External links</title>
+  <title>External link opening in PWA on IOS</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <h1>External link</h1>
+  <h1>External link opening in PWA on IOS</h1>
 
-  <input id="url" type="url">
+  <input id="url" type="url" value="https://example.com">
   
-  <a href="default" id="regularLink">regular link with href</a>
-  <a href="default" id="customLink">custom link</a>
+  <a href="https://example.com" id="regularLink">link which opens in app browser</a>
+  <a href="https://example.com" id="customLink">link which opens safari</a>
 
   <script src="index.mjs" type="module"></script>
   <script type="text/javascript">

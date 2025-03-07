@@ -24,10 +24,24 @@ window.location = `x-safari-${fullUrl}`;
     </tr>
     <tr>
         <td style="width:50%">
-            <img src="./images/in-app-browser.png" alt="External link in-app browser">
+            <video
+                poster="./images/in-app-browser.png"
+                muted="muted"
+                autoplay
+                width="100%" controls>
+                <source src="./videos/in-app-browser.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </td>
         <td>
-            <img src="./images/safari.png" alt="External link safari">
+            <video
+                poster="./images/safari.png"
+                muted="muted"
+                autoplay
+                width="100%" controls>
+                <source src="./videos/safari.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </td>
     </tr>
 </table>

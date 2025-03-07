@@ -24,22 +24,10 @@ window.location = `x-safari-${fullUrl}`;
     </tr>
     <tr>
         <td style="width:50%">
-            <video
-                muted
-                autoplay
-                width="100%"
-                controls
-                src="./assets/in-app-browser.mp4">
-            </video>
+            <img src="./assets/in-app-browser.png" alt="In-app Browser">
         </td>
         <td>
-            <video
-                muted
-                autoplay
-                width="100%"
-                controls
-                src="./assets/safari.mp4">
-            </video>
+            <img src="./assets/safari.png" alt="Safari">
         </td>
     </tr>
 </table>

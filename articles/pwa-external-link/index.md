@@ -16,9 +16,21 @@ const fullUrl = 'https://example.com';
 window.location = `x-safari-${fullUrl}`;
 ```
 
-| In-app Browser |     Safari     |
-| -------------- | -------------- |
-| ![External link in-app browser](./images/in-app-browser.png) | ![External link safari](./images/safari.png) |
+
+<table>
+    <tr>
+        <th>In-app Browser</th>
+        <th>Safari</th>
+    </tr>
+    <tr>
+        <td style="width:50%">
+            <img src="./images/in-app-browser.png" alt="External link in-app browser">
+        </td>
+        <td>
+            <img src="./images/safari.png" alt="External link safari">
+        </td>
+    </tr>
+</table>
 
 See it in action:
 Install PWA from [this link](https://stepancar.github.io/articles/articles/pwa-external-link/src/)

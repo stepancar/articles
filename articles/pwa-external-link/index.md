@@ -26,7 +26,7 @@ window.location = `x-safari-${fullUrl}`;
         <td style="width:50%">
             <video
                 poster="./images/in-app-browser.png"
-                muted="muted"
+                muted
                 autoplay
                 width="100%" controls>
                 <source src="./videos/in-app-browser.mp4" type="video/mp4">
@@ -36,7 +36,7 @@ window.location = `x-safari-${fullUrl}`;
         <td>
             <video
                 poster="./images/safari.png"
-                muted="muted"
+                muted
                 autoplay
                 width="100%" controls>
                 <source src="./videos/safari.mp4" type="video/mp4">

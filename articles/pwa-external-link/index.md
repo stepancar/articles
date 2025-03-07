@@ -25,21 +25,21 @@ window.location = `x-safari-${fullUrl}`;
     <tr>
         <td style="width:50%">
             <video
-                poster="./images/in-app-browser.png"
+                poster="./assets/in-app-browser.png"
                 muted
                 autoplay
                 width="100%" controls>
-                <source src="./videos/in-app-browser.mp4" type="video/mp4">
+                <source src="./assets/in-app-browser.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </td>
         <td>
             <video
-                poster="./images/safari.png"
+                poster="./assets/safari.png"
                 muted
                 autoplay
                 width="100%" controls>
-                <source src="./videos/safari.mp4" type="video/mp4">
+                <source src="./assets/safari.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </td>

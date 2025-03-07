@@ -21,3 +21,9 @@ window.location = `x-safari-${fullUrl}`;
 
 See it in action:
 Install PWA from [this link](https://stepancar.github.io/articles/articles/pwa-external-link/src/)
+
+
+<demo-with-playground
+    file="src/index.html"
+    initialPath="./src/index.html"
+/>

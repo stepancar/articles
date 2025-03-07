@@ -32,12 +32,24 @@
           <h2>This article explains how to force your PWA to open external links in Safari</h2>
           <div class="content">
             <h3>Ios PWA external links opening</h3>
-<p>When you are developing a PWA for iOS, you may encounter a problem with external links. When you click on an external (does not match with start url of PWA) link, it will be opened in in-app browser right inside your PWA, like in the screenshot below:</p>
-<p><img src="images/in-app-browser.png" alt="External link in-app browser"></p>
+<p>When you are developing a PWA for iOS, you may encounter a problem with external links. When you click on an external (does not match with start url of PWA) link, it will be opened in in-app browser right inside your PWA.</p>
 <p>If you want to open external links in Safari, you can use the following code:</p>
 <pre class="language-javascript"><code class="language-javascript"><span class="token keyword">const</span> fullUrl <span class="token operator">=</span> <span class="token string">'https://example.com'</span><span class="token punctuation">;</span>
 window<span class="token punctuation">.</span>location <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">x-safari-</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>fullUrl<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span></code></pre>
-<p><img src="images/safari.png" alt="External link safari"></p>
+<table>
+<thead>
+<tr>
+<th>In-app Browser</th>
+<th>Safari</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="images/in-app-browser.png" alt="External link in-app browser"></td>
+<td><img src="images/safari.png" alt="External link safari"></td>
+</tr>
+</tbody>
+</table>
 <p>See it in action:
 Install PWA from <a href="https://stepancar.github.io/articles/articles/pwa-external-link/src/">this link</a></p>
 <p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>

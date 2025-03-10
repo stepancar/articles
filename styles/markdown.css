@@ -10,7 +10,6 @@
   /* Lists */
   /* Code blocks */
   /* Inline code */
-  /* Signup Form */
   /* Extends */
 }
 @media (min-width: 670px) {
@@ -171,9 +170,6 @@
   padding: 2px 4px;
   margin: 0 2px;
   font-size: 75%;
-}
-.markdown .signup {
-  box-shadow: 14px 14px 30px -10px rgba(0, 0, 0, 0.1);
 }
 @media (min-width: 940px) {
   .markdown .extend {

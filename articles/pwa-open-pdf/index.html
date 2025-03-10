@@ -33,44 +33,71 @@
           <div class="content">
             <p>When you are developing a PWA for iOS, you may encounter a problem with PDF files. When you click on a PDF link, it will override the current page and show the PDF file. This is not a good user experience because the user will not be able to go back to the previous page. The only way to go back is to reload the PWA.</p>
 <p>There are several ways to open a PDF file in a PWA on iOS, but none of them are perfect. Here are some of the options:</p>
-<table>
-    <tr>
-        <th>File on the same domain</th>
-        <th>File on another domain</th>
-        <th>window.open blob uri</th>
-        <th>native link with blob uri</th>
-    </tr>
-    <tr>
-        <td style="width:25%">
-            <img src="assets/same-domain.png" alt="Same domain">
-        </td>
-        <td style="width:25%">
-            <img src="assets/another-domain.png" alt="Another domain">
-        </td>
-        <td style="width:25%">
-            <img src="assets/window-open.png" alt="Window open">
-        </td>
-        <td style="width:25%">
-            <img src="assets/blob-uri.png" alt="Blob Uri">
-        </td>
-    </tr>
-    <tr>
-        <td style="width:25%">
-            Replaces current page, no back button, requires to reload the PWA
-        </td>
-        <td style="width:25%">
-            Works well, opens in app browser
-        </td>
-        <td style="width:25%">
-            Works only when popups are allowed in safari settings
-            Shows warning
-            Does not allow to open file in safari
-        </td>
-        <td style="width:25%">
-            Does not allow to open file in safari
-        </td>
-    </tr>
-</table>
+<h2>Regular link</h2>
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="assets/same-domain.png" alt="Same domain">
+    </div>
+    <div>
+        <pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>test.pdf<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Open PDF<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span></code></pre>
+        <ul>
+            <li>Replaces current page</li>
+            <li>No back button</li>
+            <li>Requires to reload the PWA</li>
+        </ul>
+    </div>
+</div>
+<h2>Link to another domain</h2>
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="assets/another-domain.png" alt="Same domain">
+    </div>
+    <div style="width: 65%;">
+        <pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://example.com/test.pdf<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Open PDF<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span></code></pre>
+        <ul>
+            <li>Works well</li>
+            <li>Requires some work to support subdomain on your web site</li>
+        </ul>
+    </div>
+</div>
+<h2>window.open blob uri</h2>
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="assets/window-open.png" alt="Same domain">
+    </div>
+    <div style="width: 65%;">
+        <pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>myLink<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>href<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Open PDF<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span></code></pre>
+        <pre class="language-js"><code class="language-js">document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'myLink'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> <span class="token keyword">async</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">preventDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> url <span class="token operator">=</span> e<span class="token punctuation">.</span>target<span class="token punctuation">.</span>href<span class="token punctuation">;</span>
+            window<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token string">'_blank'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+        <ul>
+            <li>Works only when popups are allowed in safari settings</li>
+            <li>Shows warning</li>
+            <li>Does not allow to open file in safari</li>
+        </ul>
+    </div>
+</div>
+<h2>Native link with blob uri</h2>
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="assets/blob-uri.png" alt="Same domain">
+    </div>
+    <div style="width: 65%;">
+        <pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>myLink<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>./test.pdf<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Open PDF<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span></code></pre>
+        <pre class="language-js"><code class="language-js">document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'myLink'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> <span class="token keyword">async</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">preventDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> response <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span>target<span class="token punctuation">.</span>href<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> blob <span class="token operator">=</span> <span class="token keyword">await</span> response<span class="token punctuation">.</span><span class="token function">blob</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> url <span class="token operator">=</span> <span class="token constant">URL</span><span class="token punctuation">.</span><span class="token function">createObjectURL</span><span class="token punctuation">(</span>blob<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            window<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token string">'_blank'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+        <ul>
+            <li>Does not allow to open file in safari</li>
+        </ul>
+    </div>
+</div>
 <p>See it in action:
 Install PWA from <a href="https://stepancar.github.io/articles/articles/pwa-open-pdf/src/">this link</a></p>
 <p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>

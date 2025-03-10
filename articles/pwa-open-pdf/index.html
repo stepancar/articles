@@ -33,26 +33,30 @@
           <div class="content">
             <h3>PDF in PWA</h3>
 <p>When you are developing a PWA for iOS, you may encounter a problem with PDF files. When you click on a PDF link, it will be opened in in-app browser right inside your PWA.</p>
-<p>When you are developing a PWA for iOS, you may encounter a problem with external links. When you click on an external (does not match with start url of PWA) link, it will be opened in in-app browser right inside your PWA.
-:</p>
-<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">const</span> fullUrl <span class="token operator">=</span> <span class="token string">'https://example.com'</span><span class="token punctuation">;</span>
-window<span class="token punctuation">.</span>location <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">x-safari-</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>fullUrl<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span></code></pre>
 <table>
     <tr>
-        <th>In-app Browser</th>
-        <th>Safari</th>
+        <th>File on the same domain</th>
+        <th>File on another domain</th>
+        <th>window.open blob uri</th>
+        <th>native link with blob uri</th>
     </tr>
     <tr>
-        <td style="width:50%">
-            <img src="assets/in-app-browser.png" alt="In-app Browser">
+        <td style="width:25%">
+            <img src="assets/same-domain.png" alt="Same domain">
         </td>
-        <td>
-            <img src="assets/safari.png" alt="Safari">
+        <td style="width:25%">
+            <img src="assets/another-domain.png" alt="Another domain">
+        </td>
+        <td style="width:25%">
+            <img src="assets/window-open.jpeg" alt="Window open">
+        </td>
+        <td style="width:25%">
+            <img src="assets/blob-uri.png" alt="Blob Uri">
         </td>
     </tr>
 </table>
 <p>See it in action:
-Install PWA from <a href="https://stepancar.github.io/articles/articles/pwa-external-link/src/">this link</a></p>
+Install PWA from <a href="https://stepancar.github.io/articles/articles/pwa-open-pdf/src/">this link</a></p>
 <p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>
 
           </div>

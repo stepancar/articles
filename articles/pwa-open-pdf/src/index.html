@@ -13,19 +13,28 @@
 
     <a href="test.pdf">Pdf on the same domain</a>
     <a href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf">Pdf on another domain</a>
-    <a href="test.pdf" id="open-pdf">Open PDF using blob uri</a>
+    <a href="test.pdf" id="open-pdf-window-open">Open PDF using blob uri and window.open</a>
+    <a href="test.pdf" id="open-pdf-blob-uri-link">Open PDF using blob uri and native link</a>
   </div>
 
   <script src="index.mjs" type="module"></script>
   <script type="text/javascript">
-    const button = document.getElementById('open-pdf');
-    button.addEventListener('click', async (e) => {
+    const windowOpenLink = document.getElementById('open-pdf-window-open');
+    windowOpenLink.addEventListener('click', async (e) => {
       e.preventDefault();
-      const response = await fetch(button.href);
+      const response = await fetch(windowOpenLink.href);
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
     });
+
+    const blobUriLink = document.getElementById('open-pdf-blob-uri-link');
+    (async () => {
+      const response = await fetch(blobUriLink.href);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      blobUriLink.href = url;
+    })();
   </script>
 </body>
 </html>

@@ -24,10 +24,10 @@ window.location = `x-safari-${fullUrl}`;
     </tr>
     <tr>
         <td style="width:50%">
-            <img src="./assets/in-app-browser.png" alt="In-app Browser">
+            <img class="shadow" src="./assets/in-app-browser.png" alt="In-app Browser">
         </td>
         <td>
-            <img src="./assets/safari.png" alt="Safari">
+            <img class="shadow" src="./assets/safari.png" alt="Safari">
         </td>
     </tr>
 </table>

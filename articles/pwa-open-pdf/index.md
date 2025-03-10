@@ -5,10 +5,10 @@ shortDescription: This article explains how to force your PWA to show controls f
 creationDate: 2025-03-10
 ---
 
-### PDF in PWA
 
-When you are developing a PWA for iOS, you may encounter a problem with PDF files. When you click on a PDF link, it will be opened in in-app browser right inside your PWA.
+When you are developing a PWA for iOS, you may encounter a problem with PDF files. When you click on a PDF link, it will override the current page and show the PDF file. This is not a good user experience because the user will not be able to go back to the previous page. The only way to go back is to reload the PWA.
 
+There are several ways to open a PDF file in a PWA on iOS, but none of them are perfect. Here are some of the options:
 
 <table>
     <tr>

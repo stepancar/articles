@@ -52,11 +52,15 @@ pre code[class*=language-] {
     overflow-x: auto;
 }
 
-.content {
+.content > * {
     width: 100%;
     max-width: 45rem;
     margin-left: auto;
     margin-right: auto;
+}
+
+.content .wide-content {
+    max-width: 60rem;
 }
 
 .layout {
@@ -187,4 +191,8 @@ iframe {
     display: inline-block;
     border: 0;
     width: 100%;
+}
+
+img.shadow  {
+    filter: drop-shadow(0 0 5px black);
 }

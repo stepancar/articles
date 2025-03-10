@@ -10,44 +10,93 @@ When you are developing a PWA for iOS, you may encounter a problem with PDF file
 
 There are several ways to open a PDF file in a PWA on iOS, but none of them are perfect. Here are some of the options:
 
-<table>
-    <tr>
-        <th>File on the same domain</th>
-        <th>File on another domain</th>
-        <th>window.open blob uri</th>
-        <th>native link with blob uri</th>
-    </tr>
-    <tr>
-        <td style="width:25%">
-            <img src="./assets/same-domain.png" alt="Same domain">
-        </td>
-        <td style="width:25%">
-            <img src="./assets/another-domain.png" alt="Another domain">
-        </td>
-        <td style="width:25%">
-            <img src="./assets/window-open.png" alt="Window open">
-        </td>
-        <td style="width:25%">
-            <img src="./assets/blob-uri.png" alt="Blob Uri">
-        </td>
-    </tr>
-    <tr>
-        <td style="width:25%">
-            Replaces current page, no back button, requires to reload the PWA
-        </td>
-        <td style="width:25%">
-            Works well, opens in app browser
-        </td>
-        <td style="width:25%">
-            Works only when popups are allowed in safari settings
-            Shows warning
-            Does not allow to open file in safari
-        </td>
-        <td style="width:25%">
-            Does not allow to open file in safari
-        </td>
-    </tr>
-</table>
+
+## Regular link
+
+
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="./assets/same-domain.png" alt="Same domain">
+    </div>
+    <div>
+        {% highlight html %}
+            <a href="test.pdf">Open PDF</a>
+        {% endhighlight %}
+        <ul>
+            <li>Replaces current page</li>
+            <li>No back button</li>
+            <li>Requires to reload the PWA</li>
+        </ul>
+    </div>
+</div>
+
+## Link to another domain
+
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="./assets/another-domain.png" alt="Same domain">
+    </div>
+    <div style="width: 65%;">
+        {% highlight html %}
+            <a href="https://example.com/test.pdf">Open PDF</a>
+        {% endhighlight %}
+        <ul>
+            <li>Works well</li>
+            <li>Requires some work to support subdomain on your web site</li>
+        </ul>
+    </div>
+</div>
+
+## window.open blob uri
+
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="./assets/window-open.png" alt="Same domain">
+    </div>
+    <div style="width: 65%;">
+        {% highlight html %}
+            <a id="myLink" href="href">Open PDF</a>
+        {% endhighlight %}
+        {% highlight js %}
+        document.getElementById('myLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const url = e.target.href;
+            window.open(url, '_blank');
+        });
+        {% endhighlight %}
+        <ul>
+            <li>Works only when popups are allowed in safari settings</li>
+            <li>Shows warning</li>
+            <li>Does not allow to open file in safari</li>
+        </ul>
+    </div>
+</div>
+
+## Native link with blob uri
+
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="./assets/blob-uri.png" alt="Same domain">
+    </div>
+    <div style="width: 65%;">
+        {% highlight html %}
+            <a id="myLink" href="./test.pdf">Open PDF</a>
+        {% endhighlight %}
+        {% highlight js %}
+        document.getElementById('myLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const response = await fetch(e.target.href);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        });
+        {% endhighlight %}
+        <ul>
+            <li>Does not allow to open file in safari</li>
+        </ul>
+    </div>
+</div>
+
 
 See it in action:
 Install PWA from [this link](https://stepancar.github.io/articles/articles/pwa-open-pdf/src/)

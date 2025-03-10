@@ -25,7 +25,7 @@ There are several ways to open a PDF file in a PWA on iOS, but none of them are 
             <img src="./assets/another-domain.png" alt="Another domain">
         </td>
         <td style="width:25%">
-            <img src="./assets/window-open.jpeg" alt="Window open">
+            <img src="./assets/window-open.png" alt="Window open">
         </td>
         <td style="width:25%">
             <img src="./assets/blob-uri.png" alt="Blob Uri">
@@ -39,7 +39,7 @@ There are several ways to open a PDF file in a PWA on iOS, but none of them are 
             Works well, opens in app browser
         </td>
         <td style="width:25%">
-            Does not work on simulator, works on real device
+            Works only when popups are allowed in safari settings
             Shows warning
             Does not allow to open file in safari
         </td>

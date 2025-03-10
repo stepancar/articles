@@ -46,8 +46,10 @@
       a.href = url;
       a.target = '_blank';
       document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      setTimeout(() => {
+        a.click();
+        // document.body.removeChild(a);
+      }, 100)
     });
   </script>
 </body>

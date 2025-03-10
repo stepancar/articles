@@ -31,6 +31,22 @@ When you are developing a PWA for iOS, you may encounter a problem with PDF file
             <img src="./assets/blob-uri.png" alt="Blob Uri">
         </td>
     </tr>
+    <tr>
+        <td style="width:25%">
+            Replaces current page, no back button, requires to reload the PWA
+        </td>
+        <td style="width:25%">
+            Works well, opens in app browser
+        </td>
+        <td style="width:25%">
+            Does not work on simulator, works on real device
+            Shows warning
+            Does not allow to open file in safari
+        </td>
+        <td style="width:25%">
+            Does not allow to open file in safari
+        </td>
+    </tr>
 </table>
 
 See it in action:

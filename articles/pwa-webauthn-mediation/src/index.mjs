@@ -62,7 +62,7 @@ async function login() {
                 allowCredentials: [{ id: credentialId, type: "public-key" }],
                 timeout: 10000,
             },
-            mediation: "optional" // Запускает биометрию автоматически
+            mediation: "conditional" // Запускает биометрию автоматически
         });
 
         alert("Вход выполнен: " + JSON.stringify(assertion));

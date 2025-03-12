@@ -59,7 +59,7 @@ async function login() {
         const assertion = await navigator.credentials.get({
             publicKey: {
                 challenge,
-                allowCredentials: [{ id: credentialId, type: "public-key" }],
+                // allowCredentials: [{ id: credentialId, type: "public-key" }],
                 timeout: 10000,
             },
             mediation: "conditional" // Запускает биометрию автоматически

@@ -24,11 +24,14 @@ registerButton.addEventListener("click", async () => {
                     displayName: "Spider Man"
                 },
                 challenge,
-                pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                pubKeyCredParams: [
+                    { type: "public-key", alg: -7 },    // ES256 (ECDSA)
+                    { type: "public-key", alg: -257 }   // RS256 (RSA)
+                ],
                 authenticatorSelection: {
                     authenticatorAttachment: "platform", // Использует встроенную биометрию
                     userVerification: "required" // Требует биометрии
-                }
+                },
             },
         });
 

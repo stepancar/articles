@@ -64,6 +64,7 @@ async function login() {
             publicKey: {
                 challenge,
                 allowCredentials: [{ id: credentialId, type: "public-key" }],
+                timeout: 10000,
             },
             mediation: "conditional" // Запускает биометрию автоматически
         });

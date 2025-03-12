@@ -12,28 +12,33 @@ const registerButton = document.getElementById("registerButton");
 
 registerButton.addEventListener("click", async () => {
     try {
+        const userId = crypto.getRandomValues(new Uint8Array(16)); // Генерация уникального user ID
+        const challenge = crypto.getRandomValues(new Uint8Array(32)); // Секретный вызов
+
         const credential = await navigator.credentials.create({
             publicKey: {
                 rp: { name: "Example Inc." },
                 user: {
-                    id: new Uint8Array(16), // Generate a unique user ID
+                    id: userId,
                     name: "spider-man@example.com",
                     displayName: "Spider Man"
                 },
-                challenge: crypto.getRandomValues(new Uint8Array(32)), // Secure challenge
+                challenge,
                 pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                authenticatorSelection: {
+                    authenticatorAttachment: "platform", // Использует встроенную биометрию
+                    userVerification: "required" // Требует биометрии
+                }
             },
         });
 
         if (credential) {
-            const credentialId = new Uint8Array(credential.rawId);
-            localStorage.setItem("credentialId", JSON.stringify(Array.from(credentialId)));
-
-            alert("Credential created successfully!");
+            localStorage.setItem("credentialId", JSON.stringify(Array.from(new Uint8Array(credential.rawId))));
+            alert("Ключ успешно сохранен!");
         }
     } catch (error) {
-        console.error("Error during registration:", error);
-        alert("Registration failed.");
+        console.error("Ошибка регистрации:", error);
+        alert("Регистрация не удалась.");
     }
 });
 
@@ -44,26 +49,26 @@ loginButton.addEventListener("click", async () => {
 async function login() {
     try {
         const storedCredentialId = localStorage.getItem("credentialId");
-
         if (!storedCredentialId) {
-            alert("No stored credential found.");
+            alert("Нет сохраненного ключа.");
             return;
         }
 
         const credentialId = new Uint8Array(JSON.parse(storedCredentialId));
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
 
         const assertion = await navigator.credentials.get({
             publicKey: {
-                challenge: crypto.getRandomValues(new Uint8Array(32)), // Secure challenge
-                allowCredentials: [{ id: credentialId, type: "public-key" }]
+                challenge,
+                allowCredentials: [{ id: credentialId, type: "public-key" }],
             },
-            mediation: 'silent'
+            mediation: "optional" // Запускает биометрию автоматически
         });
 
-        alert("Login successful: " + JSON.stringify(assertion));
+        alert("Вход выполнен: " + JSON.stringify(assertion));
     } catch (error) {
-        console.error("Error during login:", error);
-        alert("Login failed.");
+        console.error("Ошибка входа:", error);
+        alert("Вход не удался.");
     }
 }
 

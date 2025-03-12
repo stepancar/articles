@@ -62,7 +62,7 @@ async function login() {
                 challenge,
                 allowCredentials: [{ id: credentialId, type: "public-key" }],
             },
-            mediation: "optional" // Запускает биометрию автоматически
+            mediation: "conditional" // Запускает биометрию автоматически
         });
 
         alert("Вход выполнен: " + JSON.stringify(assertion));

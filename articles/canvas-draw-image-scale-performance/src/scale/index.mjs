@@ -1,98 +1,122 @@
-const canvas_1 = document.getElementById('canvas-1');
-canvas_1.width = 1920;
-canvas_1.height = 1080;
-const canvas_2 = document.getElementById('canvas-2');
-canvas_2.width = 1920;
-canvas_2.height = 1080;
-const ctx_1 = canvas_1.getContext('2d');
-const ctx_2 = canvas_2.getContext('2d');
+const canvas1 = document.getElementById('canvas-1');
+canvas1.width = 1920;
+canvas1.height = 1080;
+const canvas2 = document.getElementById('canvas-2');
+canvas2.width = 1920;
+canvas2.height = 1080;
+const ctx1 = canvas1.getContext('2d');
+const ctx2 = canvas2.getContext('2d');
 const image = new Image();
-image.src = 'https://upload.wikimedia.org/wikipedia/ru/thumb/2/24/Lenna.png/330px-Lenna.png';
 const addImageButton = document.querySelector('#imageProcess');
-const ResultTable = document.querySelector('.ResultTable');
-let iterationsCount = 10000;
+const resultTable = document.querySelector('.ResultTable');
+let selectSmoothingQuality = document.querySelector('select').value;
 
 const setSizeOfTheCanvas = () => {
     let width = document.querySelector('#canvasWidth').value;
     let height = document.querySelector('#canvasHeight').value;
-    canvas_1.width = width;
-    canvas_1.height = height;
-    canvas_2.width = width;
-    canvas_2.height = height;
+    canvas1.width = width;
+    canvas1.height = height;
+    canvas2.width = width;
+    canvas2.height = height;
+};
+
+const getIterationsCount = () => {
+    return document.querySelector('#iterations_cnt').value;
+};
+
+const getImageUrl = () => {
+    return document.querySelector('#pic_url').value;
+};
+
+function loadImage(url) {
+    image.src = url;
+    image.onload = () => {
+        console.log('Image uploaded');
+    };
 }
 
-const setIterationsCount = () => { 
-    iterationsCount = document.querySelector('#iterations_cnt').value;
+const setSmoothingQuality = () => {
+    selectSmoothingQuality = document.querySelector('select').value;
+    ctx1.imageSmoothingQuality = selectSmoothingQuality;
+    ctx2.imageSmoothingQuality = selectSmoothingQuality;
+};
+
+// писать в таблицу selectSmoothingQuality
+// в табличку заносить размер оригинального изображения
+// добавить возможность менять коэф скейлинга
+// проверить прозрачность канваса и прозрачность изображений (alpha)
+// чекнуть параметр desynchronized влияет или нет
+// willReadFrequently для переключения операция чтения на цпу режим добавить переключалку
+function takeMeasurements() {
+    let imageUrl = getImageUrl();
+    loadImage(imageUrl);
+
+    image.onload = () => {
+        setSmoothingQuality();
+        let iterationsCount = getIterationsCount();
+        setSizeOfTheCanvas();
+
+        let drawImageWithScaleTime = drawImageWithScale(iterationsCount);
+        let drawImageWithoutScaleTime = drawImageWithoutScale(iterationsCount);
+        addNewMeasurements(
+            iterationsCount,
+            drawImageWithScaleTime,
+            drawImageWithoutScaleTime
+        );
+    };
+    image.onerror = () => {
+        console.error('Image cannot be uploaded');
+    };
 }
 
-const loadImage = () => {
-    image.src = document.querySelector('#pic_url').value;
-}
-
-const takeMeasurements = () => {
-    loadImage();
-    setIterationsCount();
-    setSizeOfTheCanvas();
-}
+takeMeasurements();
 
 addImageButton.addEventListener('click', takeMeasurements);
 
-class Test_Image {
-    constructor(name, image) {
-        this.name = name;
-        this.image = image;
-    }
-}
-
-const lenna = new Test_Image('Lenna', image);
-
-function draw_image_without_scale() {
+function drawImageWithoutScale(iterationsCount) {
     const start = performance.now();
     for (let i = 0; i < iterationsCount; i++) {
-        let x = Math.random() * canvas_1.width;
-        let y = Math.random() * canvas_1.height;
-        ctx_2.drawImage(lenna.image, x, y);
+        let x = Math.random() * canvas1.width;
+        let y = Math.random() * canvas1.height;
+        ctx2.drawImage(image, x, y);
     }
     const end = performance.now();
     let time = end - start;
-    console.log(`Drawing and scaling 1000 images took ${time}ms`);
     return time;
 }
 
-function draw_image_with_scale() {
+function drawImageWithScale(iterationsCount) {
     const start = performance.now();
-    // ctx_1.imageSmoothingQuality = 'low';
     for (let i = 0; i < iterationsCount; i++) {
-        let x = Math.random() * 100;
-        let y = Math.random() * 100;
-        ctx_1.drawImage(lenna.image, x, y);
-        ctx_1.scale(5, 5);
+        let x = Math.random() * canvas1.width;
+        let y = Math.random() * canvas1.height;
+        let scale = Math.random() * 0.2 + 0.9;
+        ctx1.resetTransform();
+        ctx1.scale(scale, scale);
+        ctx1.drawImage(image, x, y);
     }
     const end = performance.now();
     let time = end - start;
-    console.log(`Drawing 1000 images took ${time}ms`);
     return time;
 }
-
-image.onload = () => {
-    let drawImageWithScaleTime = draw_image_with_scale();
-    let drawImageWithoutScaleTime = draw_image_without_scale();
-    addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime)
-};
 
 let cnt = 1;
-function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
-    let newRow = ResultTable.insertRow();
+function addNewMeasurements(
+    iterationsCount,
+    drawImageWithScaleTime,
+    drawImageWithoutScaleTime
+) {
+    let newRow = resultTable.insertRow();
 
     let cell0 = newRow.insertCell();
     let cell1 = newRow.insertCell();
     let cell2 = newRow.insertCell();
     let cell3 = newRow.insertCell();
     let cell4 = newRow.insertCell();
-    
+
     cell0.innerHTML = cnt++;
     cell1.innerHTML = drawImageWithScaleTime;
     cell2.innerHTML = drawImageWithoutScaleTime;
     cell3.innerHTML = iterationsCount;
-    cell4.innerHTML = canvas_1.width + "x" + canvas_1.height;
+    cell4.innerHTML = canvas1.width + 'x' + canvas1.height;
 }

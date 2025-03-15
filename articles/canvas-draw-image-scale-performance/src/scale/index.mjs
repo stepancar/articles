@@ -1,9 +1,5 @@
 const canvas1 = document.getElementById('canvas-1');
-canvas1.width = 1920;
-canvas1.height = 1080;
 const canvas2 = document.getElementById('canvas-2');
-canvas2.width = 1920;
-canvas2.height = 1080;
 const ctx1 = canvas1.getContext('2d');
 const ctx2 = canvas2.getContext('2d');
 const image = new Image();
@@ -32,6 +28,9 @@ function loadImage(url) {
     image.src = url;
     image.onload = () => {
         console.log('Image uploaded');
+    };
+    image.onerror = () => {
+        console.error('Image can`t be uploaded');
     };
 }
 
@@ -113,10 +112,12 @@ function addNewMeasurements(
     let cell2 = newRow.insertCell();
     let cell3 = newRow.insertCell();
     let cell4 = newRow.insertCell();
+    let cell5 = newRow.insertCell();
 
     cell0.innerHTML = cnt++;
     cell1.innerHTML = drawImageWithScaleTime;
     cell2.innerHTML = drawImageWithoutScaleTime;
     cell3.innerHTML = iterationsCount;
     cell4.innerHTML = canvas1.width + 'x' + canvas1.height;
+    cell5.innerHTML = selectSmoothingQuality;
 }

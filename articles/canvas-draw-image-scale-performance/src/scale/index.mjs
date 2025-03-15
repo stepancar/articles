@@ -40,8 +40,6 @@ const setSmoothingQuality = () => {
     ctx2.imageSmoothingQuality = selectSmoothingQuality;
 };
 
-// писать в таблицу selectSmoothingQuality
-// в табличку заносить размер оригинального изображения
 // добавить возможность менять коэф скейлинга
 // проверить прозрачность канваса и прозрачность изображений (alpha)
 // чекнуть параметр desynchronized влияет или нет
@@ -113,6 +111,7 @@ function addNewMeasurements(
     let cell3 = newRow.insertCell();
     let cell4 = newRow.insertCell();
     let cell5 = newRow.insertCell();
+    let cell6 = newRow.insertCell();
 
     cell0.innerHTML = cnt++;
     cell1.innerHTML = drawImageWithScaleTime;
@@ -120,4 +119,5 @@ function addNewMeasurements(
     cell3.innerHTML = iterationsCount;
     cell4.innerHTML = canvas1.width + 'x' + canvas1.height;
     cell5.innerHTML = selectSmoothingQuality;
+    cell6.innerHTML = image.width + 'x' + image.height;
 }

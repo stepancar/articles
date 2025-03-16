@@ -6,7 +6,9 @@ const image = new Image();
 const addImageButton = document.querySelector('#image-process');
 const resultTable = document.querySelector('.result-table');
 let selectSmoothingQuality = document.querySelector('select').value;
-let iterationsCount = 10000;
+let rangeFrom;
+let rangeTo;
+let iterationsCount;
 
 const setSizeOfTheCanvas = () => {
     let width = document.querySelector('#canvas-width').value;
@@ -25,6 +27,16 @@ const getImageUrl = () => {
     return document.querySelector('#pic-url').value;
 };
 
+const setScaleRange = () => {
+    rangeFrom = document.querySelector('#range-from').value;
+    rangeTo = document.querySelector('#range-to').value;
+    if (rangeFrom > rangeTo) {
+        a = rangeTo;
+        rangeTo = rangeFrom;
+        rangeFrom = a;
+    }
+};
+
 function loadImage(url) {
     image.src = url;
     image.onload = () => {
@@ -41,7 +53,6 @@ const setSmoothingQuality = () => {
     ctx2.imageSmoothingQuality = selectSmoothingQuality;
 };
 
-// добавить возможность менять коэф скейлинга
 // проверить прозрачность канваса и прозрачность изображений (alpha)
 // чекнуть параметр desynchronized влияет или нет
 // willReadFrequently для переключения операция чтения на цпу режим добавить переключалку
@@ -52,6 +63,7 @@ function takeMeasurements() {
     image.onload = () => {
         setSmoothingQuality();
         setIterationsCount();
+        setScaleRange();
         setSizeOfTheCanvas();
 
         let drawImageWithScaleTime = drawImageWithScale();
@@ -84,7 +96,7 @@ function drawImageWithScale() {
     for (let i = 0; i < iterationsCount; i++) {
         let x = Math.random() * canvas1.width;
         let y = Math.random() * canvas1.height;
-        let scale = Math.random() * 0.2 + 0.9;
+        let scale = Math.random() * (rangeTo - rangeFrom) + rangeFrom;
         ctx1.resetTransform();
         ctx1.scale(scale, scale);
         ctx1.drawImage(image, x, y);
@@ -105,6 +117,7 @@ function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
     let cell4 = newRow.insertCell();
     let cell5 = newRow.insertCell();
     let cell6 = newRow.insertCell();
+    let cell7 = newRow.insertCell();
 
     cell0.innerHTML = cnt++;
     cell1.innerHTML = drawImageWithScaleTime;
@@ -113,4 +126,5 @@ function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
     cell4.innerHTML = canvas1.width + 'x' + canvas1.height;
     cell5.innerHTML = selectSmoothingQuality;
     cell6.innerHTML = image.width + 'x' + image.height;
+    cell7.innerHTML = '[' + rangeFrom + ';' + rangeTo + ')';
 }

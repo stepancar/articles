@@ -29,7 +29,7 @@
         <h1>Canvas Draw Image Scale Performance</h1>
         <canvas id="canvas-1"></canvas>
         <canvas id="canvas-2"></canvas>
-        <table class="ResultTable">
+        <table class="result-table">
             <thead>
                 <tr>
                     <th>measurement index</th>
@@ -39,31 +39,36 @@
                     <th>canvas size</th>
                     <th>smoothing quality</th>
                     <th>image size</th>
-                    <!-- сделать подсчет средних значений за все подсчеты -->
+                    <th>scale</th>
                 </tr>
             </thead>
         </table>
         <div>
-            <label for="pic_url">enter the URL of an image:</label>
-            <input type="url" id="pic_url" value="https://upload.wikimedia.org/wikipedia/ru/thumb/2/24/Lenna.png/330px-Lenna.png"/><br>
+            <label for="pic-url">enter the URL of an image:</label>
+            <input type="url" id="pic-url" value="https://upload.wikimedia.org/wikipedia/ru/thumb/2/24/Lenna.png/330px-Lenna.png"/><br>
 
-            <label for="iterations_cnt">enter count of iterations</label>
-            <input type="number" id="iterations_cnt" value="10000"><br>
+            <label for="iterations-cnt">enter count of iterations</label>
+            <input type="number" id="iterations-cnt" value="10000"><br>
 
-            <label for="canvasHeight">enter the height of the canvas</label>
-            <input type="number" id="canvasHeight" value="1080"><br>
+            <label for="canvas-height">enter the height of the canvas</label>
+            <input type="number" id="canvas-height" value="1080"><br>
 
-            <label for="canvasWidth">enter the width of the canvas</label>
-            <input type="number" id="canvasWidth" value="1920"><br>
+            <label for="canvas-width">enter the width of the canvas</label>
+            <input type="number" id="canvas-width" value="1920"><br>
             
-            <label for="SmoothingQuality">Choose imageSmoothingQuality:</label>
-            <select id="SmoothingQuality">
+            <label for="smoothing-quality">Choose imageSmoothingQuality:</label>
+            <select id="smoothing-quality">
                 <option value="low">low</option>
                 <option value="medium">medium</option>
                 <option value="high">high</option>
-            </select>
+            </select></br>
 
-            <button id="imageProcess">Process the image</button>
+            <!-- <label for="range-from">Random scale range from</label>
+            <input type="number" id="range-from"> 
+            <label for="range-to">to</label>
+            <input type="number" id="range-to"> -->
+
+            <button id="image-process">Process the image</button>
         </div>
         
 

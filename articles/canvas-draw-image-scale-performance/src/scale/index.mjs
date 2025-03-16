@@ -3,25 +3,26 @@ const canvas2 = document.getElementById('canvas-2');
 const ctx1 = canvas1.getContext('2d');
 const ctx2 = canvas2.getContext('2d');
 const image = new Image();
-const addImageButton = document.querySelector('#imageProcess');
-const resultTable = document.querySelector('.ResultTable');
+const addImageButton = document.querySelector('#image-process');
+const resultTable = document.querySelector('.result-table');
 let selectSmoothingQuality = document.querySelector('select').value;
+let iterationsCount = 10000;
 
 const setSizeOfTheCanvas = () => {
-    let width = document.querySelector('#canvasWidth').value;
-    let height = document.querySelector('#canvasHeight').value;
+    let width = document.querySelector('#canvas-width').value;
+    let height = document.querySelector('#canvas-height').value;
     canvas1.width = width;
     canvas1.height = height;
     canvas2.width = width;
     canvas2.height = height;
 };
 
-const getIterationsCount = () => {
-    return document.querySelector('#iterations_cnt').value;
+const setIterationsCount = () => {
+    iterationsCount = document.querySelector('#iterations-cnt').value;
 };
 
 const getImageUrl = () => {
-    return document.querySelector('#pic_url').value;
+    return document.querySelector('#pic-url').value;
 };
 
 function loadImage(url) {
@@ -35,7 +36,7 @@ function loadImage(url) {
 }
 
 const setSmoothingQuality = () => {
-    selectSmoothingQuality = document.querySelector('select').value;
+    selectSmoothingQuality = document.querySelector('#smoothing-quality').value;
     ctx1.imageSmoothingQuality = selectSmoothingQuality;
     ctx2.imageSmoothingQuality = selectSmoothingQuality;
 };
@@ -50,16 +51,12 @@ function takeMeasurements() {
 
     image.onload = () => {
         setSmoothingQuality();
-        let iterationsCount = getIterationsCount();
+        setIterationsCount();
         setSizeOfTheCanvas();
 
-        let drawImageWithScaleTime = drawImageWithScale(iterationsCount);
-        let drawImageWithoutScaleTime = drawImageWithoutScale(iterationsCount);
-        addNewMeasurements(
-            iterationsCount,
-            drawImageWithScaleTime,
-            drawImageWithoutScaleTime
-        );
+        let drawImageWithScaleTime = drawImageWithScale();
+        let drawImageWithoutScaleTime = drawImageWithoutScale();
+        addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime);
     };
     image.onerror = () => {
         console.error('Image cannot be uploaded');
@@ -70,7 +67,7 @@ takeMeasurements();
 
 addImageButton.addEventListener('click', takeMeasurements);
 
-function drawImageWithoutScale(iterationsCount) {
+function drawImageWithoutScale() {
     const start = performance.now();
     for (let i = 0; i < iterationsCount; i++) {
         let x = Math.random() * canvas1.width;
@@ -82,7 +79,7 @@ function drawImageWithoutScale(iterationsCount) {
     return time;
 }
 
-function drawImageWithScale(iterationsCount) {
+function drawImageWithScale() {
     const start = performance.now();
     for (let i = 0; i < iterationsCount; i++) {
         let x = Math.random() * canvas1.width;
@@ -98,11 +95,7 @@ function drawImageWithScale(iterationsCount) {
 }
 
 let cnt = 1;
-function addNewMeasurements(
-    iterationsCount,
-    drawImageWithScaleTime,
-    drawImageWithoutScaleTime
-) {
+function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
     let newRow = resultTable.insertRow();
 
     let cell0 = newRow.insertCell();

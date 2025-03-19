@@ -75,3 +75,10 @@ customLinkButtonWithFileUrl.addEventListener("click", async (e) => {
         document.body.removeChild(a);
     }, 100);
 });
+
+
+const customLinkButtonWithLocationAssign = document.getElementById("open-pdf-window-open-button-with-location-assign");
+customLinkButtonWithLocationAssign.addEventListener("click", async (e) => {
+    e.preventDefault();
+    window.location.assign(windowOpenLink.href);
+});

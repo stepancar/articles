@@ -56,3 +56,22 @@ customLinkButtonWithDownload.addEventListener("click", async (e) => {
         document.body.removeChild(a);
     }, 100);
 });
+
+
+const customLinkButtonWithFileUrl = document.getElementById("open-pdf-window-open-button-with-file-url");
+customLinkButtonWithFileUrl.addEventListener("click", async (e) => {
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    const file = new File([blob], 'file.pdf', { type: 'application/pdf' });
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.download = 'file.pdf';
+    document.body.appendChild(a);
+    setTimeout(() => {
+        a.click();
+        document.body.removeChild(a);
+    }, 100);
+});

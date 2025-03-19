@@ -12,12 +12,14 @@
     <h1>PDF opening in PWA on IOS</h1>
 
     <a href="./test.pdf">Pdf on the same domain</a>
+    <a href="./test.pdf" download="test.pdf">Pdf on the same domain with download</a>
     <a href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf">Pdf on another domain</a>
     <a href="./test.pdf" id="open-pdf-window-open">Open PDF using blob uri and window.open</a>
     <a href="./test.pdf" id="open-pdf-blob-uri-link">Open PDF using blob uri and native link</a>
     <button id="open-pdf-window-open-button">Open PDF using blob uri and custom link</button>
     <button id="open-pdf-window-open-button-with-download">Open PDF using blob uri and custom link with download</button>
     <button id="open-pdf-window-open-button-with-file-url">Open PDF using blob uri and custom link with file url</button>
+    <button id="open-pdf-window-open-button-with-location-assign">Open PDF using blob uri and custom link with location assign</button>
   </div>
   <script src="./index.mjs" type="module"></script>
 </body>

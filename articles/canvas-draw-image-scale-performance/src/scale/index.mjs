@@ -23,6 +23,10 @@ const setIterationsCount = () => {
     iterationsCount = document.querySelector('#iterations-cnt').value;
 };
 
+const getFileNameFromURL = (url) => {
+    return url.split('/').pop();
+};
+
 const getImageUrl = () => {
     return document.querySelector('#pic-url').value;
 };
@@ -39,12 +43,6 @@ const setScaleRange = () => {
 
 function loadImage(url) {
     image.src = url;
-    image.onload = () => {
-        console.log('Image uploaded');
-    };
-    image.onerror = () => {
-        console.error('Image can`t be uploaded');
-    };
 }
 
 const setSmoothingQuality = () => {
@@ -53,14 +51,13 @@ const setSmoothingQuality = () => {
     ctx2.imageSmoothingQuality = selectSmoothingQuality;
 };
 
-// проверить прозрачность канваса и прозрачность изображений (alpha)
-// чекнуть параметр desynchronized влияет или нет
-// willReadFrequently для переключения операция чтения на цпу режим добавить переключалку
 function takeMeasurements() {
     let imageUrl = getImageUrl();
+    let imageName = getFileNameFromURL(imageUrl);
     loadImage(imageUrl);
 
     image.onload = () => {
+        console.log('Image uploaded');
         setSmoothingQuality();
         setIterationsCount();
         setScaleRange();
@@ -68,7 +65,11 @@ function takeMeasurements() {
 
         let drawImageWithScaleTime = drawImageWithScale();
         let drawImageWithoutScaleTime = drawImageWithoutScale();
-        addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime);
+        addNewMeasurements(
+            drawImageWithoutScaleTime,
+            drawImageWithScaleTime,
+            imageName
+        );
     };
     image.onerror = () => {
         console.error('Image cannot be uploaded');
@@ -107,7 +108,11 @@ function drawImageWithScale() {
 }
 
 let cnt = 1;
-function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
+function addNewMeasurements(
+    drawImageWithoutScaleTime,
+    drawImageWithScaleTime,
+    filename
+) {
     let newRow = resultTable.insertRow();
 
     let cell0 = newRow.insertCell();
@@ -118,13 +123,15 @@ function addNewMeasurements(drawImageWithScaleTime, drawImageWithoutScaleTime) {
     let cell5 = newRow.insertCell();
     let cell6 = newRow.insertCell();
     let cell7 = newRow.insertCell();
+    let cell8 = newRow.insertCell();
 
     cell0.innerHTML = cnt++;
-    cell1.innerHTML = drawImageWithScaleTime;
+    cell1.innerHTML = filename;
     cell2.innerHTML = drawImageWithoutScaleTime;
-    cell3.innerHTML = iterationsCount;
-    cell4.innerHTML = canvas1.width + 'x' + canvas1.height;
-    cell5.innerHTML = selectSmoothingQuality;
-    cell6.innerHTML = image.width + 'x' + image.height;
-    cell7.innerHTML = '[' + rangeFrom + ';' + rangeTo + ')';
+    cell3.innerHTML = drawImageWithScaleTime;
+    cell4.innerHTML = iterationsCount;
+    cell5.innerHTML = canvas1.width + 'x' + canvas1.height;
+    cell6.innerHTML = selectSmoothingQuality;
+    cell7.innerHTML = image.width + 'x' + image.height;
+    cell8.innerHTML = '[' + rangeFrom + ';' + rangeTo + ')';
 }

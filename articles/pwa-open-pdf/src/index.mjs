@@ -40,7 +40,7 @@ customLinkButton.addEventListener("click", async (e) => {
 });
 
 const customLinkButtonBase64 = document.getElementById("open-pdf-window-open-button-base64");
-customLinkButton.addEventListener("click", async (e) => {
+customLinkButtonBase64.addEventListener("click", async (e) => {
     const response = await fetch(windowOpenLink.href);
     const blob = await response.blob();
 

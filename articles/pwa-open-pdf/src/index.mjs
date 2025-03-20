@@ -39,6 +39,30 @@ customLinkButton.addEventListener("click", async (e) => {
     }, 100);
 });
 
+const customLinkButtonBase64 = document.getElementById("open-pdf-window-open-button-base64");
+customLinkButton.addEventListener("click", async (e) => {
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    // Convert blob to base64
+    const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+    const url = base64;
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    document.body.appendChild(a);
+    setTimeout(() => {
+        a.click();
+        document.body.removeChild(a);
+    }, 100);
+});
+
 
 const customLinkButtonWithDownload = document.getElementById("open-pdf-window-open-button-with-download");
 customLinkButtonWithDownload.addEventListener("click", async (e) => {

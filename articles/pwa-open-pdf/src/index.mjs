@@ -142,6 +142,4 @@ customLinkButtonWithLocationAssignBlobShare.addEventListener("click", async (e) 
     await navigator.share({
         files: [file]
     });
-    const url = URL.createObjectURL(file);
-    window.location.assign(url);
 });

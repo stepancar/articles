@@ -68,11 +68,9 @@ const customLinkButtonWithDownload = document.getElementById("open-pdf-window-op
 customLinkButtonWithDownload.addEventListener("click", async (e) => {
     const response = await fetch(windowOpenLink.href);
     const blob = await response.blob();
-    const blob2 = new Blob(blob, { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob2);
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.target = "_blank";
     a.download = 'file.pdf';
     document.body.appendChild(a);
     setTimeout(() => {

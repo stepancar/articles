@@ -106,3 +106,15 @@ customLinkButtonWithLocationAssign.addEventListener("click", async (e) => {
     e.preventDefault();
     window.location.assign(windowOpenLink.href);
 });
+
+const customLinkButtonWithLocationAssignBlob = document.getElementById("open-pdf-window-open-button-with-location-assign-blob");
+customLinkButtonWithLocationAssignBlob.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    const file = new File([blob], 'file.pdf', { type: 'application/pdf' });
+    const url = URL.createObjectURL(file);
+    window.location.assign(url);
+});

@@ -68,7 +68,8 @@ const customLinkButtonWithDownload = document.getElementById("open-pdf-window-op
 customLinkButtonWithDownload.addEventListener("click", async (e) => {
     const response = await fetch(windowOpenLink.href);
     const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
+    const blob2 = new Blob([blob], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob2);
     const a = document.createElement("a");
     a.href = url;
     a.download = 'file.pdf';
@@ -113,6 +114,34 @@ customLinkButtonWithLocationAssignBlob.addEventListener("click", async (e) => {
     const blob = await response.blob();
 
     const file = new File([blob], 'file.pdf', { type: 'application/pdf' });
+    const url = URL.createObjectURL(file);
+    window.location.assign(url);
+});
+
+
+const customLinkButtonWithLocationAssignBlobOctet = document.getElementById("open-pdf-window-open-button-with-location-assign-blob-octet");
+customLinkButtonWithLocationAssignBlobOctet.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    const file = new File([blob], 'file.pdf', { type: 'octet/stream' });
+    const url = URL.createObjectURL(file);
+    window.location.assign(url);
+});
+
+const customLinkButtonWithLocationAssignBlobShare = document.getElementById("open-pdf-window-open-button-with-location-assign-blob-share");
+customLinkButtonWithLocationAssignBlobShare.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    const file = new File([blob], 'file.pdf', { type: 'application/pdf' });
+    await navigator.share({
+        files: [file]
+    });
     const url = URL.createObjectURL(file);
     window.location.assign(url);
 });

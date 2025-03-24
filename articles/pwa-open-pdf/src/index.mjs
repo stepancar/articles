@@ -90,7 +90,6 @@ customLinkButtonWithFileUrl.addEventListener("click", async (e) => {
     const url = URL.createObjectURL(file);
     const a = document.createElement("a");
     a.href = url;
-    a.target = "_blank";
     a.download = 'file.pdf';
     document.body.appendChild(a);
     setTimeout(() => {

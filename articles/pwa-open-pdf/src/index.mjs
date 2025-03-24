@@ -268,7 +268,7 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
           try {
             const response = await fetch(fileUrl);
             const blob = await response.blob();
-            const file = new File([blob], 'shared-file', { type: blob.type });
+            const file = new File([blob], 'shared-file.pdf', { type: blob.type });
             
             if (navigator.share) {
               await navigator.share({

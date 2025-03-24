@@ -131,6 +131,27 @@ customLinkButtonWithLocationAssignBlobOctet.addEventListener("click", async (e) 
     window.location.assign(url);
 });
 
+
+const customLinkButtonWithLocationAssignBlobOctet2 = document.getElementById("open-pdf-window-open-button-with-location-assign-blob-octet-2");
+customLinkButtonWithLocationAssignBlobOctet2.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    const file = new File([blob], 'file.pdf', { type: 'octet/stream' });
+    const url = URL.createObjectURL(file);
+
+    a.href = url;
+    a.target = "_blank";
+    a.download = 'file.pdf';
+    document.body.appendChild(a);
+    setTimeout(() => {
+        a.click();
+        document.body.removeChild(a);
+    }, 100);
+});
+
 const customLinkButtonWithLocationAssignBlobShare = document.getElementById("open-pdf-window-open-button-with-location-assign-blob-share");
 customLinkButtonWithLocationAssignBlobShare.addEventListener("click", async (e) => {
     e.preventDefault();

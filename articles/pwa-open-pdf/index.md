@@ -97,6 +97,36 @@ There are several ways to open a PDF file in a PWA on iOS, but none of them are 
     </div>
 </div>
 
+## Native link with blob mime type octet-stream
+
+<div class="wide-content" style="display: flex; justify-content: stretch;">
+    <div style="width: 30%;">
+        <img class="shadow" src="./assets/octet-stream.png" alt="Octet stream mime type">
+    </div>
+    <div style="width: 65%;">
+        {% highlight html %}
+            <a id="myLink" href="./test.pdf">Open PDF</a>
+        {% endhighlight %}
+        {% highlight js %}
+        document.getElementById('myLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const response = await fetch(e.target.href);
+            const blob = new Blob([await response.blob()], { type: 'octet/stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'test.pdf';
+            a.click();
+        });
+        {% endhighlight %}
+        <ul>
+            <li>Does not show preview</li>
+            <li>Allows to share file</li>
+            <li>Does not allow to open file in safari</li>
+        </ul>
+    </div>
+</div>
+
 
 See it in action:
 Install PWA from [this link](https://stepancar.github.io/articles/articles/pwa-open-pdf/src/)

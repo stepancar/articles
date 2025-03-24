@@ -305,3 +305,8 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
 
     openFilePreview(windowOpenLink.href)  
 });
+
+
+document.getElementById("theFrame").contentWindow.onload = function() {
+    this.document.getElementsByTagName("img")[0].style.width="100%";
+};

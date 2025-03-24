@@ -238,10 +238,12 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
             border: none;
             cursor: pointer;
           }
-          iframe {
+          .iframe {
             flex-grow: 1;
             width: 100%;
             border: none;
+            height: -webkit-fill-available;
+            
           }
         `;
         document.head.appendChild(style);
@@ -260,6 +262,7 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
         
         const iframe = document.createElement('embed');
         iframe.src = fileUrl;
+        iframe.className = 'iframe';
         
         const shareButton = document.createElement('button');
         shareButton.className = 'share-btn';

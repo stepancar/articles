@@ -10,8 +10,8 @@
 <body>
   <div class="container">
     <h1>PDF opening in PWA on IOS</h1>
-    <iframe src="./test-multipage.pdf" width="100%" height="500px"></iframe>
-    <embed src="./test-multipage.pdf" type="application/pdf" width="100%" height="600px" />
+    <iframe src="./test-multipage.pdf" id="theFrame" width="100%" height="500px"></iframe>
+    <embed src="./test-multipage.pdf" type="application/pdf" width="100%" />
     <a href="./test.pdf">Pdf on the same domain</a>
     <a href="./test.pdf" download="test.pdf">Pdf on the same domain with download</a>
     <a href="https://files.stepancar.github.io/articles/articles/pwa-open-pdf/src/test.pdf">Pdf on subdomain with service worker interceptor</a>

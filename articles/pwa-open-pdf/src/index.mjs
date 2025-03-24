@@ -263,6 +263,13 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
         const iframe = document.createElement('iframe');
         iframe.src = fileUrl;
         iframe.className = 'iframe';
+
+        const object = document.createElement('object');
+        object.data = fileUrl;
+        object.type = 'application/pdf';
+        object.width = '100%';
+        object.height = '100%';
+        object.style.flexGrow = '1';
         
         const shareButton = document.createElement('button');
         shareButton.className = 'share-btn';
@@ -289,7 +296,8 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
         };
         
         modalContent.appendChild(closeButton);
-        modalContent.appendChild(iframe);
+        // modalContent.appendChild(iframe);
+        modalContent.appendChild(object);
         modalContent.appendChild(shareButton);
         modal.appendChild(modalContent);
         document.body.appendChild(modal);

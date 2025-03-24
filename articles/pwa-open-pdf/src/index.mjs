@@ -141,7 +141,7 @@ customLinkButtonWithLocationAssignBlobOctet2.addEventListener("click", async (e)
 
     const file = new File([blob], 'file.pdf', { type: 'octet/stream' });
     const url = URL.createObjectURL(file);
-
+    const a = document.createElement("a");
     a.href = url;
     a.target = "_blank";
     a.download = 'file.pdf';

@@ -194,3 +194,103 @@ customLinkButtonOpenSafari2.addEventListener("click", async (e) => {
 
     window.location = `x-safari-${url}`
 });
+
+const  customLinkButtonCustomPreview = document.getElementById("open-pdf-custom-preview");
+customLinkButtonCustomPreview.addEventListener("click", async (e) => {
+    function openFilePreview(fileUrl) {
+        if (document.getElementById('filePreviewModal')) return;
+        
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .modal-content {
+            position: relative;
+            background: white;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+          }
+          .close-btn {
+            position: absolute;
+            top: calc(env(safe-area-inset-top, 0px) + 10px);
+            left: 10px;
+            background: gray;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+          }
+          .share-btn {
+            position: absolute;
+            left: 10px;
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+            margin-top: 10px;
+            background: blue;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+          }
+          iframe {
+            flex-grow: 1;
+            width: 100%;
+            border: none;
+          }
+        `;
+        document.head.appendChild(style);
+        
+        const modal = document.createElement('div');
+        modal.id = 'filePreviewModal';
+        modal.className = 'modal';
+        
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+        
+        const closeButton = document.createElement('button');
+        closeButton.className = 'close-btn';
+        closeButton.innerText = 'Close';
+        closeButton.onclick = () => modal.remove();
+        
+        const iframe = document.createElement('embed');
+        iframe.src = fileUrl;
+        
+        const shareButton = document.createElement('button');
+        shareButton.className = 'share-btn';
+        shareButton.innerText = 'Share';
+        shareButton.onclick = async () => {
+          try {
+            const response = await fetch(fileUrl);
+            const blob = await response.blob();
+            const file = new File([blob], 'shared-file', { type: blob.type });
+            
+            if (navigator.share) {
+              await navigator.share({
+                files: [file],
+                title: 'File Preview',
+                text: 'Check out this file!'
+              });
+            } else {
+              alert('Web Share API is not supported on this browser.');
+            }
+          } catch (error) {
+            console.error('Error sharing file:', error);
+            alert('Failed to share file.');
+          }
+        };
+        
+        modalContent.appendChild(closeButton);
+        modalContent.appendChild(iframe);
+        modalContent.appendChild(shareButton);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+    }
+
+    openFilePreview(windowOpenLink.href)  
+});

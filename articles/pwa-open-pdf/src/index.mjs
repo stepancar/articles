@@ -164,3 +164,35 @@ customLinkButtonWithLocationAssignBlobShare.addEventListener("click", async (e) 
         files: [file]
     });
 });
+
+
+const customLinkButtonOpenSafari = document.getElementById("open-pdf-window-open-safari");
+customLinkButtonOpenSafari.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    const url = URL.createObjectURL(blob);
+
+    window.location = `x-safari-${url}`
+});
+
+
+const customLinkButtonOpenSafari2 = document.getElementById("open-pdf-window-open-safari-2");
+customLinkButtonOpenSafari2.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+    const url = base64;
+
+    window.location = `x-safari-${url}`
+});

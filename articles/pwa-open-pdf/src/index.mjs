@@ -243,7 +243,7 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
             width: 100%;
             border: none;
             height: -webkit-fill-available;
-            
+
           }
         `;
         document.head.appendChild(style);
@@ -260,7 +260,7 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
         closeButton.innerText = 'Close';
         closeButton.onclick = () => modal.remove();
         
-        const iframe = document.createElement('embed');
+        const iframe = document.createElement('iframe');
         iframe.src = fileUrl;
         iframe.className = 'iframe';
         

@@ -188,3 +188,5 @@ function showInfo(s) {
 }
 
 document.getElementById("start_button").addEventListener("click", startButton);
+document.getElementById("select_language").addEventListener("change", updateCountry);
+document.getElementById("select_dialect").addEventListener("change", updateCountry);

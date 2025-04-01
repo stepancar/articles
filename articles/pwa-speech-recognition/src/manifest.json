@@ -1,7 +1,7 @@
 {
-    "name": "Pwa external link demo",
-    "short_name": "PWA on IOS external link demo",
-    "description": "PWA on IOS external link demo",
+    "name": "PWA speech recognition demo",
+    "short_name": "PWA speech recognition demo",
+    "description": "PWA speech recognition demo",
     "start_url": "./",
     "display": "standalone",
     "background_color": "#ffffff",

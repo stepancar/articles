@@ -42,10 +42,6 @@ var langs = [
         ["es-VE", "Venezuela"],
     ],
     ["Français", ["fr-FR"]],
-    ["Italiano", ["it-IT", "Italia"], ["it-CH", "Svizzera"]],
-    ["Português", ["pt-BR", "Brasil"], ["pt-PT", "Portugal"]],
-    ["日本語", ["ja-JP"]],
-    ["Lingua latīna", ["la"]],
     ["Russian", ["ru-RU"]],
 ];
 

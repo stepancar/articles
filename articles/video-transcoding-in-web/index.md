@@ -7,4 +7,8 @@ creationDate: 2025-02-11
 
 # Video transcoding in web
 
-We are going to find best solution for video transcoding
+
+
+<iframe src="./demo/index.html"></iframe>
+<script src="./index.mjs" type="module"></script>
+

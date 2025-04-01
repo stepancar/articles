@@ -1,0 +1,221 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>video transcoding in web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <style rel="stylesheet">
+      mjx-container[jax="SVG"] > svg {
+         max-width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+    
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          video transcoding in web
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2>This article considers challenges of video transcoding in web</h2>
+          <div class="content">
+            <h1>Video transcoding in web</h1>
+<p>We are going to find best solution for video transcoding</p>
+<!---
+
+```
+┌──────────┬───────────────────────┐
+│ demuxer  │                       │ packets for stream 0
+╞══════════╡ elementary stream 0   ├──────────────────────►
+│          │                       │
+│  global  ├───────────────────────┤
+│properties│                       │ packets for stream 1
+│   and    │ elementary stream 1   ├──────────────────────►
+│ metadata │                       │
+│          ├───────────────────────┤
+│          │                       │
+│          │     ...........       │
+│          │                       │
+│          ├───────────────────────┤
+│          │                       │ packets for stream N
+│          │ elementary stream N   ├──────────────────────►
+│          │                       │
+└──────────┴───────────────────────┘
+     ▲
+     │
+     │ read from file, network stream,
+     │     grabbing device, etc.
+     │
+```
+-->
+<h2>Что такое транскодирование</h2>
+<p>Транскодирование — это преобразование видеофайла из одного цифрового формата в другой. На бумаге звучит так будто это
+лишь поменять расширение файла нажатием кнопки "переименовать". Но на деле это далеко не так просто.
+Транскодирование включает в себя следующие этапы: демультиплексирование (демаксинг), декодирование, кодирование,
+мультиплексирование (максинг).</p>
+<h2>Что такое видео</h2>
+<p>Видео это фактически множество изображений которые быстро быстро меняются. Конечно это определение сильно упрощено,
+допустим если мы будем хаотически менять картинки или с недостаточной скоростью, то никакой нормальной внятной картинки,
+содержащей что-то осознанное мы не увидим или же наше "видео" будет больше похоже либо на презентацию либо на куча
+вспышек.</p>
+<p>Для достижений какой-либо анимации важен порядок и быстрота с которой меняются картинки.
+<img src="illustration.png" alt="img.png">
+Zeitgenössische Illustration (1886)</p>
+<p>Картинки сменяющие друг друга это кадры.</p>
+<p>А скорость с которой меняются эти кадры называется частотой и измеряется в кадрах в секунду (кадр/с, по англ fps - frame
+per second)</p>
+<h2>Что такое аудио</h2>
+<p>Аудио - это звук, тут уже попроще, если не углубляться в физику волн, так как звук это в свою очередь распространение
+волн в какой-либо среде (в нашем случае эта среда - воздух). Углубляться в физику данного являния нам не нужно, но можно
+почитать об этом <a href="https://ru.wikipedia.org/wiki/%D0%97%D0%B2%D1%83%D0%BA">здесь</a>.</p>
+<p>Конечно смотреть видео без звука возможно, как и делалось до 1940-ого года, но в настоящее время технологии
+прогрессировали и можно наслаждаться просмотром фильма, а не читать надписи с экрана.</p>
+<p>Как машины передают звук?</p>
+<p>Простыми словами, звук который передается по воздуху как волна просто колеблет специальное, чувствительное к колебаниям
+устройство, например, такое устройство есть в микрофоне. Эти колебания пораждают ток или напряжение определенной формы
+(а их мы можем записать в нули и единицы, если нужно сохранить звук),позже на другом девайсе, где нужно проиграть это
+напряжение есть тоже специальное устройство которое работает наоборот, напряжение или ток преобразуют в колебания,
+которые опять же передаются по воздуху.</p>
+<h2>Что такое кодек (codec)</h2>
+<p>Кодек – программный инструмент для кодирования и декодирования мультимедийной информации. И скорее всего большинство
+читателей не поймут что же такое кодек.<br>
+Для этого приведу пару примеров.</p>
+<h2>Что такое <a href="https://www.ffmpeg.org/">FFmpeg</a></h2>
+<p>Комплексное кроссплатформенное опенсорс решение для записи, преобразования и потоковой передачи аудио и видео.</p>
+<p>Пример с оф. сайта</p>
+<pre class="language-shell"><code class="language-shell">ffmpeg <span class="token parameter variable">-i</span> input.mp4 output.avi</code></pre>
+<p>Можно использовать как и утилиту командной строки, так и использовать скомпилированные библиотеки</p>
+<h2>Установка ffmpeg</h2>
+<p>FFmpeg предоставляет только исходный код. Его можно скачать с официального <a href="https://www.ffmpeg.org/">сайта</a></p>
+<p>На случай если нужны скомпилированные библиотеки, то на этот случай есть энтузиасты (ссылки на них тоже есть на
+официальном сайте на странице dowload).
+Ссылка с архивами релизов (скомпилированные библиотеки имеют пометку "-shared" в названии) ffmpeg
+для <a href="https://github.com/BtbN/FFmpeg-Builds/releases">Linux/Windows</a>, для <a href="https://evermeet.cx/ffmpeg/">MacOS</a></p>
+<p>На случай если нужны бинарники, то благо тоже есть энтузиасты.</p>
+<ul>
+<li>Для Ubuntu</li>
+</ul>
+<pre class="language-shell"><code class="language-shell"><span class="token function">sudo</span> <span class="token function">apt</span> update
+<span class="token function">sudo</span> <span class="token function">apt</span> <span class="token function">install</span> ffmpeg</code></pre>
+<ul>
+<li>Для Windows</li>
+</ul>
+<pre class="language-shell"><code class="language-shell">winget <span class="token function">install</span> ffmpeg</code></pre>
+<p>Возможно будут проблемы, потому что я запускал эту команду раза 3-4 и каждый раз установка не доходила до конца и
+зависала где-то на трети.
+Можете воспользоваться <a href="https://github.com/GyanD/codexffmpeg/releases/download/7.1/ffmpeg-7.1-full_build.zip">ссылкой</a> с
+которой команда и скачивает ffmpeg<br>
+<strong>!Важно!</strong><br>
+Нужно будет добавить путь к бинарникам в переменную <strong>Path</strong></p>
+<ul>
+<li>Для мака <a href="https://evermeet.cx/ffmpeg/">тут</a></li>
+</ul>
+<h2>Примеры использования FFmpeg</h2>
+<p>При установке FFmpeg в папке doc или на <a href="https://www.ffmpeg.org/ffmpeg.html">сайте</a> вы можете найти очень хорошую и
+полезную документацию.</p>
+<p>Конвертация медиа файла в разные форматы</p>
+<pre class="language-shell"><code class="language-shell">ffmpeg <span class="token parameter variable">-i</span> input.avi output.mp4</code></pre>
+<p>Задать новый битрейт</p>
+<pre class="language-shell"><code class="language-shell">ffmpeg <span class="token parameter variable">-i</span> input.avi output.mp4</code></pre>
+<p>Задать битрейт видео выходного файла на 64 кбит/с:</p>
+<pre class="language-shell"><code class="language-shell">ffmpeg <span class="token parameter variable">-i</span> input.avi <span class="token parameter variable">-b:v</span> 64k <span class="token parameter variable">-bufsize</span> 64k output.mp4</code></pre>
+<p>Задать частоту кадров в 24 кадр/с для выходного файла</p>
+<pre class="language-shell"><code class="language-shell">ffmpeg <span class="token parameter variable">-i</span> input.avi <span class="token parameter variable">-r</span> <span class="token number">24</span> output.mp4</code></pre>
+<p>Установить частоту кадров входного файла (действительно только для форматов RAW) на 1 кадр/с, а частоту кадров выходного
+файла на 24 кадр/с:</p>
+<pre class="language-shell"><code class="language-shell">ffmpeg <span class="token parameter variable">-r</span> <span class="token number">1</span> <span class="token parameter variable">-i</span> input.m2v <span class="token parameter variable">-r</span> <span class="token number">24</span> output.mp4</code></pre>
+<h2>Несколько источников откуда можно взять видеофайлы для расчёта метрик</h2>
+<ul>
+<li>https://www.sample-videos.com/</li>
+<li>https://file-examples.com/index.php/sample-video-files/sample-mp4-files/</li>
+<li>https://elecard.com/ru/videos</li>
+<li>http://bbb3d.renderfarming.net/download.html</li>
+</ul>
+<h2>Полезные источники</h2>
+<ul>
+<li>https://www.w3.org/2021/03/media-production-workshop/talks/qiang-fu-video-transcoding.html#intro</li>
+<li>https://github.com/leandromoreira/ffmpeg-libav-tutorial?tab=readme-ov-file#video---what-you-see</li>
+<li>https://habr.com/ru/companies/edison/articles/495614/</li>
+<li>https://github.com/FFmpeg/web</li>
+<li>https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API</li>
+</ul>
+
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialPath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
+          }
+
+          connectedCallback() {
+              this.render();
+          }
+
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialPath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/video-transcoding-in-web/about_transcoding/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
+    </script>
+  </body>
+</html>

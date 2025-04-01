@@ -28,6 +28,7 @@ def process_videos():
                     "-print_format", "json",
                     "-show_format",
                     "-show_streams",
+#                     "show_frame",
                     video_file
                 ],
                 stdout=subprocess.PIPE,

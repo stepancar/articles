@@ -1,4 +1,77 @@
-.container {
-    display: flex;
-    flex-direction: column;
+* {
+    font-family: Verdana, Arial, sans-serif;
+}
+
+body {
+    text-align: center;
+}
+
+body>div {
+    margin: 20px;
+}
+
+a:link {
+    color: #000;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #000;
+}
+
+a:hover {
+    color: #33F;
+}
+
+select {
+    font-size: 1em;
+}
+
+.final {
+    color: black;
+    padding-right: 3px;
+}
+
+.interim {
+    color: gray;
+}
+
+.info {
+    font-size: 14px;
+    color: #777;
+    display: none;
+}
+
+#headline {
+    font-size: 40px;
+    font-weight: 300;
+}
+
+#info {
+    font-size: 1.2em;
+    color: #777;
+    visibility: hidden;
+}
+
+#results {
+    font-size: 1.5em;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    padding: 15px;
+    min-height: 150px;
+}
+
+#start_button {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#start_button:focus {
+    background: red;
+}
+
+#language {
+    font-size: 1.2em;
 }

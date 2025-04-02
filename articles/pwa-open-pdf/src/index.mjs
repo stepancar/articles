@@ -20,7 +20,7 @@ const blobUriLink = document.getElementById("open-pdf-blob-uri-link");
 (async () => {
     const response = await fetch(blobUriLink.href);
     const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
     blobUriLink.href = url;
 })();
 

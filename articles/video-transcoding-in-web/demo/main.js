@@ -214,19 +214,7 @@ async function main() {
                 if (done)
                     break;
 
-                /* Pointlessly convert back and forth, just to demonstrate those
-                 * functions */
-                let frame;
-                if (value.codedWidth) {
-                    frame = await LibAVWebCodecsBridge.videoFrameToLAFrame(value);
-                    value.close();
-                    frame = LibAVWebCodecsBridge.laFrameToVideoFrame(frame);
-                } else {
-                    frame = await LibAVWebCodecsBridge.audioDataToLAFrame(value);
-                    value.close();
-                    frame = LibAVWebCodecsBridge.laFrameToAudioData(frame);
-                }
-
+                const frame = value;
                 enc.encode(frame);
                 frame.close();
             }

@@ -12,8 +12,8 @@ windowOpenLink.addEventListener("click", async (e) => {
     e.preventDefault();
     const response = await fetch(windowOpenLink.href);
     const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    window.open(url, "_blank");
+    const url = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+    window.open(url);
 });
 
 const blobUriLink = document.getElementById("open-pdf-blob-uri-link");

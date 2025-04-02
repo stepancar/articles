@@ -13,7 +13,7 @@ windowOpenLink.addEventListener("click", async (e) => {
     const response = await fetch(windowOpenLink.href);
     const blob = await response.blob();
     const url = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
-    window.open(url);
+    window.open(url, null, 'width=600,height=400');
 });
 
 const blobUriLink = document.getElementById("open-pdf-blob-uri-link");

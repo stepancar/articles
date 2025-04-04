@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Remap svg colors example
+        </title>
+    </head>
+ 
+    <body>
+        <select id="themeSelect">
+            <option value="[16711680, 65280, 255]">original</option>
+            <option value="[5785334, 2369583, 10463935]">lumen5</option>
+            <option value="[4359668, 16497669, 3450963]">google</option>
+            <option value="[1603570, 16777215, 15790837]">facebook</option>
+            <option value="[16750848, 0, 16777215]">amazon</option>
+            <option value="[2236191, 16777215, 15010068]">netflix</option>
+        </select>
+
+        <svg style="width: 100%;" id="svg" width="500" height="500" viewBox="0 0 500 500">
+            <path id="path1" d="M 0 250 Q 125 250 250 250 T 500 50" fill="transparent" />
+            <path id="path2" d="M 0 50 Q 125 350 250 250 T 500 250" fill="transparent" />
+            <path id="path3" d="M 0 150 Q 125 550 250 250 T 500 250" fill="transparent" />
+    
+            <circle r="50" fill="red" data-color-palette-index="0">
+                <animateMotion repeatCount="indefinite" dur="2s">
+                    <mpath href="#path1"/>
+                </animateMotion>
+            </circle>
+    
+            <circle r="90" fill="green" data-color-palette-index="1">
+                <animateMotion repeatCount="indefinite" dur="3s" begin="0.67s">
+                    <mpath href="#path2"/>
+                </animateMotion>
+            </circle>
+    
+            <circle r="30" fill="blue" data-color-palette-index="2">
+                <animateMotion repeatCount="indefinite" dur="2s" begin="1.33s">
+                    <mpath href="#path3"/>
+                </animateMotion>
+                <animate attributeName="r" values="30;25;30;70;50;30;15;10;15;20" dur="2s" repeatCount="indefinite" />
+            </circle>
+        </svg>
+
+        <script type="module" src="./index.mjs"></script>
+    </body>
+</html>

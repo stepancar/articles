@@ -1,0 +1,14 @@
+{
+  "name": "color-channel-mapping",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node ./build/build-html.mjs",
+    "start": "npx --yes http-server"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+  }
+}

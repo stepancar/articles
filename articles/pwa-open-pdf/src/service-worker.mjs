@@ -13,7 +13,7 @@ self.addEventListener("fetch", (event) => {
     const url = new URL(event.request.url);
 
     // Check if the request is for a PDF file under `files.stepancar.github.io`
-    if (url.hostname === "files.stepancar.github.io" && url.pathname.endsWith(".pdf")) {
+    if (url.hostname === "example.com" && url.pathname.endsWith(".pdf")) {
         const newUrl = `https://stepancar.github.io${url.pathname}`;
         console.log(`Redirecting: ${event.request.url} -> ${newUrl}`);
 

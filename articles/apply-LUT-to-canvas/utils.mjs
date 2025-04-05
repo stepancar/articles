@@ -25,34 +25,144 @@ export function getCssHexColor(color) {
 }
 
 
-export class CubeSelector extends EventTarget {
-    #value = null
-    constructor(selectElement) {
+export class LutSelector extends HTMLElement {
+    _presets = [
+        { name: "original", type: "preset" },
+        { name: "moody", type: "preset", url: "LUT/Moody-1.cube" },
+        { name: "cinematic", type: "preset", url: "LUT/Cinematic-1.cube" },
+        { name: "vintage", type: "preset", url: "LUT/VintageChrome-1.cube" },
+    ];
+
+    _selectedIndex = 1;
+
+    constructor() {
         super();
-        this.selectElement = selectElement;
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'changeTheme') {
-                const themePalette = event.data.value;
+        this.attachShadow({ mode: 'open' });
+        this.handleFileInput = this.handleFileInput.bind(this);
 
-                this.#value = themePalette;
+        this.isIframe = window.self !== window.top;
 
-                this.dispatchEvent(new Event('change'));
-            }
+        if (this.isIframe) {
+            window.addEventListener('message', (event) => {
+                if (event.data.type === 'changeLut') {
+                    const preset = event.data.value;
+                    const selectedPreset = this.presets.find(p => p.name === preset.name);
+                    if (selectedPreset) {
+                        this.dispatchEvent(new CustomEvent('change', {
+                            value: selectedPreset
+                        }));
+                    }
+                }
+            });
+        }
+
+        this.onPresetSelect = this.onPresetSelect.bind(this);
+    }
+
+    connectedCallback() {
+        this.render();
+        // Trigger initial change event with default preset
+        this.dispatchEvent(new CustomEvent('change', {
+            value: this.presets[1]
+        }));
+    }
+
+    render() {
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: ${this.isIframe ? 'none' : 'block'};
+                }
+                .preset-list {
+                    display: flex;
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
+                .preset-item {
+                    margin: 0 10px;
+                    cursor: pointer;
+                    padding: 5px;
+                }
+                .preset-item.selected {
+                    border: 2px solid black;
+                }
+                .file-input {
+                    margin: 10px;
+                }
+                .hidden {
+                    display: none;
+                }
+            </style>
+            <ul class="preset-list ${this.isIframe ? 'hidden' : ''}">
+                ${this.presets.map((preset, index) => `
+                    <li class="preset-item ${index === this._selectedIndex ? 'selected': ''}">
+                        ${preset.name}
+                    </li>
+                `).join('')}
+            </ul>
+            <div class="file-input">
+                <input type="file" accept=".cube,.3dl" id="lutFile">
+            </div>
+        `;
+
+        this.presetItems = this.shadowRoot.querySelectorAll('.preset-item');
+        this.presetItems.forEach(item => {
+            item.addEventListener('click', this.onPresetSelect.bind(this));
         });
 
-        this.selectElement.addEventListener('change', () => {
-            this.dispatchEvent(new Event('change'));
-        });
-        if (isIframe()) {
-            this.selectElement.style.display = 'none';
+        const fileInput = this.shadowRoot.querySelector('#lutFile');
+        fileInput.addEventListener('change', this.handleFileInput);
+    }
+
+    handleFileInput(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const newPreset = {
+                    name: file.name,
+                    type: 'custom',
+                    path: e.target.result,
+                    url: URL.createObjectURL(file),
+                };
+                this.presets.push(newPreset);
+                this.render();
+            };
+            reader.readAsDataURL(file);
         }
     }
+
+    set presets(value) {
+        this._presets = value;
+        this.render();
+    }
+
+    get presets() {
+        return this._presets;
+    }
+
+    onPresetSelect(event) {
+       const index = [...this.presetItems].indexOf(event.currentTarget);
+        
+       this.selectedIndex = index;
+    }
+
+    get selectedIndex() {
+        return this._selectedIndex;
+    }
+
+    set selectedIndex(value) {
+        this._selectedIndex = value;
+        this.render()
+        this.dispatchEvent(new CustomEvent('change'));
+    }
+
     get value() {
-        return this.#value;
+        return this.presets[this.selectedIndex];
     }
 }
 
-
-function isIframe() {
-    return window.self !== window.top;
-}
+customElements.define('lut-selector', LutSelector);

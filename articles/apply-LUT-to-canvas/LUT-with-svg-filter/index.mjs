@@ -1,3 +1,7 @@
+import { LutSelector } from '../utils.mjs';
+console.log('LutSelector', LutSelector);
+const lutSelector = document.querySelector('lut-selector');
+
 const image = document.getElementById("image");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d", { antialias: false });
@@ -7,14 +11,31 @@ const ctx = canvas.getContext("2d", { antialias: false });
     canvas.width = image.naturalWidth;
     canvas.height = image.naturalHeight;
 
-    const cubeFileText = await getCubeFileText("LUT/Cinematic-1.cube");
-    const lutData = parseCubeFile(cubeFileText);
-    const { redTable, greenTable, blueTable } = convert3DLutTo1DTables(lutData);
-    const lutData1D = [redTable, greenTable, blueTable];
-    const lutFilter = createSvgLUTFilterFromLutData(lutData1D);
-    ctx.filter = lutFilter;
-    ctx.drawImage(image, 0, 0);
+    await applyCurrentLUT();
 })();
+
+async function applyCurrentLUT() {
+    const lutUrl = lutSelector.value.url;
+    if (lutUrl) {
+        const lutData = await getCubeFileText(lutUrl);
+        const parsedLutData = parseCubeFile(lutData);
+        const { redTable, greenTable, blueTable } = convert3DLutTo1DTables(parsedLutData);
+        const lutData1D = [redTable, greenTable, blueTable];
+        const filterId = lutUrl.split('/').pop().split('.').shift() + `-filter`;
+        const lutFilter = getOrCreateSvgLUTFilterFromLutData(lutData1D, filterId);
+        ctx.filter = lutFilter;
+    } else {
+
+        ctx.filter = 'none';
+    }
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0);
+}
+
+lutSelector.addEventListener("change", async (event) => {
+    applyCurrentLUT();
+});
 
 async function getCubeFileText(url) {
     const response = await fetch(url);
@@ -22,7 +43,7 @@ async function getCubeFileText(url) {
     return text;
 }
 
-function createSvgLUTFilterFromLutData(lutData) {
+function getOrCreateSvgLUTFilterFromLutData(lutData, id) {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("width", "0");
     svg.setAttribute("height", "0");
@@ -31,7 +52,7 @@ function createSvgLUTFilterFromLutData(lutData) {
         "http://www.w3.org/2000/svg",
         "filter"
     );
-    filter.setAttribute("id", "lutFilter");
+    filter.setAttribute("id", id);
 
     const feComponentTransfer = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -63,7 +84,7 @@ function createSvgLUTFilterFromLutData(lutData) {
     svg.appendChild(filter);
 
     document.body.appendChild(svg);
-    return `url(#lutFilter)`;
+    return `url(#${id})`;
 }
 
 const parseCubeFile = (fileContent) => {

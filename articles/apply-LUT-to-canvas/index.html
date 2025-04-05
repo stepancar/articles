@@ -60,14 +60,22 @@ All demos are written in plain JavaScript without any build tools</p>
 <p>Let's imagine we have an image or video and we need to remap the colors in it to match a specific color palette. This is a common task in animation and video production. In previous article we discussed how to apply color channel mapping algorithm.
 The main problem with that that we would need to prepare assets in a specific way. It produces good results for simple media, but it is not very flexible.
 In this article we will explor LUT (Look-Up Table) color correction. LUT is a table that maps one color to another. It can be used to remap colors in an image or video to match a specific color palette.</p>
-<ul>
-<li>Code-based animation</li>
-<li>SVG-based animation</li>
-<li>Solid color remapping</li>
-</ul>
 <p>Let's dive into each approach.</p>
-<h2>Code-based animation</h2>
-<p>Imagine the animation is created using code that draws on a canvas. For example:</p>
+<h2>What is LUT?</h2>
+<p>LUT (Look-Up Table) is a table that maps one color to another. It can be used to remap colors in an image or video to match a specific color palette. LUTs are commonly used in video editing and color grading software to apply color correction and effects to footage.</p>
+<p>Let's look at a simple LUT data defined in a cube format. The cube format is a common format for LUTs and is used by many video editing and color grading software.</p>
+<pre class="language-c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span> <span class="token expression">Created by Adobe Lightroom plugin Export <span class="token function">LUT</span> <span class="token punctuation">(</span><span class="token number">1.18</span><span class="token number">.0</span><span class="token punctuation">)</span></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span> <span class="token directive keyword">www</span><span class="token expression"><span class="token punctuation">.</span>johnrellis<span class="token punctuation">.</span>com<span class="token operator">/</span>lightroom<span class="token operator">/</span>exportlut<span class="token punctuation">.</span>htm</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span> <span class="token expression">Preset<span class="token operator">:</span> Cinematic7</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span> <span class="token expression">Color profile<span class="token operator">:</span> <span class="token operator">/</span>Library<span class="token operator">/</span>Application Support<span class="token operator">/</span>Adobe<span class="token operator">/</span>Color<span class="token operator">/</span>Profiles<span class="token operator">/</span>Recommended<span class="token operator">/</span>AdobeRGB1998<span class="token punctuation">.</span>icc</span></span>
+LUT_3D_SIZE <span class="token number">32</span>
+DOMAIN_MIN <span class="token number">0.0</span> <span class="token number">0.0</span> <span class="token number">0.0</span>
+DOMAIN_MAX <span class="token number">1.0</span> <span class="token number">1.0</span> <span class="token number">1.0</span>
+<span class="token number">0.000000</span> <span class="token number">0.000000</span> <span class="token number">0.000000</span>
+<span class="token number">0.031159</span> <span class="token number">0.001862</span> <span class="token number">0.001190</span>
+<span class="token number">0.062837</span> <span class="token number">0.003113</span> <span class="token number">0.002167</span>
+<span class="token number">0.087587</span> <span class="token number">0.006531</span> <span class="token number">0.004181</span>
+<span class="token number">0.113863</span> <span class="token number">0.012634</span> <span class="token number">0.010315</span></code></pre>
 <pre class="language-typescript"><code class="language-typescript"><span class="token keyword">function</span> <span class="token function">drawCircle</span><span class="token punctuation">(</span>ctx<span class="token operator">:</span> CanvasRenderingContext2D<span class="token punctuation">,</span> x<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> y<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> r<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   ctx<span class="token punctuation">.</span><span class="token function">beginPath</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   ctx<span class="token punctuation">.</span>fillStyle <span class="token operator">=</span> <span class="token string">'red'</span><span class="token punctuation">;</span>

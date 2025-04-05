@@ -22,7 +22,7 @@ creationDate: 2025-04-04
 </style>
 
 <div class="global-theme-select">
-    <theme-selector></theme-selector>
+    <lut-selector><lut-selector>
 </div>
 
 

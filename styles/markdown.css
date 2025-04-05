@@ -127,7 +127,6 @@
   list-style-type: decimal;
 }
 .markdown blockquote {
-  margin: 2rem 0 2rem -35px;
   padding-left: 35px;
   border-left: 3px solid var(--color-secondary);
 }

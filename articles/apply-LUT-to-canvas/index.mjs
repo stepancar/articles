@@ -1,5 +1,4 @@
-import { PalettesSelector } from './utils.mjs';
-
+import { CubeSelector } from './utils.mjs';
 
 
 const iframes = document.querySelectorAll('iframe');
@@ -90,11 +89,6 @@ class ThemeSelector extends HTMLElement {
                 ${palettes.map((palette, index )=> `
                     <li class="theme-item ${index=== 1 ? 'selected': ''}" data-theme='${JSON.stringify(palette.colors)}' >
                         <span>${palette.name}</span>
-                        <div class="colors">
-                            ${palette.colors.map(color => `
-                                <div class="color-box" style="background-color: ${this.colorToHex(color)}"></div>
-                            `).join('')}
-                        </div>
                     </li>
                 `).join('')}
             </ul>
@@ -104,11 +98,6 @@ class ThemeSelector extends HTMLElement {
         this.themeItems.forEach(item => {
             item.addEventListener('click', this.onThemeSelect.bind(this));
         });
-    }
-
-    // Convert integer color to hex format
-    colorToHex(color) {
-        return `#${color.toString(16).padStart(6, '0')}`;
     }
 
     // Handle theme selection
@@ -135,15 +124,13 @@ customElements.define('theme-selector', ThemeSelector);
 
 
 const palettes = [
-    { name: "original", colors: [16711680, 65280, 255] },
-    { name: "lumen5", colors: [5785334, 2369583, 10463935] },
-    { name: "google", colors: [4359668, 16497669, 3450963] },
-    { name: "facebook", colors: [1603570, 16777215, 15790837] },
-    { name: "amazon", colors: [16750848, 16777215, 0] },
-    { name: "netflix", colors: [2236191, 16777215, 15010068] }
+    { name: "original" },
+    { name: "moody" },
+    { name: "cinematic" },
+    { name: "vintage chrome" },
 ];
 const themeSelector = document.querySelector('theme-selector');
-const paleteSelector = new PalettesSelector(themeSelector);
+const paleteSelector = new CubeSelector(themeSelector);
 
 paleteSelector.addEventListener('change', () => {
     document.querySelectorAll('iframe').forEach((iframe) => {

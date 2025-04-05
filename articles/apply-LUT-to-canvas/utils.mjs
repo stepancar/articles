@@ -33,7 +33,7 @@ export function getCssHexColor(color) {
 }
 
 
-export class PalettesSelector extends EventTarget {
+export class CubeSelector extends EventTarget {
     #value = null
     constructor(selectElement) {
         super();

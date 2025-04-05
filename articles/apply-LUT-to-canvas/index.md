@@ -61,14 +61,6 @@ DOMAIN_MAX 1.0 1.0 1.0
 0.113863 0.012634 0.010315
 ```
 
-```typescript
-function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  ctx.beginPath();
-  ctx.fillStyle = 'red';
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fill();
-}
-```
 
 <demo-with-playground
     file="./LUT-with-svg-filter/index.mjs"

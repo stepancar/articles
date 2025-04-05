@@ -39,16 +39,27 @@ The main problem with that that we would need to prepare assets in a specific wa
 In this article we will explor LUT (Look-Up Table) color correction. LUT is a table that maps one color to another. It can be used to remap colors in an image or video to match a specific color palette.
 
 
-- Code-based animation
-- SVG-based animation
-- Solid color remapping
-
 Let's dive into each approach.
 
-## Code-based animation
+## What is LUT?
+LUT (Look-Up Table) is a table that maps one color to another. It can be used to remap colors in an image or video to match a specific color palette. LUTs are commonly used in video editing and color grading software to apply color correction and effects to footage.
 
+Let's look at a simple LUT data defined in a cube format. The cube format is a common format for LUTs and is used by many video editing and color grading software.
 
-Imagine the animation is created using code that draws on a canvas. For example:
+```c
+# Created by Adobe Lightroom plugin Export LUT (1.18.0)
+# www.johnrellis.com/lightroom/exportlut.htm
+# Preset: Cinematic7
+# Color profile: /Library/Application Support/Adobe/Color/Profiles/Recommended/AdobeRGB1998.icc
+LUT_3D_SIZE 32
+DOMAIN_MIN 0.0 0.0 0.0
+DOMAIN_MAX 1.0 1.0 1.0
+0.000000 0.000000 0.000000
+0.031159 0.001862 0.001190
+0.062837 0.003113 0.002167
+0.087587 0.006531 0.004181
+0.113863 0.012634 0.010315
+```
 
 ```typescript
 function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {

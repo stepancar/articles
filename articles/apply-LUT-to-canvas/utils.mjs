@@ -13,14 +13,6 @@ export function hexToVector3(hex) {
     return hexToRgb(hex).map(v => v / 255);
 }
 
-function splitColorToRGB(color) {
-    const red = (color >> 16) & 0xFF;
-    const green = (color >> 8) & 0xFF;
-    const blue = color & 0xFF;
-    return [red, green, blue]
-}
-
-
 export function drawCircle(ctx, x, y, r, color) {
     ctx.beginPath();
     ctx.fillStyle = color
@@ -56,7 +48,7 @@ export class CubeSelector extends EventTarget {
         }
     }
     get value() {
-        return this.#value || JSON.parse(this.selectElement.value);
+        return this.#value;
     }
 }
 

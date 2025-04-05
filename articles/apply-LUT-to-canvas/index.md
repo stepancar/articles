@@ -62,9 +62,20 @@ DOMAIN_MAX 1.0 1.0 1.0
 ```
 
 
+## SVG filter imaplementation
+
+
 <demo-with-playground
     file="./LUT-with-svg-filter/index.mjs"
     initialPath="./LUT-with-svg-filter/index.html"
+/>
+
+
+## WebGL implementation
+
+<demo-with-playground
+    file="./LUT-with-webgl/index.mjs"
+    initialPath="./LUT-with-webgl/index.html"
 />
 
 

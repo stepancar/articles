@@ -1,5 +1,5 @@
 {
-  "name": "color-channel-mapping",
+  "name": "lut-filter",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

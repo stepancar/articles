@@ -23,6 +23,7 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addPassthroughCopy("./articles/**/*.pdf");
     eleventyConfig.addPassthroughCopy("./articles/**/*.html");
     eleventyConfig.addPassthroughCopy("./articles/**/*.mov");
+    eleventyConfig.addPassthroughCopy("./articles/**/*.cube");
     eleventyConfig.addPassthroughCopy("./styles/**/*.css");
 
     eleventyConfig.addExtension("scss", {

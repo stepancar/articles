@@ -7,6 +7,7 @@ const formats = {
     "flv": ["avc1.42403e", "mp4a.40.2", "video/x-flv"], // H.264 for video, AAC for audio
     "ts": ["avc1.42403e", "mp4a.40.2", "video/mp2t"],  // H.264 for video, AAC for audio
 };
+
 class BufferStream extends ReadableStream {
     buf = [];
     res = null;
@@ -52,7 +53,6 @@ async function translateAllStreams({
     const encoders = [];
     const encoderStreams = [];
     const encoderReaders = [];
-    const encConfigs = [];
     const chunkToPackets = [];
     const ostreams = [];
     for (let streamI = 0; streamI < istreams.length; streamI++) {
@@ -113,7 +113,6 @@ async function translateAllStreams({
             numberOfChannels: config.numberOfChannels,
             sampleRate: config.sampleRate
         };
-        encConfigs.push(encConfig);
 
         // Make the encoder
         const encStream = new BufferStream();
@@ -144,7 +143,7 @@ async function transcodeVideo({
                                   height,       // Высота видео
                               }) {
     const libav = await LibAV.LibAV({noworker: true});
-    const outputFile = "output."+containerType
+    const outputFile = "output." + containerType
 
     try {
         await libav.mkreadaheadfile("input", file);
@@ -157,7 +156,14 @@ async function transcodeVideo({
 
         // Translate all the streams
 
-        const [iToO, decoders, decoderStreams, packetToChunks, encoders, encoderStreams, encoderReaders, chunkToPackets, ostreams] = await translateAllStreams({istreams,vc,ac,width,height,libav});
+        const [iToO, decoders, decoderStreams, packetToChunks, encoders, encoderStreams, encoderReaders, chunkToPackets, ostreams] = await translateAllStreams({
+            istreams,
+            vc,
+            ac,
+            width,
+            height,
+            libav
+        });
 
         if (!decoders.length)
             throw new Error("No decodable streams found!");
@@ -210,24 +216,9 @@ async function transcodeVideo({
 
                 while (true) {
                     const {done, value} = await decRdr.read();
-                    if (done)
-                        break;
-
-                    /* Pointlessly convert back and forth, just to demonstrate those
-                     * functions */
-                    let frame;
-                    if (value.codedWidth) {
-                        frame = await LibAVWebCodecsBridge.videoFrameToLAFrame(value);
-                        value.close();
-                        frame = LibAVWebCodecsBridge.laFrameToVideoFrame(frame);
-                    } else {
-                        frame = await LibAVWebCodecsBridge.audioDataToLAFrame(value);
-                        value.close();
-                        frame = LibAVWebCodecsBridge.laFrameToAudioData(frame);
-                    }
-
-                    enc.encode(frame);
-                    frame.close();
+                    if (done) break;
+                    enc.encode(value);
+                    value.close();
                 }
 
                 await enc.flush();
@@ -302,13 +293,13 @@ async function transcodeVideo({
         // Чтение выходного файла
         return await libav.readFile(outputFile);
 
+    } catch (error) {
+        console.log(error)
     } finally {
         // Очистка
         await libav.terminate();
     }
 }
-
-
 
 
 async function main() {
@@ -333,10 +324,10 @@ async function main() {
     const outputFile = "output." + container
 
     const output = await transcodeVideo({
-        file:file,         // Входной файл (ArrayBuffer или Blob)
+        file: file,         // Входной файл (ArrayBuffer или Blob)
         containerType: container,
         vc: vc,           // Видео кодек (например, "vp09.00.10.08")
-        ac:ac,           // MIME-тип выходного файла (например, "video/webm")
+        ac: ac,           // MIME-тип выходного файла (например, "video/webm")
         width: width,        // Ширина видео
         height: height,       // Высота видео
     });

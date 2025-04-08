@@ -49,7 +49,7 @@ customLinkButtonBase64.addEventListener("click", async (e) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result);
         reader.onerror = reject;
-        reader.readAsDataURL(blob);
+        reader.readAsDataURL(new Blob([blob], { type: 'application/pdf' }));
     });
     const url = base64;
 

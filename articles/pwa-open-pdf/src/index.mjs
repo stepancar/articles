@@ -305,3 +305,21 @@ customLinkButtonCustomPreview.addEventListener("click", async (e) => {
 
     openFilePreview(windowOpenLink.href)  
 });
+
+
+(async () => {
+    const response = await fetch(windowOpenLink.href);
+    const blob = await response.blob();
+
+    // Convert blob to base64
+    const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(new Blob([blob], { type: 'application/pdf' }));
+    });
+    const url = base64;
+
+    const iframe = document.getElementById('theFrameBase64');
+    iframe.src = url;
+})();

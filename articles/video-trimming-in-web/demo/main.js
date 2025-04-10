@@ -220,13 +220,15 @@ async function main() {
                 res !== 0 &&
                 res !== libav.AVERROR_EOF)
                 break;
-
+            
+            let packetsAfterLastRegion = false;
             for (const idx in packets) {
                 if (iToO[idx] < 0)
                     continue;
                 const o = iToO[idx];
                 const dec = decoders[o];
                 const p2c = packetToChunks[o];
+                
                 for (const packet of packets[idx]) {
                     const chunk = p2c(packet, istreams[idx]);
                     while (dec.decodeQueueSize) {
@@ -234,12 +236,25 @@ async function main() {
                             dec.addEventListener("dequeue", res, {once: true});
                         });
                     }
+
+                    if (dec instanceof VideoDecoder) {
+                        const chunkTimestamp = chunk.timestamp / 1000;
+                        
+                        if (chunkTimestamp > regions[regions.length - 1][1]) {
+                            packetsAfterLastRegion = true;
+                        }
+                    }
                     dec.decode(chunk);
                 }
             }
 
             if (res === libav.AVERROR_EOF)
                 break;
+
+            if (packetsAfterLastRegion) {
+                console.log("Packets after last region, stopping demuxing.");
+                break;
+            }
         }
 
         for (let i = 0; i < decoders.length; i++) {

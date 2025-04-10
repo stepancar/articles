@@ -28,7 +28,7 @@ By default there are 4 trim regions defined with total duration of 18 seconds
 
 
 <demo-with-playground
-    file="/demo/index.html"
+    file="./demo/index.html"
     initialPath="./demo/index.html"
 />
 

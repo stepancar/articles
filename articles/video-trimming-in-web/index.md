@@ -7,7 +7,7 @@ creationDate: 2025-04-10
 
 # Video trimming in web
 
-Download [this video](https://stepancar.github.io/articles/articles/video-trimming-in-web/test_videos/bbb_sunflower_1min_1080p_30fps_normal.mp4) for testing
+Download [this video](https://github.com/stepancar/articles/raw/refs/heads/main/articles/video-trimming-in-web/test_videos/bbb_sunflower_1min_1080p_30fps_normal.mp4?download=) for testing
 
 
 Edit trim regions

@@ -1,11 +1,10 @@
 ---
 layout: article.njk
-title: video trimming in web
-shortDescription: This article explains how trimming video in web
+title: Video trimming in web
+shortDescription: This article explains how trim video in web
 creationDate: 2025-04-10
 ---
 
-# Video trimming in web
 
 Download [this video](https://github.com/stepancar/articles/raw/refs/heads/main/articles/video-trimming-in-web/test_videos/bbb_sunflower_1min_1080p_30fps_normal.mp4?download=) for testing
 

@@ -41,6 +41,9 @@
   border-bottom-color: var(--color-primary);
   outline: none;
 }
+.markdown .shortDescription {
+  text-align: center;
+}
 .markdown img,
 .markdown video {
   display: block;

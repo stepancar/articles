@@ -106,20 +106,18 @@ class Transcoder {
             const decoderStream = new this.#BufferStream();
             const decoder = new tools.Decoder({
                 output: frame => {
-                    console.count("frame decoded");
                     decoderStream.push(frame);
                 },
-                error: error => alert(`Decoder ${JSON.stringify(config)}:\n${error}`)
+                error: error => console.error(`Decoder ${JSON.stringify(config)}:\n${error}`)
             });
             decoder.configure(config);
 
             const encoderStream = new this.#BufferStream();
             const encoder = new tools.Encoder({
                 output: (chunk, metadata) => {
-                    console.count("chunk encoded");
                     encoderStream.push({ chunk, metadata });
                 },
-                error: error => alert(`Encoder ${JSON.stringify(encConfig)}:\n${error}`)
+                error: error => console.error(`Encoder ${JSON.stringify(encConfig)}:\n${error}`)
             });
             encoder.configure(encConfig);
 
@@ -177,7 +175,6 @@ class Transcoder {
             while (true) {
                 const { done, value } = await decRdr.read();
                 if (done) break;
-                // await new Promise(resolve => setTimeout(resolve, 500));
                 enc.encode(value);
                 value.close();
             }
@@ -264,10 +261,13 @@ class Transcoder {
         } catch (error) {
             console.error("Transcoding error:", error);
             throw error;
-        } finally {
-            await this.libav.terminate();
         }
     }
+
+    async terminate(){
+        await this.libav.terminate();
+    }
+
 }
 
 async function main() {
@@ -296,18 +296,22 @@ async function main() {
         height: height,
         libav: libav
     });
+    try{
 
-    const output = await transcoder.transcode();
+        const output = await transcoder.transcode();
 
-    const blob = new Blob([output.buffer], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const downloadLink = document.createElement("a");
-    downloadLink.href = url;
-    downloadLink.download = `output.${container}`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-    URL.revokeObjectURL(url);
+        const blob = new Blob([output.buffer], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = `output.${container}`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
+    }finally {
+        await transcoder.terminate();
+    }
 }
 
 main();

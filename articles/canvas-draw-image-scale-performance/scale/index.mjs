@@ -97,9 +97,9 @@ function drawImageWithScale() {
     for (let i = 0; i < iterationsCount; i++) {
         let x = Math.random() * canvas1.width;
         let y = Math.random() * canvas1.height;
-        let scale = Math.random() * (rangeTo - rangeFrom) + rangeFrom;
+        let scaleParameter = Math.random() * (rangeTo - rangeFrom) + rangeFrom;
         ctx1.resetTransform();
-        ctx1.scale(scale, scale);
+        ctx1.scale(scaleParameter, scaleParameter);
         ctx1.drawImage(image, x, y);
     }
     const end = performance.now();
@@ -127,11 +127,11 @@ function addNewMeasurements(
 
     cell0.innerHTML = cnt++;
     cell1.innerHTML = filename;
-    cell2.innerHTML = drawImageWithoutScaleTime;
-    cell3.innerHTML = drawImageWithScaleTime;
+    cell2.innerHTML = image.width + 'x' + image.height;
+    cell3.innerHTML = '[' + rangeFrom + ';' + rangeTo + ')';
     cell4.innerHTML = iterationsCount;
     cell5.innerHTML = canvas1.width + 'x' + canvas1.height;
     cell6.innerHTML = selectSmoothingQuality;
-    cell7.innerHTML = image.width + 'x' + image.height;
-    cell8.innerHTML = '[' + rangeFrom + ';' + rangeTo + ')';
+    cell7.innerHTML = drawImageWithoutScaleTime;
+    cell8.innerHTML = drawImageWithScaleTime;
 }

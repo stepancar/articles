@@ -58,11 +58,16 @@
         <option value="854x480">FWVGA (854x480)</option>
         <option value="320x240">QVGA (320x240)</option>
     </select><br/>
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+        <div id="status-text">Waiting...</div>
+        <div id="stage-text"></div>
+    </div>
 
     <label for="file">Input file:&nbsp;</label>
     <input type="file" id="file"/>
 </div>
 
-<script type="text/javascript" src="main.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>

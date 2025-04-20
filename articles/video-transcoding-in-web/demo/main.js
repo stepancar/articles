@@ -1,9 +1,9 @@
 const formats = {
     "webm": ["vp09.00.10.08.03.1.1.1.0", "opus", "video/webm"],
     "mp4": ["hvc1.1.6.L123.B0", "mp4a.40.2", "video/mp4"],
-    "mkv": ["avc1.42403e", "mp4a.40.2", "video/x-matroska"],
+    "mkv": ["avc1.42403e", "opus", "video/x-matroska"],
     "avi": ["mpeg4", "pcm_s16le", "video/x-msvideo"],
-    "mov": ["avc1.42403e", "mp4a.40.2", "video/quicktime"],
+    "mov": ["avc1.42403e", "pcm_s16le", "video/quicktime"],
     "flv": ["avc1.42403e", "mp4a.40.2", "video/x-flv"],
     "ts": ["avc1.42403e", "mp4a.40.2", "video/mp2t"],
 };
@@ -12,12 +12,17 @@ class Transcoder {
     #BufferStream = class extends ReadableStream {
         buf = [];
         res = null;
+        closed = false;
 
         constructor() {
             super({
                 pull: async (controller) => {
-                    while (!this.buf.length) {
+                    while (!this.buf.length && !this.closed) {
                         await new Promise(res => this.res = res);
+                    }
+                    if (this.closed) {
+                        controller.close();
+                        return;
                     }
                     const next = this.buf.shift();
                     if (next !== null) controller.enqueue(next);
@@ -27,7 +32,17 @@ class Transcoder {
         }
 
         push(next) {
+            if (this.closed) return;
             this.buf.push(next);
+            if (this.res) {
+                const res = this.res;
+                this.res = null;
+                res();
+            }
+        }
+
+        close() {
+            this.closed = true;
             if (this.res) {
                 const res = this.res;
                 this.res = null;
@@ -36,15 +51,8 @@ class Transcoder {
         }
     };
 
-    constructor({ file, containerType, vc, ac, width, height, libav }) {
-        this.file = file;
-        this.containerType = containerType;
-        this.vc = vc;
-        this.ac = ac;
-        this.width = width;
-        this.height = height;
-        this.libav = libav;
-        this.outputFile = `output.${containerType}`;
+    constructor({libav}) {
+        this.libav = libav; // Единственное поле класса
     }
 
     async #getCodecTools(codecType) {
@@ -68,20 +76,20 @@ class Transcoder {
         }[codecType];
     }
 
-    async #setupStreams() {
-        this.iToO = [];
-        this.decoders = [];
-        this.decoderStreams = [];
-        this.packetToChunks = [];
-        this.encoders = [];
-        this.encoderStreams = [];
-        this.encoderReaders = [];
-        this.chunkToPackets = [];
-        this.ostreams = [];
+    async #setupStreams({istreams, vc, ac, width, height}) {
+        const iToO = [];
+        const decoders = [];
+        const decoderStreams = [];
+        const packetToChunks = [];
+        const encoders = [];
+        const encoderStreams = [];
+        const encoderReaders = [];
+        const chunkToPackets = [];
+        const ostreams = [];
 
-        for (let streamI = 0; streamI < this.istreams.length; streamI++) {
-            const istream = this.istreams[streamI];
-            this.iToO.push(-1);
+        for (let streamI = 0; streamI < istreams.length; streamI++) {
+            const istream = istreams[streamI];
+            iToO.push(-1);
 
             const tools = await this.#getCodecTools(istream.codec_type);
             if (!tools) continue;
@@ -90,15 +98,16 @@ class Transcoder {
             let supported;
             try {
                 supported = await tools.Decoder.isConfigSupported(config);
-            } catch (ex) {}
+            } catch (ex) {
+            }
 
             if (!supported || !supported.supported) continue;
 
-            this.iToO[streamI] = this.decoders.length;
+            iToO[streamI] = decoders.length;
             const encConfig = {
-                codec: istream.codec_type === this.libav.AVMEDIA_TYPE_VIDEO ? this.vc : this.ac,
-                width: this.width,
-                height: this.height,
+                codec: istream.codec_type === this.libav.AVMEDIA_TYPE_VIDEO ? vc : ac,
+                width: width,
+                height: height,
                 numberOfChannels: config.numberOfChannels,
                 sampleRate: config.sampleRate
             };
@@ -106,51 +115,64 @@ class Transcoder {
             const decoderStream = new this.#BufferStream();
             const decoder = new tools.Decoder({
                 output: frame => {
-                    decoderStream.push(frame);
+                    try {
+                        decoderStream.push(frame);
+                    } catch (e) {
+                        console.error('Decoder output error:', e);
+                    }
                 },
-                error: error => console.error(`Decoder ${JSON.stringify(config)}:\n${error}`)
+                error: error => console.error(`Decoder error: ${error}`)
             });
             decoder.configure(config);
 
             const encoderStream = new this.#BufferStream();
             const encoder = new tools.Encoder({
                 output: (chunk, metadata) => {
-                    encoderStream.push({ chunk, metadata });
+                    try {
+                        encoderStream.push({chunk, metadata});
+                    } catch (e) {
+                        console.error('Encoder output error:', e);
+                    }
                 },
-                error: error => console.error(`Encoder ${JSON.stringify(encConfig)}:\n${error}`)
+                error: error => console.error(`Encoder error: ${error}`)
             });
             encoder.configure(encConfig);
 
-            this.decoders.push(decoder);
-            this.decoderStreams.push(decoderStream);
-            this.packetToChunks.push(tools.packetToChunk);
-            this.encoders.push(encoder);
-            this.encoderStreams.push(encoderStream);
-            this.encoderReaders.push(encoderStream.getReader());
-            this.chunkToPackets.push(tools.chunkToPacket);
-            this.ostreams.push(await tools.configToStream(this.libav, encConfig));
+            decoders.push(decoder);
+            decoderStreams.push(decoderStream);
+            packetToChunks.push(tools.packetToChunk);
+            encoders.push(encoder);
+            encoderStreams.push(encoderStream);
+            encoderReaders.push(encoderStream.getReader());
+            chunkToPackets.push(tools.chunkToPacket);
+            ostreams.push(await tools.configToStream(this.libav, encConfig));
         }
 
-        if (!this.decoders.length) {
-            throw new Error("No decodable streams found!");
-        }
+        return {
+            iToO, decoders, decoderStreams, packetToChunks,
+            encoders, encoderStreams, encoderReaders, chunkToPackets, ostreams
+        };
     }
 
-    async #demux() {
+    async #demux({ifc, rpkt, iToO, istreams, decoders, decoderStreams, packetToChunks}) {
+
         while (true) {
-            const [res, packets] = await this.libav.ff_read_frame_multi(this.ifc, this.rpkt, { limit: 1 });
-            if (res !== -this.libav.EAGAIN && res !== 0 && res !== this.libav.AVERROR_EOF) break;
+            const [res, packets] = await this.libav.ff_read_frame_multi(ifc, rpkt, {limit: 1});
+            if (res !== -this.libav.EAGAIN && res !== 0 && res !== this.libav.AVERROR_EOF) {
+                console.error('Demux error:', res);
+                break;
+            }
 
             for (const idx in packets) {
-                if (this.iToO[idx] < 0) continue;
-                const o = this.iToO[idx];
-                const dec = this.decoders[o];
-                const p2c = this.packetToChunks[o];
+                if (iToO[idx] < 0) continue;
+                const o = iToO[idx];
+                const dec = decoders[o];
+                const p2c = packetToChunks[o];
                 for (const packet of packets[idx]) {
-                    const chunk = p2c(packet, this.istreams[idx]);
+                    const chunk = p2c(packet, istreams[idx]);
                     while (dec.decodeQueueSize) {
                         await new Promise(res => {
-                            dec.addEventListener("dequeue", res, { once: true });
+                            dec.addEventListener("dequeue", res, {once: true});
                         });
                     }
                     dec.decode(chunk);
@@ -159,21 +181,20 @@ class Transcoder {
 
             if (res === this.libav.AVERROR_EOF) break;
         }
-
-        for (let i = 0; i < this.decoders.length; i++) {
-            await this.decoders[i].flush();
-            this.decoders[i].close();
-            this.decoderStreams[i].push(null);
+        for (let i = 0; i < decoders.length; i++) {
+            await decoders[i].flush();
+            decoders[i].close();
+            decoderStreams[i].push(null);
         }
     }
 
-    async #encode() {
-        const encodePromises = this.decoders.map(async (_, i) => {
-            const decRdr = this.decoderStreams[i].getReader();
-            const enc = this.encoders[i];
+    async #encode({decoders, decoderStreams, encoders, encoderStreams}) {
+        const encodePromises = decoders.map(async (_, i) => {
+            const decRdr = decoderStreams[i].getReader();
+            const enc = encoders[i];
 
             while (true) {
-                const { done, value } = await decRdr.read();
+                const {done, value} = await decRdr.read();
                 if (done) break;
                 enc.encode(value);
                 value.close();
@@ -181,137 +202,181 @@ class Transcoder {
 
             await enc.flush();
             enc.close();
-            this.encoderStreams[i].push(null);
+            encoderStreams[i].push(null);
         });
 
         return Promise.all(encodePromises);
     }
 
-    async #getStarterPackets() {
+    async #getStarterPackets({encoderReaders, chunkToPackets, ostreams}) {
         const starterPackets = [];
-        for (let i = 0; i < this.encoderReaders.length; i++) {
-            const { done, value } = await this.encoderReaders[i].read();
-            if (done) continue;
-            starterPackets.push(await this.chunkToPackets[i](
-                this.libav, value.chunk, value.metadata, this.ostreams[i], i));
+        for (let i = 0; i < encoderReaders.length; i++) {
+            try {
+                const {done, value} = await encoderReaders[i].read();
+                if (done) continue;
+                starterPackets.push(await chunkToPackets[i](
+                    this.libav, value.chunk, value.metadata, ostreams[i], i));
+            } catch (e) {
+                console.error('Starter packet error:', e);
+            }
         }
         return starterPackets;
     }
 
-    async #mux(starterPackets) {
-        [this.ofc, , this.pb] = await this.libav.ff_init_muxer({
-            filename: this.outputFile,
+    async #mux({starterPackets, ostreams, encoderReaders, chunkToPackets, outputFile, wpkt}) {
+        const [ofc, , pb] = await this.libav.ff_init_muxer({
+            filename: outputFile,
             open: true,
             codecpars: true
-        }, this.ostreams);
-        await this.libav.avformat_write_header(this.ofc, 0);
-        await this.libav.ff_write_multi(this.ofc, this.wpkt, starterPackets);
+        }, ostreams);
+        await this.libav.avformat_write_header(ofc, 0);
+        await this.libav.ff_write_multi(ofc, wpkt, starterPackets);
 
         let writePromise = Promise.resolve();
-        for (let i = 0; i < this.encoderReaders.length; i++) {
+        for (let i = 0; i < encoderReaders.length; i++) {
             (async () => {
-                const encRdr = this.encoderReaders[i];
-                const chunkToPacket = this.chunkToPackets[i];
-                const ostream = this.ostreams[i];
+                const encRdr = encoderReaders[i];
+                const chunkToPacket = chunkToPackets[i];
+                const ostream = ostreams[i];
                 while (true) {
-                    const { done, value } = await encRdr.read();
+                    const {done, value} = await encRdr.read();
                     if (done) break;
                     writePromise = writePromise.then(async () => {
                         const packet = await chunkToPacket(
                             this.libav, value.chunk, value.metadata, ostream, i);
-                        await this.libav.ff_write_multi(this.ofc, this.wpkt, [packet]);
+                        await this.libav.ff_write_multi(ofc, wpkt, [packet]);
                     });
                 }
             })();
         }
-        return writePromise;
+
+        return {ofc, pb, writePromise};
     }
 
-    async #cleanup() {
-        await this.libav.av_write_trailer(this.ofc);
-        await this.libav.avformat_close_input_js(this.ifc);
-        await this.libav.ff_free_muxer(this.ofc, this.pb);
-        await this.libav.av_packet_free(this.rpkt);
-        await this.libav.av_packet_free(this.wpkt);
-    }
-
-    async transcode() {
+    async #cleanup({ifc, ofc, pb, rpkt, wpkt}) {
         try {
-            await this.libav.mkreadaheadfile("input", this.file);
-            [this.ifc, this.istreams] = await this.libav.ff_init_demuxer_file("input");
-            [this.rpkt, this.wpkt] = await Promise.all([
+            await this.libav.av_write_trailer(ofc);
+            await this.libav.avformat_close_input_js(ifc);
+            await this.libav.ff_free_muxer(ofc, pb);
+            await this.libav.av_packet_free(rpkt);
+            await this.libav.av_packet_free(wpkt);
+        } catch (e) {
+            console.error('Cleanup error:', e);
+        }
+    }
+
+    async transcode(file, {containerType, vc, ac, width, height}) {
+        const rand_id = Math.random().toString(36).substr(2, 9);
+        const input_libav = `input_${rand_id}`;
+        const output_libav = `output_${rand_id}.${containerType}`;
+
+        try {
+            await this.libav.mkreadaheadfile(input_libav, file);
+            const [ifc, istreams] = await this.libav.ff_init_demuxer_file(input_libav);
+            const [rpkt, wpkt] = await Promise.all([
                 this.libav.av_packet_alloc(),
                 this.libav.av_packet_alloc()
             ]);
 
-            await this.#setupStreams();
+            const streams = await this.#setupStreams({istreams, vc, ac, width, height});
+            if (!streams.decoders.length) throw new Error("No decodable streams found!");
 
-            const demuxPromise = this.#demux();
-            const encodePromise = this.#encode();
+            const demuxPromise = this.#demux({
+                ifc, rpkt,
+                iToO: streams.iToO,
+                istreams,
+                decoders: streams.decoders,
+                decoderStreams: streams.decoderStreams,
+                packetToChunks: streams.packetToChunks
+            });
 
-            const starterPackets = await this.#getStarterPackets();
-            const writePromise = await this.#mux(starterPackets);
+            const encodePromise = this.#encode({
+                decoders: streams.decoders,
+                decoderStreams: streams.decoderStreams,
+                encoders: streams.encoders,
+                encoderStreams: streams.encoderStreams
+            });
+
+            const starterPackets = await this.#getStarterPackets({
+                encoderReaders: streams.encoderReaders,
+                chunkToPackets: streams.chunkToPackets,
+                ostreams: streams.ostreams
+            });
+
+            const {ofc, pb, writePromise} = await this.#mux({
+                starterPackets: starterPackets,
+                ostreams: streams.ostreams,
+                encoderReaders: streams.encoderReaders,
+                chunkToPackets: streams.chunkToPackets,
+                outputFile: output_libav,
+                wpkt
+            });
 
             await Promise.all([demuxPromise, encodePromise]);
             await writePromise;
+            await this.#cleanup({ifc, ofc, pb, rpkt, wpkt});
 
-            await this.#cleanup();
-
-            return await this.libav.readFile(this.outputFile);
+            return await this.libav.readFile(output_libav);
         } catch (error) {
             console.error("Transcoding error:", error);
             throw error;
+        } finally {
+            await this.libav.unlink(input_libav).catch(() => {
+            });
+            await this.libav.unlink(output_libav).catch(() => {
+            });
         }
     }
-
-    async terminate(){
-        await this.libav.terminate();
-    }
-
 }
+
 
 async function main() {
     const fileBox = document.getElementById("file");
     await new Promise(res => {
-        fileBox.onchange = function() {
+        fileBox.onchange = function () {
             if (fileBox.files.length) res();
         };
     });
     const file = fileBox.files[0];
     document.getElementById("input-box").style.display = "none";
 
-    const container = document.getElementById("container").value;
+    const containerType = document.getElementById("container").value;
     const resolution = document.getElementById("resolution").value.split("x");
-    const [vc, ac, mimeType] = formats[container];
+    const [vc, ac, mimeType] = formats[containerType];
     const width = parseInt(resolution[0]);
     const height = parseInt(resolution[1]);
 
-    const libav = await LibAV.LibAV({ noworker: true });
+    const libav = await LibAV.LibAV({noworker: true});
     const transcoder = new Transcoder({
-        file: file,
-        containerType: container,
-        vc: vc,
-        ac: ac,
-        width: width,
-        height: height,
         libav: libav
     });
-    try{
-
-        const output = await transcoder.transcode();
-
-        const blob = new Blob([output.buffer], { type: mimeType });
+    try {
+        console.time("transcode")
+        let output = await transcoder.transcode(file,
+            {
+                containerType,
+                vc, ac,
+                width,
+                height
+            });
+        console.timeEnd("transcode")
+        const blob = new Blob([output.buffer], {type: mimeType});
         const url = URL.createObjectURL(blob);
         const downloadLink = document.createElement("a");
         downloadLink.href = url;
-        downloadLink.download = `output.${container}`;
+        downloadLink.download = `output.${containerType}`;
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
         URL.revokeObjectURL(url);
-    }finally {
-        await transcoder.terminate();
+    } finally {
+        await libav.terminate();
     }
 }
 
 main();
+
+
+
+
+

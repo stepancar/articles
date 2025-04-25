@@ -30,6 +30,10 @@
         }
     }
 
+    .shortDescription {
+        text-align: center;
+    }
+
     /* Images */
     img,
     video {
@@ -126,7 +130,6 @@
     }
 
     blockquote {
-        margin: 2rem 0 2rem -35px;
         padding-left: 35px;
         border-left: 3px solid var(--color-secondary);
     }
@@ -173,11 +176,6 @@
         padding: 2px 4px;
         margin: 0 2px;
         font-size: 75%;
-    }
-
-    /* Signup Form */
-    .signup {
-        box-shadow: 14px 14px 30px -10px rgba(0, 0, 0, 0.1);
     }
 
     /* Extends */

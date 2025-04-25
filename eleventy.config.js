@@ -17,9 +17,13 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addPassthroughCopy("./articles/**/*.wasm");
     eleventyConfig.addPassthroughCopy("./articles/**/*.css");
     eleventyConfig.addPassthroughCopy("./articles/**/*.png");
+    eleventyConfig.addPassthroughCopy("./articles/**/*.jpeg");
     eleventyConfig.addPassthroughCopy("./articles/**/*.jpg");
     eleventyConfig.addPassthroughCopy("./articles/**/*.mp4");
+    eleventyConfig.addPassthroughCopy("./articles/**/*.pdf");
+    eleventyConfig.addPassthroughCopy("./articles/**/*.html");
     eleventyConfig.addPassthroughCopy("./articles/**/*.mov");
+    eleventyConfig.addPassthroughCopy("./articles/**/*.cube");
     eleventyConfig.addPassthroughCopy("./styles/**/*.css");
 
     eleventyConfig.addExtension("scss", {

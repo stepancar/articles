@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1, initial-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>External link opening in PWA on IOS</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+  <div class="container">
+    <h1>External link opening in PWA on IOS</h1>
+
+    <input id="url" type="url" value="https://example.com" />
+    <a href="https://example.com" id="regularLink">link which opens in in-app browser</a>
+    <a href="https://example.com" id="customLink">link which opens safari</a>
+  </div>
+
+  <script src="./index.mjs" type="module"></script>
+  <script type="text/javascript">
+    const regularLink = document.getElementById('regularLink');
+    const customLink = document.getElementById('customLink');
+    const url = document.getElementById('url');
+    url.onchange = (e) => {
+      regularLink.href = e.target.value;
+      customLink.href = e.target.value;
+    }
+    customLink.onclick = (e) => {
+      e.preventDefault();
+      window.location = `x-safari-${e.target.href}`;
+    }
+  </script>
+</body>
+</html>

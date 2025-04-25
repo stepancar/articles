@@ -4,7 +4,7 @@ const formats = {
     "webm": ["vp09.00.10.08.03.1.1.1.0", "opus", "video/webm"],
     "mp4": ["hvc1.1.6.L123.B0", "mp4a.40.2", "video/mp4"],
     "mkv": ["avc1.42403e", "opus", "video/x-matroska"],
-    "avi": ["mpeg4", "pcm_s16le", "video/x-msvideo"],
+    "avi": ["mpeg4", "mp4a.40.2", "video/x-msvideo"],
     "mov": ["avc1.42403e", "mp4a.40.2", "video/quicktime"],
     "flv": ["avc1.42403e", "mp4a.40.2", "video/x-flv"],
     "ts": ["avc1.42403e", "mp4a.40.2", "video/mp2t"],
@@ -53,13 +53,18 @@ async function main() {
         document.getElementById("progress-status").textContent = "Initializing transcoder...";
 
         const libav = await LibAV.LibAV({noworker: true});
-        const transcoder = new Transcoder({ libav });
+        let transcoder = new Transcoder({ libav });
+        window.addEventListener('beforeunload', async () => {
+            if (libav) await libav.terminate();
+            transcoder = null
+        });
+
 
         transcoder.addEventListener('progress', (e) => {
             const { stage, percent, processedDuration, totalDuration, error } = e.detail;
 
-            document.querySelector(".progress-percent").textContent = `${percent || 0}%`;
-            document.querySelector(".progress-bar").style.width = `${percent || 0}%`;
+            document.querySelector(".progress-percent").textContent = `${percent.toFixed(2) || 0}%`;
+            document.querySelector(".progress-bar").style.width = `${percent.toFixed(2) || 0}%`;
 
             if (stage === 'start') {
                 document.getElementById("progress-time").textContent =
@@ -96,11 +101,10 @@ async function main() {
             });
 
             resultBlobUrl = URL.createObjectURL(new Blob([output.buffer], {type: mimeType}));
-            console.timeEnd("transcode");
         } catch (error) {
             console.error("Transcoding failed:", error);
         } finally {
-            await libav.terminate();
+            console.timeEnd("transcode")
         }
     });
 }

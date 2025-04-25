@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Canvas Draw Image Scale Performance</title>
+        <style>
+            canvas {
+                border: 1px solid black;
+                height: 200px;
+            }
+            table {
+            	width: 50%;
+            	margin-bottom: 20px;
+            	border: 1px solid #dddddd;
+            	border-collapse: collapse; 
+            }
+            table th {
+            	font-weight: bold;
+            	padding: 5px;
+            	background: #efefef;
+            	border: 1px solid #dddddd;
+            }
+            table td {
+            	border: 1px solid #dddddd;
+            	padding: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Canvas Draw Image Scale Performance</h1>
+        <canvas id="canvas-1"></canvas>
+        <canvas id="canvas-2"></canvas>
+        <table class="result-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>filename</th>
+                    <th>image size</th>
+                    <th>scale</th>
+                    <th>iterations</th>
+                    <th>canvas size</th>
+                    <th>smoothing quality</th>
+                    <th>drawImage without scale</th>
+                    <th>drawImage with scale</th>
+                </tr>
+            </thead>
+        </table>
+        <div>
+            <label for="pic-url">enter the URL of an image:</label>
+            <input type="url" id="pic-url" value="https://upload.wikimedia.org/wikipedia/ru/thumb/2/24/Lenna.png/330px-Lenna.png"/><br>
+
+            <label for="iterations-cnt">enter count of iterations</label>
+            <input type="number" id="iterations-cnt" value="10000"><br>
+
+            <label for="canvas-height">enter the height of the canvas</label>
+            <input type="number" id="canvas-height" value="1080"><br>
+
+            <label for="canvas-width">enter the width of the canvas</label>
+            <input type="number" id="canvas-width" value="1920"><br>
+            
+            <label for="smoothing-quality">Choose imageSmoothingQuality:</label>
+            <select id="smoothing-quality">
+                <option value="low">low</option>
+                <option value="medium">medium</option>
+                <option value="high">high</option>
+            </select></br>
+
+            <label for="range-from">Random scale range from</label>
+            <input type="number" id="range-from" value="0.9"> 
+            <label for="range-to">to</label>
+            <input type="number" id="range-to" value="1.1"><br>
+
+            <button id="image-process">Process the image</button>
+        </div>
+        <script src="index.mjs"></script>
+    </body>
+</html>

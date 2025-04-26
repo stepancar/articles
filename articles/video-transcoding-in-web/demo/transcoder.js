@@ -89,15 +89,16 @@ export class Transcoder extends EventTarget {
             let supported;
             try {
                 supported = await tools.Decoder.isConfigSupported(config);
-            } catch (ex) {}
+            } catch (ex) {
+            }
 
             if (!supported || !supported.supported) continue;
 
             iToO[streamI] = decoders.length;
             const encConfig = {
                 codec: istream.codec_type === this.libav.AVMEDIA_TYPE_VIDEO ? vc : ac,
-                width: width,
-                height: height,
+                width: !width ? config.codedWidth : width,
+                height: !height ? config.codedHeight : height,
                 numberOfChannels: config.numberOfChannels,
                 sampleRate: config.sampleRate
             };
@@ -113,7 +114,7 @@ export class Transcoder extends EventTarget {
                 },
                 error: error => {
                     console.error(`Decoder error: ${error}`);
-                    this.dispatchEvent(new CustomEvent('error', { detail: { error } }));
+                    this.dispatchEvent(new CustomEvent('error', {detail: {error}}));
                     decoderStream.push(null);
                 }
             });
@@ -125,12 +126,12 @@ export class Transcoder extends EventTarget {
                         encoderStream.push({chunk, metadata});
                     } catch (e) {
                         console.error('Encoder output error:', e);
-                        this.dispatchEvent(new CustomEvent('error', { detail: { error: e } }));
+                        this.dispatchEvent(new CustomEvent('error', {detail: {error: e}}));
                     }
                 },
                 error: error => {
                     console.error(`Encoder error: ${error}`);
-                    this.dispatchEvent(new CustomEvent('error', { detail: { error } }));
+                    this.dispatchEvent(new CustomEvent('error', {detail: {error}}));
                     encoderStream.push(null);
                 }
             });
@@ -369,8 +370,10 @@ export class Transcoder extends EventTarget {
             console.error("Transcoding error:", error);
             throw error;
         } finally {
-            await this.libav.unlink(input_libav).catch(() => {});
-            await this.libav.unlink(output_libav).catch(() => {});
+            await this.libav.unlink(input_libav).catch(() => {
+            });
+            await this.libav.unlink(output_libav).catch(() => {
+            });
         }
     }
 }

@@ -69,7 +69,7 @@ async function main() {
 
         const containerType = document.getElementById("container").value;
         const resolution = document.getElementById("resolution").value.split("x");
-        const save_resolution = resolution[0] === "src";
+        const save_resolution = resolution[0] === "orig";
         const [vc, ac, mimeType] = formats[containerType];
         let width, height;
         if (!save_resolution) {

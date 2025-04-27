@@ -69,18 +69,18 @@ async function main() {
 
         const file = fileInput.files[0];
 
-        let {inp_width, inp_height} = await get_input_resolution(file);
+        const {inp_width, inp_height} = await get_input_resolution(file);
 
         const containerType = document.getElementById("container").value;
         const resolution = document.getElementById("resolution").value.split("x");
-        const save_resolution = resolution[0] === "src";
+        const save_resolution = resolution[0] === "orig";
         const [vc, ac, mimeType] = formats[containerType];
         let width = inp_width, height = inp_height;
         if (!save_resolution) {
             width = parseInt(resolution[0]);
             height = parseInt(resolution[1]);
         }
-        if (is_aspect_save_checked && !save_resolution) {
+        if (is_aspect_save_checked) {
             const aspect_ration = inp_width / inp_height;
             height = Math.round(width / aspect_ration);
         }

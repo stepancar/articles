@@ -17,30 +17,6 @@ function formatTime(seconds) {
     return date.toISOString().substr(11, 8);
 }
 
-async function get_input_resolution(file) {
-    const videoElement = document.createElement('video');
-    const videoUrl = URL.createObjectURL(file);
-
-    // Устанавливаем источник видео
-    videoElement.src = videoUrl;
-
-    await new Promise((resolve, reject) => {
-        videoElement.onloadedmetadata = resolve;
-        videoElement.onerror = reject;
-    });
-
-    const inp_width = videoElement.videoWidth;
-    const inp_height = videoElement.videoHeight;
-    console.log("asdsdd", inp_width, inp_height)
-
-
-    videoElement.pause();
-    videoElement.src = '';
-
-    URL.revokeObjectURL(videoUrl);
-    return {inp_width, inp_height}
-}
-
 async function main() {
     const fileInput = document.getElementById("file");
     const inputBox = document.getElementById("input-box");
@@ -66,8 +42,6 @@ async function main() {
         progressContainer.style.display = "block";
 
         const file = fileInput.files[0];
-
-        let {inp_width, inp_height} = await get_input_resolution(file);
 
         const containerType = document.getElementById("container").value;
         const resolution = document.getElementById("resolution").value.split("x");

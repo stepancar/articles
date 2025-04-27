@@ -62,8 +62,6 @@ async function main() {
 
     fileInput.addEventListener('change', async function () {
         if (!fileInput.files.length) return;
-        const aspectRatioCheckbox = document.getElementById('aspect-ratio');
-        const is_aspect_save_checked = aspectRatioCheckbox.checked; // true или false
         inputBox.style.display = "none";
         progressContainer.style.display = "block";
 
@@ -73,17 +71,10 @@ async function main() {
 
         const containerType = document.getElementById("container").value;
         const resolution = document.getElementById("resolution").value.split("x");
-        const save_resolution = resolution[0] === "src";
         const [vc, ac, mimeType] = formats[containerType];
-        let width = inp_width, height = inp_height;
-        if (!save_resolution) {
-            width = parseInt(resolution[0]);
-            height = parseInt(resolution[1]);
-        }
-        if (is_aspect_save_checked && !save_resolution) {
-            const aspect_ration = inp_width / inp_height;
-            height = Math.round(width / aspect_ration);
-        }
+        const width = parseInt(resolution[0]);
+        const height = parseInt(resolution[1]);
+
         document.getElementById("progress-resolution").textContent = `${width}x${height}`;
         document.getElementById("progress-status").textContent = "Initializing transcoder...";
 

@@ -96,23 +96,28 @@ async function main() {
 
 
         transcoder.addEventListener('progress', (e) => {
-            const {stage, percent, processedDuration, totalDuration, error} = e.detail;
+            const { stage, percent, processedDuration, totalDuration, error } = e.detail;
 
-            document.querySelector(".progress-percent").textContent = `${percent.toFixed(2) || 0}%`;
-            document.querySelector(".progress-bar").style.width = `${percent.toFixed(2) || 0}%`;
+            document.querySelector(".progress-percent").textContent = `${percent || 0}%`;
+            document.querySelector(".progress-bar").style.width = `${percent || 0}%`;
 
             if (stage === 'start') {
-                document.getElementById("progress-time").textContent = `00:00:00 / ${formatTime(totalDuration)}`;
+                document.getElementById("progress-time").textContent =
+                    `00:00:00 / ${formatTime(totalDuration)}`;
                 document.getElementById("progress-status").textContent = "Starting transcoding...";
-            } else if (stage === 'processing') {
-                document.getElementById("progress-time").textContent = `${formatTime(processedDuration)} / ${formatTime(totalDuration)}`;
+            }
+            else if (stage === 'processing') {
+                document.getElementById("progress-time").textContent =
+                    `${formatTime(processedDuration)} / ${formatTime(totalDuration)}`;
                 document.getElementById("progress-status").textContent = "Transcoding in progress...";
-            } else if (stage === 'complete') {
+            }
+            else if (stage === 'complete') {
                 document.getElementById("progress-status").textContent = "Transcoding completed!";
                 document.getElementById("progress-status").style.color = "#00a854";
                 document.querySelector(".progress-bar").style.background = "#00d97e";
                 downloadBtn.style.display = "block";
-            } else if (stage === 'error') {
+            }
+            else if (stage === 'error') {
                 document.getElementById("progress-error").textContent = error;
                 document.getElementById("progress-error").style.display = "block";
                 document.getElementById("progress-status").textContent = "Transcoding failed!";

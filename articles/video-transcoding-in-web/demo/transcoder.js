@@ -89,16 +89,15 @@ export class Transcoder extends EventTarget {
             let supported;
             try {
                 supported = await tools.Decoder.isConfigSupported(config);
-            } catch (ex) {
-            }
+            } catch (ex) {}
 
             if (!supported || !supported.supported) continue;
 
             iToO[streamI] = decoders.length;
             const encConfig = {
                 codec: istream.codec_type === this.libav.AVMEDIA_TYPE_VIDEO ? vc : ac,
-                width: !width ? config.codedWidth : width,
-                height: !height ? config.codedHeight : height,
+                width: width,
+                height: height,
                 numberOfChannels: config.numberOfChannels,
                 sampleRate: config.sampleRate
             };
@@ -112,13 +111,10 @@ export class Transcoder extends EventTarget {
                         console.error('Decoder output error:', e);
                     }
                 },
-                error: error => {
-                    console.error(`Decoder error: ${error}`);
-                    this.dispatchEvent(new CustomEvent('error', {detail: {error}}));
-                    decoderStream.push(null);
-                }
+                error: error => console.error(`Decoder error: ${error}`)
             });
             decoder.configure(config);
+
             const encoderStream = new this.#BufferStream();
             const encoder = new tools.Encoder({
                 output: (chunk, metadata) => {
@@ -126,14 +122,9 @@ export class Transcoder extends EventTarget {
                         encoderStream.push({chunk, metadata});
                     } catch (e) {
                         console.error('Encoder output error:', e);
-                        this.dispatchEvent(new CustomEvent('error', {detail: {error: e}}));
                     }
                 },
-                error: error => {
-                    console.error(`Encoder error: ${error}`);
-                    this.dispatchEvent(new CustomEvent('error', {detail: {error}}));
-                    encoderStream.push(null);
-                }
+                error: error => console.error(`Encoder error: ${error}`)
             });
             encoder.configure(encConfig);
 
@@ -276,41 +267,38 @@ export class Transcoder extends EventTarget {
         const output_libav = `output_${rand_id}.${containerType}`;
 
         try {
-            let processedDuration = 0;
-            let totalDuration = 0;
-
-            const dispatchProgress = (stage, additionalData = {}) => {
-                this.dispatchEvent(new CustomEvent('progress', {
-                    detail: {
-                        stage,
-                        percent: stage === 'start' ? 0 :
-                            stage === 'complete' ? 100 :
-                                Math.min(100, (processedDuration / totalDuration) * 100),
-                        processedDuration: stage === 'start' ? 0 : processedDuration,
-                        totalDuration,
-                        ...additionalData
-                    }
-                }));
-            };
-
             await this.libav.mkreadaheadfile(input_libav, file);
             const [ifc, istreams] = await this.libav.ff_init_demuxer_file(input_libav);
 
-            totalDuration = istreams.reduce((max, stream) => {
+            const totalDuration = istreams.reduce((max, stream) => {
                 if (!stream || stream.duration === undefined) return max;
                 return Math.max(max, stream.duration);
             }, 0);
 
-            dispatchProgress('start', {totalDuration});
+            this.dispatchEvent(new CustomEvent('progress', {
+                detail: { stage: 'start', totalDuration }
+            }));
 
             const [rpkt, wpkt] = await Promise.all([
                 this.libav.av_packet_alloc(),
                 this.libav.av_packet_alloc()
             ]);
 
+            let processedDuration = 0;
             const updateProgress = (timestampSeconds) => {
                 processedDuration = Math.max(processedDuration, timestampSeconds);
-                dispatchProgress('processing');
+                const percent = totalDuration > 0
+                    ? Math.min(100, (processedDuration / totalDuration) * 100)
+                    : 0;
+
+                this.dispatchEvent(new CustomEvent('progress', {
+                    detail: {
+                        stage: 'processing',
+                        percent: percent.toFixed(1),
+                        processedDuration,
+                        totalDuration
+                    }
+                }));
             };
 
             const streams = await this.#setupStreams({istreams, vc, ac, width, height});
@@ -354,26 +342,20 @@ export class Transcoder extends EventTarget {
 
             const result = await this.libav.readFile(output_libav);
 
-            dispatchProgress('complete');
-            return result;
+            this.dispatchEvent(new CustomEvent('progress', {
+                detail: { stage: 'complete', percent: 100 }
+            }));
 
+            return result;
         } catch (error) {
             this.dispatchEvent(new CustomEvent('progress', {
-                detail: {
-                    stage: 'error',
-                    error: error.message,
-                    percent: 0,
-                    processedDuration: 0,
-                    totalDuration: totalDuration || 0
-                }
+                detail: { stage: 'error', error: error.message }
             }));
             console.error("Transcoding error:", error);
             throw error;
         } finally {
-            await this.libav.unlink(input_libav).catch(() => {
-            });
-            await this.libav.unlink(output_libav).catch(() => {
-            });
+            await this.libav.unlink(input_libav).catch(() => {});
+            await this.libav.unlink(output_libav).catch(() => {});
         }
     }
 }

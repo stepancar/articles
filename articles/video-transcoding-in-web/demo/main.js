@@ -32,6 +32,7 @@ async function get_input_resolution(file) {
     const inp_width = videoElement.videoWidth;
     const inp_height = videoElement.videoHeight;
 
+
     videoElement.pause();
     videoElement.src = '';
 

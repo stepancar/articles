@@ -40,11 +40,12 @@ async function get_input_resolution(file) {
 }
 
 async function main() {
+    const libav = await LibAV.LibAV({noworker: true});
+
     const fileInput = document.getElementById("file");
     const inputBox = document.getElementById("input-box");
     const progressContainer = document.getElementById("progress-container");
     const downloadBtn = document.getElementById("download-btn");
-
     let resultBlobUrl = null;
 
     downloadBtn.onclick = () => {
@@ -73,19 +74,12 @@ async function main() {
         const resolution = document.getElementById("resolution").value.split("x");
         const save_resolution = resolution[0] === "orig";
         const [vc, ac, mimeType] = formats[containerType];
-        let width = inp_width, height = inp_height;
-        if (!save_resolution) {
-            width = parseInt(resolution[0]);
-            height = parseInt(resolution[1]);
-        }
-        if (is_aspect_save_checked) {
-            const aspect_ration = inp_width / inp_height;
-            height = Math.round(width / aspect_ration);
-        }
+        const width = parseInt(resolution[0]);
+        const height = parseInt(resolution[1]);
+
         document.getElementById("progress-resolution").textContent = `${width}x${height}`;
         document.getElementById("progress-status").textContent = "Initializing transcoder...";
 
-        const libav = await LibAV.LibAV({noworker: true});
         let transcoder = new Transcoder({libav});
         window.addEventListener('beforeunload', async () => {
             if (libav) await libav.terminate();
@@ -130,7 +124,8 @@ async function main() {
                 containerType,
                 vc, ac,
                 width,
-                height
+                height,
+                keepAspectRatio: is_aspect_save_checked,
             });
 
             resultBlobUrl = URL.createObjectURL(new Blob([output.buffer], {type: mimeType}));

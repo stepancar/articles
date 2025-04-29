@@ -4,7 +4,7 @@ const formats = {
     "webm": ["vp09.00.10.08.03.1.1.1.0", "opus", "video/webm"],
     "mp4": ["hvc1.1.6.L123.B0", "mp4a.40.2", "video/mp4"],
     "mkv": ["avc1.42403e", "opus", "video/x-matroska"],
-    "avi": ["mpeg4", "pcm_s16le", "video/x-msvideo"],
+    "avi": ["mpeg4", "mp4a.40.2", "video/x-msvideo"],
     "mov": ["avc1.42403e", "mp4a.40.2", "video/quicktime"],
     "flv": ["avc1.42403e", "mp4a.40.2", "video/x-flv"],
     "ts": ["avc1.42403e", "mp4a.40.2", "video/mp2t"],
@@ -17,12 +17,35 @@ function formatTime(seconds) {
     return date.toISOString().substr(11, 8);
 }
 
+async function get_input_resolution(file) {
+    const videoElement = document.createElement('video');
+    const videoUrl = URL.createObjectURL(file);
+
+    // Устанавливаем источник видео
+    videoElement.src = videoUrl;
+
+    await new Promise((resolve, reject) => {
+        videoElement.onloadedmetadata = resolve;
+        videoElement.onerror = reject;
+    });
+
+    const inp_width = videoElement.videoWidth;
+    const inp_height = videoElement.videoHeight;
+
+    videoElement.pause();
+    videoElement.src = '';
+
+    URL.revokeObjectURL(videoUrl);
+    return {inp_width, inp_height}
+}
+
 async function main() {
+    const libav = await LibAV.LibAV({noworker: true});
+
     const fileInput = document.getElementById("file");
     const inputBox = document.getElementById("input-box");
     const progressContainer = document.getElementById("progress-container");
     const downloadBtn = document.getElementById("download-btn");
-
     let resultBlobUrl = null;
 
     downloadBtn.onclick = () => {
@@ -36,15 +59,20 @@ async function main() {
         }
     };
 
-    fileInput.addEventListener('change', async function() {
+    fileInput.addEventListener('change', async function () {
         if (!fileInput.files.length) return;
-
+        const aspectRatioCheckbox = document.getElementById('aspect-ratio');
+        const is_aspect_save_checked = aspectRatioCheckbox.checked; // true или false
         inputBox.style.display = "none";
         progressContainer.style.display = "block";
 
         const file = fileInput.files[0];
+
+        const {inp_width, inp_height} = await get_input_resolution(file);
+
         const containerType = document.getElementById("container").value;
         const resolution = document.getElementById("resolution").value.split("x");
+        const save_resolution = resolution[0] === "orig";
         const [vc, ac, mimeType] = formats[containerType];
         const width = parseInt(resolution[0]);
         const height = parseInt(resolution[1]);
@@ -52,8 +80,12 @@ async function main() {
         document.getElementById("progress-resolution").textContent = `${width}x${height}`;
         document.getElementById("progress-status").textContent = "Initializing transcoder...";
 
-        const libav = await LibAV.LibAV({noworker: true});
-        const transcoder = new Transcoder({ libav });
+        let transcoder = new Transcoder({libav});
+        window.addEventListener('beforeunload', async () => {
+            if (libav) await libav.terminate();
+            transcoder = null
+        });
+
 
         transcoder.addEventListener('progress', (e) => {
             const { stage, percent, processedDuration, totalDuration, error } = e.detail;
@@ -92,15 +124,15 @@ async function main() {
                 containerType,
                 vc, ac,
                 width,
-                height
+                height,
+                keepAspectRatio: is_aspect_save_checked,
             });
 
             resultBlobUrl = URL.createObjectURL(new Blob([output.buffer], {type: mimeType}));
-            console.timeEnd("transcode");
         } catch (error) {
             console.error("Transcoding failed:", error);
         } finally {
-            await libav.terminate();
+            console.timeEnd("transcode")
         }
     });
 }

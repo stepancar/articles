@@ -187,14 +187,45 @@ export class Transcoder extends EventTarget {
         }
     }
 
-    async #encode({decoders, decoderStreams, encoders, encoderStreams, onProgress}) {
+    async #encode({
+                      decoders,
+                      decoderStreams,
+                      encoders,
+                      encoderStreams,
+                      onProgress,
+                      targetWidth,
+                      targetHeight,
+                      keepAspectRatio
+                  }) {
+        let canvas, ctx;
+        if (keepAspectRatio) {
+            canvas = new OffscreenCanvas(targetWidth, targetHeight);
+            ctx = canvas.getContext('2d');
+        }
         const encodePromises = decoders.map(async (_, i) => {
             const decRdr = decoderStreams[i].getReader();
             const enc = encoders[i];
 
             while (true) {
-                const {done, value} = await decRdr.read();
+                let {done, value} = await decRdr.read();
                 if (done) break;
+                if (keepAspectRatio && value instanceof VideoFrame) {
+                    const {scaledWidth, scaledHeight} = this.#getScaledWidthHeight({
+                        originalWidth: value.codedWidth,
+                        originalHeight: value.codedHeight,
+                        targetWidth: targetWidth,
+                        targetHeight: targetHeight
+                    })
+                    const offsetX = (targetWidth - scaledWidth) / 2;
+                    const offsetY = (targetHeight - scaledHeight) / 2;
+                    ctx.drawImage(value, offsetX, offsetY,scaledWidth,scaledHeight);
+                    const frame = value;
+                    value = new VideoFrame(canvas,{
+                        timestamp: frame.timestamp,
+                        duration:frame.duration,
+                    })
+                    frame.close();
+                }
                 enc.encode(value);
                 value.close();
                 if (onProgress && value.timestamp) {
@@ -270,7 +301,7 @@ export class Transcoder extends EventTarget {
         }
     }
 
-    async transcode(file, {containerType, vc, ac, width, height}) {
+    async transcode(file, {containerType, vc, ac, width, height, keepAspectRatio}) {
         const rand_id = Math.random().toString(36).substr(2, 9);
         const input_libav = `input_${rand_id}`;
         const output_libav = `output_${rand_id}.${containerType}`;
@@ -330,6 +361,9 @@ export class Transcoder extends EventTarget {
                 decoderStreams: streams.decoderStreams,
                 encoders: streams.encoders,
                 encoderStreams: streams.encoderStreams,
+                targetWidth: width,
+                targetHeight: height,
+                keepAspectRatio: keepAspectRatio,
                 onProgress: updateProgress
             });
 

@@ -86,9 +86,10 @@
   "devDependencies": {
     "typescript": "^5.8.3"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w"
+    },
   "keywords": [],
   "author": "",
   "license": "ISC"

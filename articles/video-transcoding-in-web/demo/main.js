@@ -58,33 +58,40 @@ async function main() {
             if (libav) await libav.terminate();
             transcoder = null
         });
+        let totalDuration;
 
+        transcoder.addEventListener('progress-init', (e) => {
+            totalDuration = e.detail.totalDuration;
+            document.getElementById("progress-time").textContent = `00:00:00 / ${formatTime(totalDuration)}`;
+            document.getElementById("progress-status").textContent = "Starting transcoding...";
+        });
 
         transcoder.addEventListener('progress', (e) => {
-            const {stage, percent, processedDuration, totalDuration, error} = e.detail;
+            const {percent, processedDuration} = e.detail;
 
-            document.querySelector(".progress-percent").textContent = `${percent.toFixed(2) || 0}%`;
-            document.querySelector(".progress-bar").style.width = `${percent.toFixed(2) || 0}%`;
+            document.querySelector(".progress-percent").textContent = `${percent.toFixed(2)}%`;
+            document.querySelector(".progress-bar").style.width = `${percent.toFixed(2)}%`;
+            document.getElementById("progress-time").textContent =
+                `${formatTime(processedDuration)} / ${formatTime(totalDuration)}`;
 
-            if (stage === 'start') {
-                document.getElementById("progress-time").textContent = `00:00:00 / ${formatTime(totalDuration)}`;
-                document.getElementById("progress-status").textContent = "Starting transcoding...";
-            } else if (stage === 'processing') {
-                document.getElementById("progress-time").textContent = `${formatTime(processedDuration)} / ${formatTime(totalDuration)}`;
-                document.getElementById("progress-status").textContent = "Transcoding in progress...";
-            } else if (stage === 'complete') {
+            if (percent >= 100) {
                 document.getElementById("progress-status").textContent = "Transcoding completed!";
                 document.getElementById("progress-status").style.color = "#00a854";
                 document.querySelector(".progress-bar").style.background = "#00d97e";
                 downloadBtn.style.display = "block";
-            } else if (stage === 'error') {
-                document.getElementById("progress-error").textContent = error;
-                document.getElementById("progress-error").style.display = "block";
-                document.getElementById("progress-status").textContent = "Transcoding failed!";
-                document.getElementById("progress-status").style.color = "#e63757";
-                document.querySelector(".progress-bar").style.background = "#e63757";
+            } else {
+                document.getElementById("progress-status").textContent = "Transcoding in progress...";
             }
         });
+
+        transcoder.addEventListener('error', (e) => {
+            document.getElementById("progress-error").textContent = e.detail.error;
+            document.getElementById("progress-error").style.display = "block";
+            document.getElementById("progress-status").textContent = "Transcoding failed!";
+            document.getElementById("progress-status").style.color = "#e63757";
+            document.querySelector(".progress-bar").style.background = "#e63757";
+        });
+
 
         try {
             console.time("transcode");

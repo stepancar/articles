@@ -270,6 +270,7 @@ export class Transcoder extends EventTarget {
         }
     }
 
+
     async transcode(file, {containerType, vc, ac, width, height}) {
         const rand_id = Math.random().toString(36).substr(2, 9);
         const input_libav = `input_${rand_id}`;
@@ -279,16 +280,20 @@ export class Transcoder extends EventTarget {
             let processedDuration = 0;
             let totalDuration = 0;
 
-            const dispatchProgress = (stage, additionalData = {}) => {
+            // Отправляем totalDuration только один раз при инициализации
+            this.dispatchEvent(new CustomEvent('progress-init', {
+                detail: {totalDuration}
+            }));
+
+            const dispatchProgress = () => {
+                const percent = totalDuration > 0
+                    ? Math.min(100, (processedDuration / totalDuration) * 100)
+                    : 0;
+
                 this.dispatchEvent(new CustomEvent('progress', {
                     detail: {
-                        stage,
-                        percent: stage === 'start' ? 0 :
-                            stage === 'complete' ? 100 :
-                                Math.min(100, (processedDuration / totalDuration) * 100),
-                        processedDuration: stage === 'start' ? 0 : processedDuration,
-                        totalDuration,
-                        ...additionalData
+                        percent,
+                        processedDuration
                     }
                 }));
             };
@@ -301,7 +306,6 @@ export class Transcoder extends EventTarget {
                 return Math.max(max, stream.duration);
             }, 0);
 
-            dispatchProgress('start', {totalDuration});
 
             const [rpkt, wpkt] = await Promise.all([
                 this.libav.av_packet_alloc(),
@@ -310,7 +314,7 @@ export class Transcoder extends EventTarget {
 
             const updateProgress = (timestampSeconds) => {
                 processedDuration = Math.max(processedDuration, timestampSeconds);
-                dispatchProgress('processing');
+                dispatchProgress();
             };
 
             const streams = await this.#setupStreams({istreams, vc, ac, width, height});
@@ -354,19 +358,13 @@ export class Transcoder extends EventTarget {
 
             const result = await this.libav.readFile(output_libav);
 
-            dispatchProgress('complete');
+            // Финальное событие с 100% прогрессом
+            processedDuration = totalDuration;
+            dispatchProgress();
+
             return result;
 
         } catch (error) {
-            this.dispatchEvent(new CustomEvent('progress', {
-                detail: {
-                    stage: 'error',
-                    error: error.message,
-                    percent: 0,
-                    processedDuration: 0,
-                    totalDuration: totalDuration || 0
-                }
-            }));
             console.error("Transcoding error:", error);
             throw error;
         } finally {

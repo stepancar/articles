@@ -1,4 +1,3 @@
-// transcoder.ts
 export class Transcoder extends EventTarget {
     private libav: any;
 
@@ -231,6 +230,43 @@ export class Transcoder extends EventTarget {
         return {scaledWidth, scaledHeight};
     }
 
+
+    private transformFrameToAspectRatio(
+        frame: VideoFrame,
+        canvas: OffscreenCanvas,
+        ctx: OffscreenCanvasRenderingContext2D,
+        targetWidth: number,
+        targetHeight: number
+    ): VideoFrame {
+        const {scaledWidth, scaledHeight} = this.getScaledWidthHeight({
+            originalWidth: frame.codedWidth,
+            originalHeight: frame.codedHeight,
+            targetWidth,
+            targetHeight
+        });
+
+        const offsetX = (targetWidth - scaledWidth) / 2;
+        const offsetY = (targetHeight - scaledHeight) / 2;
+
+        ctx.clearRect(0, 0, targetWidth, targetHeight);
+        ctx.drawImage(frame, offsetX, offsetY, scaledWidth, scaledHeight);
+
+        const frameInit: VideoFrameInit = {
+            timestamp: frame.timestamp || 0,
+            duration: frame.duration || undefined,
+            visibleRect: {
+                x: 0,
+                y: 0,
+                width: targetWidth,
+                height: targetHeight
+            }
+        };
+
+        const newFrame = new VideoFrame(canvas, frameInit);
+        frame.close();
+        return newFrame;
+    }
+
     private async encode({
                              decoders,
                              decoderStreams,
@@ -250,13 +286,16 @@ export class Transcoder extends EventTarget {
         targetHeight?: number,
         keepAspectRatio: boolean
     }): Promise<void> {
-        let canvas: OffscreenCanvas | null = null;
-        let ctx: OffscreenCanvasRenderingContext2D | null = null;
+        let transformationCanvas: OffscreenCanvas | null = null;
+        let transformationCtx: OffscreenCanvasRenderingContext2D | null = null;
 
-        if (keepAspectRatio && targetWidth && targetHeight) {
-            canvas = new OffscreenCanvas(targetWidth, targetHeight);
-            ctx = canvas.getContext('2d')!;
-        }
+        const getTransformationCanvas = () => {
+            if (!transformationCanvas && targetWidth && targetHeight) {
+                transformationCanvas = new OffscreenCanvas(targetWidth, targetHeight);
+                transformationCtx = transformationCanvas.getContext('2d')!;
+            }
+            return { canvas: transformationCanvas, ctx: transformationCtx };
+        };
 
         const encodePromises = decoders.map(async (_, i) => {
             const decRdr = decoderStreams[i].getReader();
@@ -269,34 +308,18 @@ export class Transcoder extends EventTarget {
 
                 let frameToEncode = value;
 
-                if (keepAspectRatio && value instanceof VideoFrame && canvas && ctx && targetWidth && targetHeight) {
-                    const {scaledWidth, scaledHeight} = this.getScaledWidthHeight({
-                        originalWidth: value.codedWidth,
-                        originalHeight: value.codedHeight,
-                        targetWidth,
-                        targetHeight
-                    });
+                if (keepAspectRatio && value instanceof VideoFrame && targetWidth && targetHeight) {
+                    const { canvas, ctx } = getTransformationCanvas();
 
-                    const offsetX = (targetWidth - scaledWidth) / 2;
-                    const offsetY = (targetHeight - scaledHeight) / 2;
-
-                    ctx.clearRect(0, 0, targetWidth, targetHeight);
-                    ctx.drawImage(value, offsetX, offsetY, scaledWidth, scaledHeight);
-
-                    const frameInit: VideoFrameInit = {
-                        timestamp: value.timestamp || 0,
-                        duration: value.duration || undefined,
-                        visibleRect: {
-                            x: 0,
-                            y: 0,
-                            width: targetWidth,
-                            height: targetHeight
-                        }
-                    };
-
-                    const newFrame = new VideoFrame(canvas, frameInit);
-                    value.close();
-                    frameToEncode = newFrame;
+                    if (canvas && ctx) {
+                        frameToEncode = this.transformFrameToAspectRatio(
+                            value,
+                            canvas,
+                            ctx,
+                            targetWidth,
+                            targetHeight
+                        );
+                    }
                 }
 
                 enc.encode(frameToEncode);
@@ -314,6 +337,7 @@ export class Transcoder extends EventTarget {
 
         await Promise.all(encodePromises);
     }
+
 
     private async getStarterPackets({encoderReaders, chunkToPackets, ostreams}: {
         encoderReaders: any[],

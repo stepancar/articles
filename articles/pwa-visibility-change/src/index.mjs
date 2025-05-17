@@ -24,6 +24,7 @@ document.addEventListener('visibilitychange', handleVisibilityChange);
 displayLog();
 
 clearLogButton.addEventListener('click', () => {
-  localStorage.removeItem('visibilityChangeLog');
-  document.getElementById('log').innerHTML = '';
+  localStorage.setItem('visibilityChangeLog', '[]');
+  visibilityChangeLog.length = 0;
+  displayLog();
 });

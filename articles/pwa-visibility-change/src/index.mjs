@@ -11,12 +11,19 @@ const handleVisibilityChange = () => {
   };
   visibilityChangeLog.push(logEntry);
   localStorage.setItem('visibilityChangeLog', JSON.stringify(visibilityChangeLog));
-  logContainer.innerHTML += `<p>${logEntry.timestamp} - ${logEntry.visibilityState}</p>`;
+  displayLog();
+}
+
+function displayLog() {
+    logContainer.innerHTML = '';
+    visibilityChangeLog.forEach(entry => {
+        logContainer.innerHTML += `<p>${entry.timestamp} - ${entry.visibilityState}</p>`;
+    });
 }
 document.addEventListener('visibilitychange', handleVisibilityChange);
+displayLog();
 
 clearLogButton.addEventListener('click', () => {
   localStorage.removeItem('visibilityChangeLog');
   document.getElementById('log').innerHTML = '';
-  logContainer.innerHTML = '<p>Log cleared</p>';
 });

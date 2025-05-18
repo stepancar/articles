@@ -19,11 +19,10 @@ async function test() {
     const showPreview = document.querySelector('[name=showPreview]').checked;
     const timestamps = document.querySelector('timestamps-selector').value;
     const runInParallel = document.querySelector('[name=runInParallel]').checked;
+    const preloadToBlobStorage = document.querySelector('[name=preloadToBlobStorage]').checked;
     const videoSourcesToCompare = document.querySelectorAll('video-source-selector');
         
     async function getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, mediaUrl) {
-        
-
         const globalStartTime = new Date().getTime();
         const result = await seekVideoSequentiallyToTimestamps(videoElement, timestamps);
 
@@ -37,32 +36,39 @@ async function test() {
         }
     }
 
+    async function getBlobStorageUrl(src) {
+        const buffer = await fetchBuffer(src);
+        const blob = new Blob([buffer], { type: 'video/mp4' });
+        const url = URL.createObjectURL(blob);
+        return url;
+    }
+
     const videoElements = await Promise.all(Array.from(videoSourcesToCompare).map(async (videoSourceElement) => {
         const mediaUrl = videoSourceElement.value;
         const videoElement = document.createElement('video');
-        videoElement.src = mediaUrl;
+        videoElement.src = preloadToBlobStorage ? await getBlobStorageUrl(mediaUrl) : mediaUrl;
 
         await waitVideoIsLoaded(videoElement);
-        return videoElement;
+        return [videoElement, mediaUrl];
     }));
 
 
     let results = [];
     const startTime = performance.now();
     if (runInParallel) {
-        results = await Promise.all(Array.from(videoElements).map(async (videoElement) => {
+        results = await Promise.all(Array.from(videoElements).map(async ([videoElement, mediaUrl]) => {
             if (showPreview) {
                 previews.appendChild(videoElement);
             }
-            return getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, videoElement.src);
+            return getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, mediaUrl);
         }));
     } else {
         for (let i = 0; i < videoElements.length; i++) {
-            const videoElement = videoElements[i];
+            const [videoElement, mediaUrl] = videoElements[i];
             if (showPreview) {
                 previews.appendChild(videoElement);
             }
-            const result = await getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, videoElement.src);
+            const result = await getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, mediaUrl);
             results.push(result);
         }
     }
@@ -78,7 +84,6 @@ async function test() {
         seekingTimePerFrame: totalTime / totalFramesGenerated,
         seekingFPS: 1000 / (totalTime / totalFramesGenerated),
     }
-
    
     const resultTable = document.createElement('table');
     resultTable.innerHTML = `

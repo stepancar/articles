@@ -31,6 +31,10 @@ export async function seekVideoSequentiallyToTimestamps(videoElement, timestamps
 
 export async function waitVideoIsLoaded(videoElement) {
     return new Promise((resolve) => {
+        if (videoElement.readyState >= 1) {
+            resolve();
+            return;
+        }
         const listener = () => {
             videoElement.removeEventListener('loadedmetadata', listener);
             resolve();

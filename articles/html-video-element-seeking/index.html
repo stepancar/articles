@@ -282,6 +282,53 @@ ffmpeg <span class="token parameter variable">-i</span> bbb_sunflower_7sec_1080p
   <span class="token parameter variable">-force_key_frames</span> <span class="token string">"0"</span> <span class="token parameter variable">-pix_fmt</span> yuv420p <span class="token punctuation">\</span>
   <span class="token parameter variable">-preset</span> fast <span class="token parameter variable">-crf</span> <span class="token number">18</span> <span class="token punctuation">\</span>
   bbb_sunflower_7sec_1080p_30fps_one-iframe.mp4</code></pre>
+<p>On my machine running this experiment showed such results:</p>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Video Type</th>
+<th>Total Frames</th>
+<th>Total Time (ms)</th>
+<th>Seeking Time per Frame (ms)</th>
+<th>Seeking FPS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chromium</td>
+<td>Normal</td>
+<td>301</td>
+<td>5561.60</td>
+<td>18.48</td>
+<td>54.12</td>
+</tr>
+<tr>
+<td>Chromium</td>
+<td>Normal (1 I-frame)</td>
+<td>301</td>
+<td>9485.30</td>
+<td>31.51</td>
+<td>31.73</td>
+</tr>
+<tr>
+<td>Safari</td>
+<td>Normal</td>
+<td>301</td>
+<td>844.00</td>
+<td>2.80</td>
+<td>356.64</td>
+</tr>
+<tr>
+<td>Safari</td>
+<td>Normal (1 I-frame)</td>
+<td>301</td>
+<td>1134.00</td>
+<td>3.77</td>
+<td>265.43</td>
+</tr>
+</tbody>
+</table>
 
           </div>
         </article>

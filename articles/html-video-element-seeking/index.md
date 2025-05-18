@@ -89,3 +89,6 @@ On my machine running this experiment showed such results:
 | Chromium | Normal (1 I-frame)      | 301          | 9485.30          | 31.51                        | 31.73       |
 | Safari   | Normal                  | 301          | 844.00           | 2.80                         | 356.64      |
 | Safari   | Normal (1 I-frame)      | 301          | 1134.00          | 3.77                         | 265.43      |
+
+
+[chromium issue](https://issues.chromium.org/issues/418456081)

@@ -335,8 +335,8 @@ video<span class="token punctuation">.</span><span class="token function">addEve
 <p>Chromium seek operation has O(n) complexity. Which means O(n^2) complexity to get all frames in the video;
 To prove it I created a video with only one I-frame. This video has 301 frames and 7 seconds duration. The video is encoded with 30 fps, which means it has 210 frames per second. The video is encoded with 9999 keyframes, which means it has only one I-frame.</p>
 <p>You can use this 2 videos to test the performance of seeking</p>
-<p><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4">normal video</a></p>
-<p><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4">video with one i-frame</a></p>
+<p><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4">normal video</a> contains 3 iframes</p>
+<p><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4">video with one i-frame</a> contains only one iframe</p>
 <p>this video was creted by using ffmpeg command:</p>
 <pre class="language-bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> bbb_sunflower_7sec_1080p_30fps_normal.mp4 <span class="token punctuation">\</span>
   <span class="token parameter variable">-c:v</span> libx264 <span class="token parameter variable">-g</span> <span class="token number">9999</span> <span class="token parameter variable">-keyint_min</span> <span class="token number">9999</span> <span class="token parameter variable">-sc_threshold</span> <span class="token number">0</span> <span class="token punctuation">\</span>
@@ -390,6 +390,8 @@ To prove it I created a video with only one I-frame. This video has 301 frames a
 </tr>
 </tbody>
 </table>
+<p>On this chart you can see how the seeking time is growing with the number of frames in the video.</p>
+<p><a href="static/seekTimeChart.png"><img src="static/seekTimeChart.png" alt="Seeking time chart"></a></p>
 <p><a href="https://issues.chromium.org/issues/418456081">chromium issue</a></p>
 <p>You can also compare performance with <code>Preload to blob storage</code> option.
 This option will preload video to blob storage and then you can seek to any time in the video without waiting for the video chunk to be loaded.</p>

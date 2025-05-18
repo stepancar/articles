@@ -63,3 +63,20 @@ Info about the video files:
 {% include "./mediaSource/test-videos/video_info.md" %}
 
 <iframe src="./mediaSource/index.html"></iframe>
+
+
+
+[normal video](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4)
+
+
+[video with one i-frame](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4)
+
+this video was creted by using ffmpeg command:
+```bash
+
+ffmpeg -i bbb_sunflower_7sec_1080p_30fps_normal.mp4 \
+  -c:v libx264 -g 9999 -keyint_min 9999 -sc_threshold 0 \
+  -force_key_frames "0" -pix_fmt yuv420p \
+  -preset fast -crf 18 \
+  bbb_sunflower_7sec_1080p_30fps_one-iframe.mp4
+```

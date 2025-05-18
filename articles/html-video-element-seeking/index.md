@@ -80,3 +80,12 @@ ffmpeg -i bbb_sunflower_7sec_1080p_30fps_normal.mp4 \
   -preset fast -crf 18 \
   bbb_sunflower_7sec_1080p_30fps_one-iframe.mp4
 ```
+
+On my machine running this experiment showed such results:
+
+| Browser  | Video Type              | Total Frames | Total Time (ms) | Seeking Time per Frame (ms) | Seeking FPS |
+|----------|-------------------------|--------------|------------------|------------------------------|-------------|
+| Chromium | Normal                  | 301          | 5561.60          | 18.48                        | 54.12       |
+| Chromium | Normal (1 I-frame)      | 301          | 9485.30          | 31.51                        | 31.73       |
+| Safari   | Normal                  | 301          | 844.00           | 2.80                         | 356.64      |
+| Safari   | Normal (1 I-frame)      | 301          | 1134.00          | 3.77                         | 265.43      |

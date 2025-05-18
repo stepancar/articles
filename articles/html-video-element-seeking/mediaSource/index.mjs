@@ -20,14 +20,7 @@ async function test() {
     const timestamps = document.querySelector('timestamps-selector').value;
     const runInParallel = document.querySelector('[name=runInParallel]').checked;
     const videoSourcesToCompare = document.querySelectorAll('video-source-selector');
-    
-    async function initializeVideoElement(mediaUrl) {
-        const videoElement = document.createElement('video');
         
-        return videoElement;
-    }
-        
-
     async function getSeekingPerformanceStatsForVideoSource(videoElement, timestamps, mediaUrl) {
         
 
@@ -47,15 +40,9 @@ async function test() {
     const videoElements = await Promise.all(Array.from(videoSourcesToCompare).map(async (videoSourceElement) => {
         const mediaUrl = videoSourceElement.value;
         const videoElement = document.createElement('video');
-        const sourceElement = document.createElement('source');
-        // sourceElement.type = 'video/mp4;codecs="hev1.1.6.L120.90"';
-        videoElement.appendChild(sourceElement);
-        sourceElement.src = mediaUrl;
+        videoElement.src = mediaUrl;
 
         await waitVideoIsLoaded(videoElement);
-
-        // console.log(videoElement.canPlayType('video/mp4;codecs="hev1.1.6.L120.90"'));
-        console.log('lol')
         return videoElement;
     }));
 
@@ -90,10 +77,38 @@ async function test() {
         totalTime,
         seekingTimePerFrame: totalTime / totalFramesGenerated,
         seekingFPS: 1000 / (totalTime / totalFramesGenerated),
-        results,
     }
 
-    document.querySelector('.results').innerText = JSON.stringify(report, null, 2);
+   
+    const resultTable = document.createElement('table');
+    resultTable.innerHTML = `
+        <thead>
+            <tr>
+                <th>Media</th>
+                <th>Average Frame Seek Time (ms)</th>
+                <th>Total Seek Time (ms)</th>
+                <th>Frames Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${results.map(result => `
+                <tr>
+                    <td>
+                       <a href="${result.mediaUrl}">${getFileNameFromUrl(result.mediaUrl)}</a>
+                    </td>
+                    <td>${result.averageFrameSeekTime}</td>
+                    <td>${result.totalSeekTime}</td>
+                    <td>${result.framesCount}</td>
+                </tr>`).join('')}
+        </tbody>
+    `;
+
+    document.querySelector('.results').appendChild(resultTable);
 };
+
+function getFileNameFromUrl(url) {
+    const urlParts = url.split('/');
+    return urlParts[urlParts.length - 1];
+}
 
 document.querySelector('#runTests').addEventListener('click', test);

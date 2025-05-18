@@ -17,9 +17,15 @@ class VideoSourceSelector extends HTMLElement {
         this.shadowRoot.querySelector('#fileInput').addEventListener('change', (e) => {
             this.#value = URL.createObjectURL(e.target.files[0]);
         });
+
+        this.shadowRoot.querySelector('#remove').addEventListener('click', () => {
+            this.remove();
+        });
     }
 
     #value = null;
+
+    #defaultValue = this.getAttribute('value') || '';
 
     get value() {
         return this.#value;
@@ -56,17 +62,21 @@ class VideoSourceSelector extends HTMLElement {
                 }
             </style>
             <div class="source">
+                <div>
                 <div class="option">
                     <input type="radio" id="radioUrl" checked name="radio">
                     <label for="radioUrl">From url</label>
-                    <input id="urlInput" type="url" value="https://nickdesaulniers.github.io/netfix/demo/frag_bunny.mp4">
+                    <input id="urlInput" type="url" value=${this.#defaultValue}>
                 </div>
                 <div class="option">
                     <input type="radio" id="radioFile" name="radio">
                     <label for="radioFile">From file</label>
                     <input id="fileInput" type="file">
                 </div>
+                </div>
+                <button id="remove">Remove</button>
             </div>
+            
         `;
     }
 }

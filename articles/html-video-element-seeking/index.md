@@ -62,7 +62,9 @@ Info about the video files:
 
 {% include "./mediaSource/test-videos/video_info.md" %}
 
-<iframe src="./mediaSource/index.html"></iframe>
+<div>
+    <iframe src="./mediaSource/index.html"></iframe>
+</div>
 
 
 

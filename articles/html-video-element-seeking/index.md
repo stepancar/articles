@@ -49,9 +49,20 @@ async function seek(videElement, currentTime) {
 await seek(video, 10);
 ```
 
-## How to measure seeking performance?
+## Performance measurement tool
 
 In this demo you can chose video you like, edit timestamps and run the test.
+
+
+<div>
+    <demo-with-playground
+        file="mediaSource/index.html"
+        initialPath="./mediaSource/index.html"
+    />
+</div>
+
+
+## Test videos
 
 There are links to standard video files, but you can also upload your own video.
 
@@ -61,11 +72,13 @@ Info about the video files:
 
 {% include "./mediaSource/test-videos/video_info.md" %}
 
-<div>
-    <iframe src="./mediaSource/index.html"></iframe>
-</div>
 
+### Conclusion
 
+Chromium seek operation has O(n) complexity. Which means O(n^2) complexity to get all frames in the video;
+To prove it I created a video with only one I-frame. This video has 301 frames and 7 seconds duration. The video is encoded with 30 fps, which means it has 210 frames per second. The video is encoded with 9999 keyframes, which means it has only one I-frame.
+
+You can use this 2 videos to test the performance of seeking
 
 [normal video](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4)
 
@@ -73,8 +86,8 @@ Info about the video files:
 [video with one i-frame](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4)
 
 this video was creted by using ffmpeg command:
-```bash
 
+```bash
 ffmpeg -i bbb_sunflower_7sec_1080p_30fps_normal.mp4 \
   -c:v libx264 -g 9999 -keyint_min 9999 -sc_threshold 0 \
   -force_key_frames "0" -pix_fmt yuv420p \
@@ -83,6 +96,7 @@ ffmpeg -i bbb_sunflower_7sec_1080p_30fps_normal.mp4 \
 ```
 
 On my machine running this experiment showed such results:
+
 
 | Browser  | Video Type              | Total Frames | Total Time (ms) | Seeking Time per Frame (ms) | Seeking FPS |
 |----------|-------------------------|--------------|------------------|------------------------------|-------------|

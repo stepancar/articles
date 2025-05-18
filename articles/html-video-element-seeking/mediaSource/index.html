@@ -22,6 +22,18 @@
             #runTests {
                 margin: 20px 0;
             }
+
+            .chart-container {
+                width: 100%;
+                max-width: 100%;
+                height: 400px; /* or any height you want */
+                position: relative;
+            }
+            canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
         </style>
     </head>
     <body>
@@ -64,6 +76,7 @@
 
         <div class="results"></div>
 
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="index.mjs" type="module"></script>
     </body>
 </html>

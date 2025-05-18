@@ -134,7 +134,7 @@ class TimestempsSelector extends HTMLElement {
                     <label for="startTime">StartTime</label>
                     <input name="startTime" type="number" value="0">
                     <label for="endTime">EndTime</label>
-                    <input name="endTime" type="number" value="10">
+                    <input name="endTime" type="number" value="7">
                     <label for="fps">FPS</label>
                     <input name="fps" id="fps" type="number" value="30">
                 </div>

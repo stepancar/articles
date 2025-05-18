@@ -80,10 +80,10 @@ To prove it I created a video with only one I-frame. This video has 301 frames a
 
 You can use this 2 videos to test the performance of seeking
 
-[normal video](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4)
+[normal video](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4) contains 3 iframes
 
 
-[video with one i-frame](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4)
+[video with one i-frame](https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4) contains only one iframe
 
 this video was creted by using ffmpeg command:
 
@@ -104,6 +104,10 @@ On my machine running this experiment showed such results:
 | Chromium | Normal (1 I-frame)      | 301          | 9485.30          | 31.51                        | 31.73       |
 | Safari   | Normal                  | 301          | 844.00           | 2.80                         | 356.64      |
 | Safari   | Normal (1 I-frame)      | 301          | 1134.00          | 3.77                         | 265.43      |
+
+On this chart you can see how the seeking time is growing with the number of frames in the video.
+
+[![Seeking time chart](./static/seekTimeChart.png)](./static/seekTimeChart.png)
 
 
 [chromium issue](https://issues.chromium.org/issues/418456081)

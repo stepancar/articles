@@ -60,8 +60,12 @@ video<span class="token punctuation">.</span><span class="token function">addEve
 <span class="token punctuation">}</span>
 
 <span class="token keyword">await</span> <span class="token function">seek</span><span class="token punctuation">(</span>video<span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
-<h2>How to measure seeking performance?</h2>
+<h2>Performance measurement tool</h2>
 <p>In this demo you can chose video you like, edit timestamps and run the test.</p>
+<div>
+    <demo-with-playground file="mediaSource/index.html" initialPath="./mediaSource/index.html">
+</demo-with-playground></div>
+<h2>Test videos</h2>
 <p>There are links to standard video files, but you can also upload your own video.</p>
 <p>For tests we will use <a href="http://bbb3d.renderfarming.net/download.html">big buck bunny</a> video files with different resolutions and frame rates, iframes density, etc.</p>
 <p>Info about the video files:</p>
@@ -149,16 +153,192 @@ video<span class="token punctuation">.</span><span class="token function">addEve
 <td>75</td>
 <td>yes</td>
 </tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_2160p_30fps_normal_10_times_more_iframes.mp4">bbb_sunflower_1min_2160p_30fps_normal_10_times_more_iframes.mp4</a></td>
+<td>153</td>
+<td>489</td>
+<td>1158</td>
+<td>142</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_2160p_30fps_normal_noaudio.mp4">bbb_sunflower_1min_2160p_30fps_normal_noaudio.mp4</a></td>
+<td>11</td>
+<td>481</td>
+<td>1308</td>
+<td>73</td>
+<td>no</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_2160p_60fps_normal.mp4">bbb_sunflower_1min_2160p_60fps_normal.mp4</a></td>
+<td>16</td>
+<td>748</td>
+<td>2836</td>
+<td>64</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_2160p_60fps_normal_10_times_more_iframes.mp4">bbb_sunflower_1min_2160p_60fps_normal_10_times_more_iframes.mp4</a></td>
+<td>168</td>
+<td>1017</td>
+<td>2420</td>
+<td>156</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_2160p_60fps_normal_noaudio.mp4">bbb_sunflower_1min_2160p_60fps_normal_noaudio.mp4</a></td>
+<td>16</td>
+<td>748</td>
+<td>2836</td>
+<td>61</td>
+<td>no</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_480p_30fps_normal.mp4">bbb_sunflower_1min_480p_30fps_normal.mp4</a></td>
+<td>12</td>
+<td>623</td>
+<td>1165</td>
+<td>10</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_480p_30fps_normal_10_times_more_iframes.mp4">bbb_sunflower_1min_480p_30fps_normal_10_times_more_iframes.mp4</a></td>
+<td>153</td>
+<td>598</td>
+<td>1049</td>
+<td>16</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_480p_30fps_normal_noaudio.mp4">bbb_sunflower_1min_480p_30fps_normal_noaudio.mp4</a></td>
+<td>12</td>
+<td>623</td>
+<td>1165</td>
+<td>8</td>
+<td>no</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_480p_60fps_normal.mp4">bbb_sunflower_1min_480p_60fps_normal.mp4</a></td>
+<td>17</td>
+<td>1360</td>
+<td>2223</td>
+<td>11</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_480p_60fps_normal_10_times_more_iframes.mp4">bbb_sunflower_1min_480p_60fps_normal_10_times_more_iframes.mp4</a></td>
+<td>168</td>
+<td>1304</td>
+<td>2128</td>
+<td>17</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_480p_60fps_normal_noaudio.mp4">bbb_sunflower_1min_480p_60fps_normal_noaudio.mp4</a></td>
+<td>17</td>
+<td>1360</td>
+<td>2223</td>
+<td>9</td>
+<td>no</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_720p_30fps_normal.mp4">bbb_sunflower_1min_720p_30fps_normal.mp4</a></td>
+<td>12</td>
+<td>531</td>
+<td>1257</td>
+<td>16</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_720p_30fps_normal_10_times_more_iframes.mp4">bbb_sunflower_1min_720p_30fps_normal_10_times_more_iframes.mp4</a></td>
+<td>153</td>
+<td>515</td>
+<td>1132</td>
+<td>28</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_720p_30fps_normal_noaudio.mp4">bbb_sunflower_1min_720p_30fps_normal_noaudio.mp4</a></td>
+<td>12</td>
+<td>531</td>
+<td>1257</td>
+<td>14</td>
+<td>no</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_720p_60fps_normal.mp4">bbb_sunflower_1min_720p_60fps_normal.mp4</a></td>
+<td>17</td>
+<td>1238</td>
+<td>2345</td>
+<td>19</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_720p_60fps_normal_10_times_more_iframes.mp4">bbb_sunflower_1min_720p_60fps_normal_10_times_more_iframes.mp4</a></td>
+<td>168</td>
+<td>1215</td>
+<td>2217</td>
+<td>30</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_1min_720p_60fps_normal_noaudio.mp4">bbb_sunflower_1min_720p_60fps_normal_noaudio.mp4</a></td>
+<td>17</td>
+<td>1238</td>
+<td>2345</td>
+<td>16</td>
+<td>no</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4">bbb_sunflower_7sec_1080p_30fps_normal.mp4</a></td>
+<td>3</td>
+<td>62</td>
+<td>147</td>
+<td>2</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal_allframes.mp4">bbb_sunflower_7sec_1080p_30fps_normal_allframes.mp4</a></td>
+<td>212</td>
+<td>0</td>
+<td>0</td>
+<td>7</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal_alliframes.mp4">bbb_sunflower_7sec_1080p_30fps_normal_alliframes.mp4</a></td>
+<td>212</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4">bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4</a></td>
+<td>1</td>
+<td>60</td>
+<td>151</td>
+<td>3</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/video-seek-test-optimized.mp4">video-seek-test-optimized.mp4</a></td>
+<td>2</td>
+<td>49</td>
+<td>140</td>
+<td>2</td>
+<td>no</td>
+</tr>
 </tbody>
 </table>
-<div>
-    <iframe src="mediaSource/index.html"></iframe>
-</div>
+<h3>Conclusion</h3>
+<p>Chromium seek operation has O(n) complexity. Which means O(n^2) complexity to get all frames in the video;
+To prove it I created a video with only one I-frame. This video has 301 frames and 7 seconds duration. The video is encoded with 30 fps, which means it has 210 frames per second. The video is encoded with 9999 keyframes, which means it has only one I-frame.</p>
+<p>You can use this 2 videos to test the performance of seeking</p>
 <p><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_normal.mp4">normal video</a></p>
 <p><a href="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4">video with one i-frame</a></p>
 <p>this video was creted by using ffmpeg command:</p>
-<pre class="language-bash"><code class="language-bash">
-ffmpeg <span class="token parameter variable">-i</span> bbb_sunflower_7sec_1080p_30fps_normal.mp4 <span class="token punctuation">\</span>
+<pre class="language-bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> bbb_sunflower_7sec_1080p_30fps_normal.mp4 <span class="token punctuation">\</span>
   <span class="token parameter variable">-c:v</span> libx264 <span class="token parameter variable">-g</span> <span class="token number">9999</span> <span class="token parameter variable">-keyint_min</span> <span class="token number">9999</span> <span class="token parameter variable">-sc_threshold</span> <span class="token number">0</span> <span class="token punctuation">\</span>
   <span class="token parameter variable">-force_key_frames</span> <span class="token string">"0"</span> <span class="token parameter variable">-pix_fmt</span> yuv420p <span class="token punctuation">\</span>
   <span class="token parameter variable">-preset</span> fast <span class="token parameter variable">-crf</span> <span class="token number">18</span> <span class="token punctuation">\</span>

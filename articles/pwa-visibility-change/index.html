@@ -32,6 +32,27 @@
           <h2 class="shortDescription">This article explains how to use the visibility change event in a PWA.</h2>
           <div class="content">
             <h1>PWA visibility change</h1>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event">Visibility change events</a> are important for Progressive Web Apps (PWAs) because they allow developers to manage the app's behavior when the user minimizes the app or closes it. This is particularly important for PWAs, which are designed to provide a native app-like experience on the web.</p>
+<p>Here's a demonstration of how to use the visibility change event in a PWA:</p>
+<pre class="language-javascript"><code class="language-javascript">document<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'visibilitychange'</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>document<span class="token punctuation">.</span>visibilityState <span class="token operator">===</span> <span class="token string">'hidden'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// The app is minimized or closed</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'App is minimized or closed'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// Perform any necessary actions, such as pausing a video or saving state</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token comment">// The app is visible again</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'App is visible again'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// Resume any paused activities or refresh the UI</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>See it in action:
+Install PWA from <a href="https://stepancar.github.io/articles/articles/pwa-visibility-change/src/">this link</a></p>
+<p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>
+<h2>Notes</h2>
+<ul>
+<li>Sometimes the visibility change event may not fire as expected</li>
+<li>When user closes the app, pwa fires the visibility change event with the state 'hidden' twice (not always).</li>
+</ul>
 
           </div>
         </article>

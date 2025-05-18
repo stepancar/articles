@@ -1,7 +1,7 @@
 {
-    "name": "Pwa visibility change",
-    "short_name": "Pwa visibility change",
-    "description": "Pwa visibility change",
+    "name": "Visibility change demo",
+    "short_name": "Visibility change demo",
+    "description": "Visibility change demo",
     "start_url": "./",
     "display": "standalone",
     "background_color": "#ffffff",

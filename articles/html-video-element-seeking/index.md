@@ -94,3 +94,6 @@ On my machine running this experiment showed such results:
 
 
 [chromium issue](https://issues.chromium.org/issues/418456081)
+
+You can also compare performance with `Preload to blob storage` option.
+This option will preload video to blob storage and then you can seek to any time in the video without waiting for the video chunk to be loaded.

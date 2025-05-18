@@ -6,6 +6,9 @@ input_directory="./"
 # Output text file
 output_file="video_info.md"
 
+# URL prefix for the Markdown links
+url_prefix="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/"
+
 # Write the header to the output file
 echo -e "| filename | iframes count | pframes count | bframes count | size in mb | has audio |" > "$output_file"
 echo -e "| -------- | ------------- | ------------- | ------------- | ---------- | -------- |" >> "$output_file"
@@ -14,6 +17,8 @@ echo -e "| -------- | ------------- | ------------- | ------------- | ----------
 for file in "$input_directory"/*.mp4; do
   # Extract filename without path
   filename=$(basename "$file")
+  file_url="${url_prefix}${filename}"
+  md_link="[$filename]($file_url)"
 
   # Get frame counts
   iframe_count=$(ffprobe -v error -select_streams v:0 -show_entries frame=pict_type -of csv=p=0 "$file" | grep -c I)
@@ -27,7 +32,7 @@ for file in "$input_directory"/*.mp4; do
   has_audio=$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_type -of default=noprint_wrappers=1:nokey=1 "$file" | grep -c 'audio' | awk '{if ($1 > 0) print "yes"; else print "no"}')
 
   # Write the information to the output file
-  echo -e "| $filename | $iframe_count | $pframe_count | $bframe_count | $file_size_mb | $has_audio |" >> "$output_file"
+  echo -e "| $md_link | $iframe_count | $pframe_count | $bframe_count | $file_size_mb | $has_audio |" >> "$output_file"
 done
 
 echo "Report generated: $output_file"

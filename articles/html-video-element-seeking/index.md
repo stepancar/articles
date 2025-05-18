@@ -55,8 +55,7 @@ In this demo you can chose video you like, edit timestamps and run the test.
 
 There are links to standard video files, but you can also upload your own video.
 
-For tests we will use big buck bunny video files with different resolutions and frame rates.
-http://bbb3d.renderfarming.net/download.html
+For tests we will use [big buck bunny](http://bbb3d.renderfarming.net/download.html) video files with different resolutions and frame rates, iframes density, etc.
 
 Info about the video files:
 

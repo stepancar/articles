@@ -102,8 +102,8 @@ On my machine running this experiment showed such results:
 |----------|-------------------------|--------------|------------------|------------------------------|-------------|
 | Chromium | Normal                  | 301          | 5561.60          | 18.48                        | 54.12       |
 | Chromium | Normal (1 I-frame)      | 301          | 9485.30          | 31.51                        | 31.73       |
-| Safari   | Normal                  | 301          | 844.00           | 2.80                         | 356.64      |
-| Safari   | Normal (1 I-frame)      | 301          | 1134.00          | 3.77                         | 265.43      |
+| Safari   | Normal                  | 301          | 595.00           | 2.81                         | 355.87      |
+| Safari   | Normal (1 I-frame)      | 301          | 471.00          | 2.23                        | 448.43      |
 
 On this chart you can see how the seeking time is growing with the number of frames in the video.
 

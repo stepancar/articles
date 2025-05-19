@@ -32,11 +32,113 @@
           <h2 class="shortDescription">This article validates the performance of drawImage when scaling images</h2>
           <div class="content">
             <h1>Scale performance of drawImage</h1>
-<p>Let's consider example</p>
-<pre><code>drawImage
-</code></pre>
-<iframe src="src/scale/index.html"></iframe>
+<h2>Introductions</h2>
+<p>This article explores <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas#dont_scale_images_in_drawimage">recommendation from mdn</a> about image scaling by the CanvasRenderingContext2D.drawImage().</p>
+<blockquote>
+<p>Don't scale images in drawImage</p>
+</blockquote>
+<p>We ran tests with dynamic image scaling versus drawing without scaling.</p>
+<p>Spoiler: <em>in all cases there is either minimal or no difference</em>.</p>
+<h2>Methodological research</h2>
+<p>We used JS in conjunction with HTML so we could test the theory on our inputs:</p>
+<ul>
+<li>URL of an image</li>
+<li>count of iterations</li>
+<li>height of the canvas</li>
+<li>width of the canvas</li>
+<li>imageSmoothingQuality</li>
+<li>Random scale range</li>
+</ul>
+<pre class="language-JS"><code class="language-JS">function drawImageWithoutScale() {
+    const start = performance.now();
+    for (let i = 0; i &lt; iterationsCount; i++) {
+        let x = Math.random() * canvas1.width;
+        let y = Math.random() * canvas1.height;
+        ctx2.drawImage(image, x, y);
+    }
+    const end = performance.now();
+    let time = end - start;
+    return time;
+}
 
+function drawImageWithScale() {
+    const start = performance.now();
+    for (let i = 0; i &lt; iterationsCount; i++) {
+        let x = Math.random() * canvas1.width;
+        let y = Math.random() * canvas1.height;
+        let scaleParameter = Math.random() * (rangeTo - rangeFrom) + rangeFrom;
+        ctx1.resetTransform();
+        ctx1.scale(scaleParameter, scaleParameter);
+        ctx1.drawImage(image, x, y);
+    }
+    const end = performance.now();
+    let time = end - start;
+    return time;
+}</code></pre>
+<p>The rendering with and without scaling in two different canvases is run according to the specified parameters, the time measurements are displayed in a table.</p>
+<p>Example:
+<img src="image.png" alt="table"></p>
+<p>You can take measurements with your values</p>
+<iframe src="scale/index.html"></iframe>
+<h2>Measurement results</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>filename</th>
+<th>iterations</th>
+<th>canvas size</th>
+<th>smoothing quality</th>
+<th>image size</th>
+<th>scale</th>
+<th>drawImage without scale</th>
+<th>drawImage with scale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Lenna.png</td>
+<td>330x330</td>
+<td>[0.9;1.1)</td>
+<td>10000</td>
+<td>1920x1080</td>
+<td>low</td>
+<td>31.1</td>
+<td>50</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Lenna.png</td>
+<td>330x330</td>
+<td>[0.9;1.1)</td>
+<td>10000</td>
+<td>1920x1080</td>
+<td>low</td>
+<td>23.39</td>
+<td>46.8</td>
+</tr>
+</tbody>
+</table>
+<h2>Analyzing measurement results</h2>
+<ul>
+<li>
+<p>The difference in time is noticeable only at 1000+ iterations.</p>
+</li>
+<li>
+<p>No significant performance slippages were detected with scale().</p>
+</li>
+<li>
+<p>When using modern browsers, engine-level optimization probably smoothes out the differences.</p>
+</li>
+</ul>
+<h2>Conclusion</h2>
+<p>The mdn recommendation that using scale() is a slow operation can be considered outdated and irrelevant, since in the current realities the GPU speeds up such calculations.
+The above synthetic measurements for 1000+ iterations may show a slight increase in time when using scaling, but under normal conditions this difference will be completely unnoticeable and will not affect the user experience.</p>
+<!-- указать ссылку на код -->
+<a href="." target="_blank">
+  <img alt="Open in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg">
+</a>
           </div>
         </article>
       </main>

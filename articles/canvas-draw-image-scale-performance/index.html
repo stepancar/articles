@@ -46,40 +46,39 @@
 <li>count of iterations</li>
 <li>height of the canvas</li>
 <li>width of the canvas</li>
-<li>imageSmoothingQuality</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingQuality">imageSmoothingQuality</a></li>
 <li>Random scale range</li>
 </ul>
-<pre class="language-JS"><code class="language-JS">function drawImageWithoutScale() {
-    const start = performance.now();
-    for (let i = 0; i &lt; iterationsCount; i++) {
-        let x = Math.random() * canvas1.width;
-        let y = Math.random() * canvas1.height;
-        ctx2.drawImage(image, x, y);
-    }
-    const end = performance.now();
-    let time = end - start;
-    return time;
-}
+<pre class="language-js"><code class="language-js"><span class="token keyword">function</span> <span class="token function">drawImageWithoutScale</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> start <span class="token operator">=</span> performance<span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> iterationsCount<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> x <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> canvas1<span class="token punctuation">.</span>width<span class="token punctuation">;</span>
+        <span class="token keyword">const</span> y <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> canvas1<span class="token punctuation">.</span>height<span class="token punctuation">;</span>
+        ctx2<span class="token punctuation">.</span><span class="token function">drawImage</span><span class="token punctuation">(</span>image<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">const</span> end <span class="token operator">=</span> performance<span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> end <span class="token operator">-</span> start<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
 
-function drawImageWithScale() {
-    const start = performance.now();
-    for (let i = 0; i &lt; iterationsCount; i++) {
-        let x = Math.random() * canvas1.width;
-        let y = Math.random() * canvas1.height;
-        let scaleParameter = Math.random() * (rangeTo - rangeFrom) + rangeFrom;
-        ctx1.resetTransform();
-        ctx1.scale(scaleParameter, scaleParameter);
-        ctx1.drawImage(image, x, y);
-    }
-    const end = performance.now();
-    let time = end - start;
-    return time;
-}</code></pre>
+<span class="token keyword">function</span> <span class="token function">drawImageWithScale</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> start <span class="token operator">=</span> performance<span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> iterationsCount<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> x <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> canvas1<span class="token punctuation">.</span>width<span class="token punctuation">;</span>
+        <span class="token keyword">let</span> y <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> canvas1<span class="token punctuation">.</span>height<span class="token punctuation">;</span>
+        <span class="token keyword">let</span> scaleParameter <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token punctuation">(</span>rangeTo <span class="token operator">-</span> rangeFrom<span class="token punctuation">)</span> <span class="token operator">+</span> rangeFrom<span class="token punctuation">;</span>
+        ctx1<span class="token punctuation">.</span><span class="token function">resetTransform</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ctx1<span class="token punctuation">.</span><span class="token function">scale</span><span class="token punctuation">(</span>scaleParameter<span class="token punctuation">,</span> scaleParameter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ctx1<span class="token punctuation">.</span><span class="token function">drawImage</span><span class="token punctuation">(</span>image<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">const</span> end <span class="token operator">=</span> performance<span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> time <span class="token operator">=</span> end <span class="token operator">-</span> start<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> time<span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
 <p>The rendering with and without scaling in two different canvases is run according to the specified parameters, the time measurements are displayed in a table.</p>
 <p>Example:
 <img src="image.png" alt="table"></p>
 <p>You can take measurements with your values</p>
-<iframe src="scale/index.html"></iframe>
+<p><demo-with-playground file="scale/index.html" initialPath="./scale/index.html"></demo-with-playground></p>
 <h2>Measurement results</h2>
 <table>
 <thead>

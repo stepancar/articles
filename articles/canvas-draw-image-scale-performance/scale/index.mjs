@@ -32,8 +32,8 @@ const getImageUrl = () => {
 };
 
 const setScaleRange = () => {
-    rangeFrom = document.querySelector('#range-from').value;
-    rangeTo = document.querySelector('#range-to').value;
+    rangeFrom = Number(document.querySelector('#range-from').value);
+    rangeTo = Number(document.querySelector('#range-to').value);
     if (rangeFrom > rangeTo) {
         a = rangeTo;
         rangeTo = rangeFrom;
@@ -98,6 +98,7 @@ function drawImageWithScale() {
         let x = Math.random() * canvas1.width;
         let y = Math.random() * canvas1.height;
         let scaleParameter = Math.random() * (rangeTo - rangeFrom) + rangeFrom;
+        console.log('scaleParameter', scaleParameter);
         ctx1.resetTransform();
         ctx1.scale(scaleParameter, scaleParameter);
         ctx1.drawImage(image, x, y);

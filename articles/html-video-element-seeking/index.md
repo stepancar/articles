@@ -107,7 +107,11 @@ On my machine running this experiment showed such results:
 
 On this chart you can see how the seeking time is growing with the number of frames in the video.
 
-[![Seeking time chart](./static/seekTimeChart.png)](./static/seekTimeChart.png)
+Chromium
+[![Seeking time chart Chromium](./static/seekTimeChartChromium.png)](./static/seekTimeChartChromium.png)
+
+Safari
+[![Seeking time chart Safari](./static/seekTimeChartSafari.png)](./static/seekTimeChartSafari.png)
 
 
 [chromium issue](https://issues.chromium.org/issues/418456081)

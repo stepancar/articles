@@ -24,21 +24,20 @@ We used JS in conjunction with HTML so we could test the theory on our inputs:
 + count of iterations
 + height of the canvas 
 + width of the canvas 
-+ imageSmoothingQuality
++ [imageSmoothingQuality](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingQuality)
 + Random scale range
 
 
-```JS
+```js
 function drawImageWithoutScale() {
     const start = performance.now();
     for (let i = 0; i < iterationsCount; i++) {
-        let x = Math.random() * canvas1.width;
-        let y = Math.random() * canvas1.height;
+        const x = Math.random() * canvas1.width;
+        const y = Math.random() * canvas1.height;
         ctx2.drawImage(image, x, y);
     }
     const end = performance.now();
-    let time = end - start;
-    return time;
+    return end - start;
 }
 
 function drawImageWithScale() {
@@ -64,7 +63,12 @@ Example:
 
 You can take measurements with your values
 
-<iframe src="./scale/index.html"></iframe>
+
+  <demo-with-playground
+      file="scale/index.html"
+      initialPath="./scale/index.html"
+  />
+
 
 ## Measurement results
 

@@ -376,22 +376,25 @@ To prove it I created a video with only one I-frame. This video has 301 frames a
 <td>Safari</td>
 <td>Normal</td>
 <td>301</td>
-<td>844.00</td>
-<td>2.80</td>
-<td>356.64</td>
+<td>595.00</td>
+<td>2.81</td>
+<td>355.87</td>
 </tr>
 <tr>
 <td>Safari</td>
 <td>Normal (1 I-frame)</td>
 <td>301</td>
-<td>1134.00</td>
-<td>3.77</td>
-<td>265.43</td>
+<td>471.00</td>
+<td>2.23</td>
+<td>448.43</td>
 </tr>
 </tbody>
 </table>
 <p>On this chart you can see how the seeking time is growing with the number of frames in the video.</p>
-<p><a href="static/seekTimeChart.png"><img src="static/seekTimeChart.png" alt="Seeking time chart"></a></p>
+<p>Chromium
+<a href="static/seekTimeChartChromium.png"><img src="static/seekTimeChartChromium.png" alt="Seeking time chart Chromium"></a></p>
+<p>Safari
+<a href="static/seekTimeChartSafari.png"><img src="static/seekTimeChartSafari.png" alt="Seeking time chart Safari"></a></p>
 <p><a href="https://issues.chromium.org/issues/418456081">chromium issue</a></p>
 <p>You can also compare performance with <code>Preload to blob storage</code> option.
 This option will preload video to blob storage and then you can seek to any time in the video without waiting for the video chunk to be loaded.</p>

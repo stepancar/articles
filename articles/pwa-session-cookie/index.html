@@ -31,7 +31,49 @@
         <article class="markdown">
           <h2 class="shortDescription"></h2>
           <div class="content">
-            
+            <p>Session cookie is a type of cookie that is stored in memory and is cleared when the browser or app is closed. This article explores how session cookies behave across different platforms and contexts</p>
+<p>How to create a session cookie in JavaScript:</p>
+<pre class="language-javascript"><code class="language-javascript">document<span class="token punctuation">.</span>cookie <span class="token operator">=</span> <span class="token string">"sessionCookie=value; path=/; secure; SameSite=Lax"</span><span class="token punctuation">;</span></code></pre>
+<table>
+<thead>
+<tr>
+<th>Platform / Context</th>
+<th>Session Cookie Cleared When...</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chrome (Desktop)</strong></td>
+<td>Tab is closed</td>
+<td>Unless "Continue where you left off" is enabled</td>
+</tr>
+<tr>
+<td><strong>Safari (iOS - Regular)</strong></td>
+<td>Browser (Safari) is fully closed</td>
+<td>Closing tab alone does not clear session cookies</td>
+</tr>
+<tr>
+<td><strong>Safari (iOS - Private)</strong></td>
+<td>Tab is closed or app is fully closed</td>
+<td>Session cookies are properly cleared as expected</td>
+</tr>
+<tr>
+<td><strong>iOS PWA (Home Screen)</strong></td>
+<td>❌ Not cleared on app close</td>
+<td>Session cookie persists even after full app close</td>
+</tr>
+<tr>
+<td><strong>Chrome (Android PWA)</strong></td>
+<td>App is closed</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>See it in action:
+Install PWA from <a href="https://stepancar.github.io/articles/articles/pwa-session-cookie/src/">this link</a></p>
+<p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>
+
           </div>
         </article>
       </main>

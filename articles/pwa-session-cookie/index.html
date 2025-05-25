@@ -1,0 +1,101 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PWA session cookie</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <style rel="stylesheet">
+      mjx-container[jax="SVG"] > svg {
+         max-width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+    
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          PWA session cookie
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2 class="shortDescription"></h2>
+          <div class="content">
+            
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialPath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
+          }
+
+          connectedCallback() {
+              this.render();
+          }
+
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialPath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/pwa-session-cookie/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
+    </script>
+  </body>
+</html>

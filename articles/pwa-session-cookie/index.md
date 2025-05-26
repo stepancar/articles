@@ -5,7 +5,7 @@ shortDescription:
 creationDate: 2025-05-25
 ---
 
-Session cookie is a type of cookie that is stored in memory and is cleared when the browser or app is closed. This article explores how session cookies behave across different platforms and contexts
+[Session cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#removal_defining_the_lifetime_of_a_cookie) is a type of cookie that is stored in memory and is cleared when the browser or app is closed. This article explores how session cookies behave across different platforms and contexts
 
 How to create a session cookie in JavaScript:
 

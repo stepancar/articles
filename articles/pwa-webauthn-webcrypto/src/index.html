@@ -1,110 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Secure Custom Key with WebAuthn</title>
+  <meta charset="UTF-8">
+  <title>WebAuthn + AES Demo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+    input, button { margin: 0.5rem 0; width: 100%; padding: 0.5rem; }
+    #output { margin-top: 1rem; white-space: pre-wrap; background: #eee; padding: 1rem; border-radius: 5px; }
+  </style>
 </head>
 <body>
-  <h2>🔐 Store Custom Key Gated by Biometric Auth</h2>
-  <textarea id="keyInput" placeholder="Enter your custom key text"></textarea><br>
-  <button id="registerBtn">Register Key</button>
-  <button id="unlockBtn">Unlock Key (with biometrics)</button>
-  <pre id="output"></pre>
 
-  <script>
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
+<h2>🔐 WebAuthn + AES Demo (No Server)</h2>
 
-    async function aesEncrypt(plaintext, key) {
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext);
-      return { ciphertext, iv };
+<label>Enter Custom Secret:</label>
+<input id="customKey" placeholder="e.g. my secret text" />
+
+<button onclick="register()">Register (Biometrics)</button>
+<button onclick="unlock()">Unlock with Biometrics</button>
+
+<div id="output"></div>
+
+<script>
+function base64url(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function base64ToBuffer(str) {
+  str = str.replace(/-/g, "+").replace(/_/g, "/");
+  const pad = str.length % 4 ? "=".repeat(4 - str.length % 4) : "";
+  const bin = atob(str + pad);
+  return Uint8Array.from(bin, c => c.charCodeAt(0));
+}
+
+async function register() {
+  const challenge = crypto.getRandomValues(new Uint8Array(32));
+  const userId = crypto.getRandomValues(new Uint8Array(16));
+
+  const cred = await navigator.credentials.create({
+    publicKey: {
+      challenge,
+      rp: { name: "NoServer Demo" },
+      user: {
+        id: userId,
+        name: "user@example.com",
+        displayName: "Test User"
+      },
+      pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+      authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+      timeout: 60000,
+      attestation: "none"
     }
+  });
 
-    async function aesDecrypt(ciphertext, key, iv) {
-      return await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  const credId = base64url(cred.rawId);
+  localStorage.setItem("credentialId", credId);
+
+  // Derive AES key from biometric signature
+  const assertion = await navigator.credentials.get({
+    publicKey: {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      allowCredentials: [{ type: "public-key", id: cred.rawId }],
+      userVerification: "required"
     }
+  });
 
-    async function generateAesKey() {
-      return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+  const entropy = new Uint8Array([
+    ...new Uint8Array(assertion.response.authenticatorData),
+    ...new Uint8Array(assertion.response.signature),
+  ]);
+
+  const baseKey = await crypto.subtle.importKey("raw", entropy, "HKDF", false, ["deriveKey"]);
+  const salt = new Uint8Array(16); // static for demo — store if needed
+  const info = new TextEncoder().encode("aes-key-derive");
+
+  const aesKey = await crypto.subtle.deriveKey({
+    name: "HKDF",
+    hash: "SHA-256",
+    salt,
+    info,
+  }, baseKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+
+  // Encrypt user secret
+  const secretText = document.getElementById("customKey").value || "demo secret";
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext = await crypto.subtle.encrypt({
+    name: "AES-GCM", iv
+  }, aesKey, new TextEncoder().encode(secretText));
+
+  localStorage.setItem("wrappedKey", base64url(ciphertext));
+  localStorage.setItem("wrappedIV", base64url(iv));
+  localStorage.setItem("salt", base64url(salt));
+
+  document.getElementById("output").textContent = "✅ Registered and stored securely!";
+}
+
+async function unlock() {
+  const credId = localStorage.getItem("credentialId");
+  if (!credId) return alert("Please register first.");
+
+  const assertion = await navigator.credentials.get({
+    publicKey: {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      allowCredentials: [{
+        type: "public-key",
+        id: base64ToBuffer(credId).buffer,
+        transports: ["internal"]
+      }],
+      userVerification: "required"
     }
+  });
 
-    function bufferToBase64(buf) {
-      return btoa(String.fromCharCode(...new Uint8Array(buf)));
-    }
+  const entropy = new Uint8Array([
+    ...new Uint8Array(assertion.response.authenticatorData),
+    ...new Uint8Array(assertion.response.signature),
+  ]);
 
-    function base64ToBuffer(str) {
-      const bin = atob(str);
-      return Uint8Array.from(bin, c => c.charCodeAt(0));
-    }
+  const baseKey = await crypto.subtle.importKey("raw", entropy, "HKDF", false, ["deriveKey"]);
+  const salt = base64ToBuffer(localStorage.getItem("salt"));
+  const info = new TextEncoder().encode("aes-key-derive");
 
-    document.getElementById("registerBtn").onclick = async function register() {
-      const customText = document.getElementById("keyInput").value;
-      const customBytes = encoder.encode(customText);
+  const aesKey = await crypto.subtle.deriveKey({
+    name: "HKDF",
+    hash: "SHA-256",
+    salt,
+    info,
+  }, baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
 
-      const publicKey = {
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp: { name: "Local Demo" },
-        user: {
-          id: crypto.getRandomValues(new Uint8Array(16)),
-          name: "local-user",
-          displayName: "Local User"
-        },
-        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-        authenticatorSelection: {
-          authenticatorAttachment: "platform",
-          userVerification: "required"
-        },
-        timeout: 60000,
-        attestation: "none"
-      };
+  const ciphertext = base64ToBuffer(localStorage.getItem("wrappedKey"));
+  const iv = base64ToBuffer(localStorage.getItem("wrappedIV"));
 
-      const cred = await navigator.credentials.create({ publicKey });
-      const credIdB64 = bufferToBase64(cred.rawId);
-      localStorage.setItem("credentialId", credIdB64);
-
-      const aesKey = await generateAesKey();
-      const exportedAesKey = await crypto.subtle.exportKey("raw", aesKey);
-      const { ciphertext, iv } = await aesEncrypt(customBytes, aesKey);
-
-      localStorage.setItem("wrappedCustomKey", bufferToBase64(ciphertext));
-      localStorage.setItem("wrappedIV", bufferToBase64(iv));
-      localStorage.setItem("aesKeyWrapped", bufferToBase64(exportedAesKey));
-
-      document.getElementById("output").textContent = "✅ Key registered and encrypted. Use biometrics to unlock.";
-    };
-
-    document.getElementById("unlockBtn").onclick = async function unlock() {
-      const credIdB64 = localStorage.getItem("credentialId");
-      if (!credIdB64) {
-        alert("No credential registered!");
-        return;
-      }
-
-      const assertionOptions = {
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        allowCredentials: [{
-          type: "public-key",
-          id: base64ToBuffer(credIdB64).buffer,
-          transports: ["internal"]
-        }],
-        userVerification: "required"
-      };
-
-      try {
-        const assertion = await navigator.credentials.get({ publicKey: assertionOptions });
-
-        const keyData = base64ToBuffer(localStorage.getItem("aesKeyWrapped"));
-        const aesKey = await crypto.subtle.importKey("raw", keyData, "AES-GCM", true, ["decrypt"]);
-
-        const ciphertext = base64ToBuffer(localStorage.getItem("wrappedCustomKey"));
-        const iv = base64ToBuffer(localStorage.getItem("wrappedIV"));
-
-        const plaintext = await aesDecrypt(ciphertext.buffer, aesKey, iv.buffer);
-        document.getElementById("output").textContent = "🔓 Decrypted custom key: " + decoder.decode(plaintext);
-      } catch (err) {
-        document.getElementById("output").textContent = "❌ Failed to unlock: " + err.message;
-      }
-    };
-  </script>
+  try {
+    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, aesKey, ciphertext);
+    const plaintext = new TextDecoder().decode(decrypted);
+    document.getElementById("output").textContent = "🔓 Decrypted: " + plaintext;
+  } catch (e) {
+    document.getElementById("output").textContent = "❌ Failed to decrypt.";
+  }
+}
+</script>
 </body>
 </html>

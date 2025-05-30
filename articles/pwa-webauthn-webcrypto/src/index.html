@@ -52,7 +52,7 @@ async function createCredential() {
         pubKeyCredParams: [{ type: "public-key", alg: -7 }],
         timeout: 60000,
         authenticatorSelection: {
-          authenticatorAttachment: "cross-platform",
+          authenticatorAttachment: "platform",
           residentKey: "required"
         },
         extensions: { prf: {} },

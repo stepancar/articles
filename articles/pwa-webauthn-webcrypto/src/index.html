@@ -1,144 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>WebAuthn + AES Demo</title>
-  <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
-    input, button { margin: 0.5rem 0; width: 100%; padding: 0.5rem; }
-    #output { margin-top: 1rem; white-space: pre-wrap; background: #eee; padding: 1rem; border-radius: 5px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WebAuthn PRF Secret Storage Demo</title>
 </head>
 <body>
+<h2>WebAuthn PRF Secret Storage Demo</h2>
 
-<h2>🔐 WebAuthn + AES Demo (No Server)</h2>
+<button id="create-cred">Create Credential</button>
+<button id="authenticate">Authenticate & Decrypt Secret</button>
 
-<label>Enter Custom Secret:</label>
-<input id="customKey" placeholder="e.g. my secret text" />
+<div>
+  <h3>Enter Secret Message to Encrypt & Store:</h3>
+  <textarea id="secret-input" rows="4" cols="50"></textarea><br />
+  <button id="encrypt-save">Encrypt & Save Secret</button>
+</div>
 
-<button onclick="register()">Register (Biometrics)</button>
-<button onclick="unlock()">Unlock with Biometrics</button>
-
-<div id="output"></div>
+<h3>Decrypted Secret Message:</h3>
+<pre id="decrypted-secret">(none)</pre>
 
 <script>
-function base64url(buffer) {
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const STORAGE_KEY = "webauthn_prf_encrypted_secret";
+
+// Helper: Convert ArrayBuffer to base64 string
+function ab2b64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary);
+}
+// Helper: Convert base64 string to ArrayBuffer
+function b642ab(base64) {
+  const binary = atob(base64);
+  const buffer = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) buffer[i] = binary.charCodeAt(i);
+  return buffer.buffer;
 }
 
-function base64ToBuffer(str) {
-  str = str.replace(/-/g, "+").replace(/_/g, "/");
-  const pad = str.length % 4 ? "=".repeat(4 - str.length % 4) : "";
-  const bin = atob(str + pad);
-  return Uint8Array.from(bin, c => c.charCodeAt(0));
-}
-
-async function register() {
-  const challenge = crypto.getRandomValues(new Uint8Array(32));
-  const userId = crypto.getRandomValues(new Uint8Array(16));
-
-  const cred = await navigator.credentials.create({
-    publicKey: {
-      challenge,
-      rp: { name: "NoServer Demo" },
-      user: {
-        id: userId,
-        name: "user@example.com",
-        displayName: "Test User"
-      },
-      pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-      authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-      timeout: 60000,
-      attestation: "none"
-    }
-  });
-
-  const credId = base64url(cred.rawId);
-  localStorage.setItem("credentialId", credId);
-
-  // Derive AES key from biometric signature
-  const assertion = await navigator.credentials.get({
-    publicKey: {
-      challenge: crypto.getRandomValues(new Uint8Array(32)),
-      allowCredentials: [{ type: "public-key", id: cred.rawId }],
-      userVerification: "required"
-    }
-  });
-
-  const entropy = new Uint8Array([
-    ...new Uint8Array(assertion.response.authenticatorData),
-    ...new Uint8Array(assertion.response.signature),
-  ]);
-
-  const baseKey = await crypto.subtle.importKey("raw", entropy, "HKDF", false, ["deriveKey"]);
-  const salt = new Uint8Array(16); // static for demo — store if needed
-  const info = new TextEncoder().encode("aes-key-derive");
-
-  const aesKey = await crypto.subtle.deriveKey({
-    name: "HKDF",
-    hash: "SHA-256",
-    salt,
-    info,
-  }, baseKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
-
-  // Encrypt user secret
-  const secretText = document.getElementById("customKey").value || "demo secret";
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ciphertext = await crypto.subtle.encrypt({
-    name: "AES-GCM", iv
-  }, aesKey, new TextEncoder().encode(secretText));
-
-  localStorage.setItem("wrappedKey", base64url(ciphertext));
-  localStorage.setItem("wrappedIV", base64url(iv));
-  localStorage.setItem("salt", base64url(salt));
-
-  document.getElementById("output").textContent = "✅ Registered and stored securely!";
-}
-
-async function unlock() {
-  const credId = localStorage.getItem("credentialId");
-  if (!credId) return alert("Please register first.");
-
-  const assertion = await navigator.credentials.get({
-    publicKey: {
-      challenge: crypto.getRandomValues(new Uint8Array(32)),
-      allowCredentials: [{
-        type: "public-key",
-        id: base64ToBuffer(credId).buffer,
-        transports: ["internal"]
-      }],
-      userVerification: "required"
-    }
-  });
-
-  const entropy = new Uint8Array([
-    ...new Uint8Array(assertion.response.authenticatorData),
-    ...new Uint8Array(assertion.response.signature),
-  ]);
-
-  const baseKey = await crypto.subtle.importKey("raw", entropy, "HKDF", false, ["deriveKey"]);
-  const salt = base64ToBuffer(localStorage.getItem("salt"));
-  const info = new TextEncoder().encode("aes-key-derive");
-
-  const aesKey = await crypto.subtle.deriveKey({
-    name: "HKDF",
-    hash: "SHA-256",
-    salt,
-    info,
-  }, baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
-
-  const ciphertext = base64ToBuffer(localStorage.getItem("wrappedKey"));
-  const iv = base64ToBuffer(localStorage.getItem("wrappedIV"));
-
+// Create credential with PRF extension
+async function createCredential() {
   try {
-    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, aesKey, ciphertext);
-    const plaintext = new TextDecoder().decode(decrypted);
-    document.getElementById("output").textContent = "🔓 Decrypted: " + plaintext;
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        rp: { name: "Acme" },
+        user: {
+          id: new Uint8Array(16), // must be unique per user, here dummy zero bytes
+          name: "john.p.smith@example.com",
+          displayName: "John P. Smith"
+        },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+        timeout: 60000,
+        authenticatorSelection: {
+          authenticatorAttachment: "cross-platform",
+          residentKey: "required"
+        },
+        extensions: { prf: {} },
+        challenge: new Uint8Array([0]).buffer // dummy challenge for creation
+      }
+    });
+    alert("Credential created. Now try authenticating.");
+    console.log("Created credential:", credential);
   } catch (e) {
-    document.getElementById("output").textContent = "❌ Failed to decrypt.";
+    alert("Credential creation failed: " + e);
+    console.error(e);
   }
 }
+
+// Authenticate and get PRF output for fixed input "Foo encryption key"
+async function authenticate() {
+  try {
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        timeout: 60000,
+        challenge: new Uint8Array([1, 2, 3, 4]).buffer, // dummy challenge, must be random in real apps
+        extensions: {
+          prf: {
+            eval: {
+              first: new TextEncoder().encode("Foo encryption key")
+            }
+          }
+        }
+      }
+    });
+    const prfResults = assertion.getClientExtensionResults().prf.results;
+    if (!prfResults || !prfResults.first) {
+      alert("PRF extension not supported or failed");
+      return null;
+    }
+    // Return raw PRF output bytes
+    return new Uint8Array(prfResults.first);
+  } catch (e) {
+    alert("Authentication failed: " + e);
+    console.error(e);
+    return null;
+  }
+}
+
+// Import PRF output as AES-GCM key
+async function importKey(prfOutput) {
+  return await crypto.subtle.importKey(
+    "raw",
+    prfOutput,
+    "AES-GCM",
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+// Encrypt plaintext with AES-GCM, random nonce
+async function encryptSecret(key, plaintext) {
+  const enc = new TextEncoder();
+  const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit nonce
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    enc.encode(plaintext)
+  );
+  return { ciphertext: new Uint8Array(ciphertext), iv };
+}
+
+// Decrypt ciphertext with AES-GCM and nonce
+async function decryptSecret(key, ciphertext, iv) {
+  const decrypted = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv },
+    key,
+    ciphertext
+  );
+  const dec = new TextDecoder();
+  return dec.decode(decrypted);
+}
+
+document.getElementById("create-cred").onclick = createCredential;
+
+document.getElementById("authenticate").onclick = async () => {
+  const prf = await authenticate();
+  if (!prf) return;
+
+  try {
+    const key = await importKey(prf);
+
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) {
+      alert("No secret stored yet.");
+      return;
+    }
+
+    const obj = JSON.parse(stored);
+    const ciphertext = new Uint8Array(b642ab(obj.ciphertext));
+    const iv = new Uint8Array(b642ab(obj.iv));
+
+    const decrypted = await decryptSecret(key, ciphertext, iv);
+    document.getElementById("decrypted-secret").textContent = decrypted;
+  } catch (e) {
+    alert("Decryption failed: " + e);
+    console.error(e);
+  }
+};
+
+document.getElementById("encrypt-save").onclick = async () => {
+  const secret = document.getElementById("secret-input").value;
+  if (!secret) {
+    alert("Enter a secret message first!");
+    return;
+  }
+
+  // Authenticate to get the key
+  const prf = await authenticate();
+  if (!prf) return;
+
+  try {
+    const key = await importKey(prf);
+
+    const { ciphertext, iv } = await encryptSecret(key, secret);
+
+    // Store base64 strings in localStorage
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ciphertext: ab2b64(ciphertext.buffer),
+        iv: ab2b64(iv.buffer)
+      })
+    );
+
+    alert("Secret encrypted and saved to localStorage!");
+    document.getElementById("secret-input").value = "";
+  } catch (e) {
+    alert("Encryption failed: " + e);
+    console.error(e);
+  }
+};
 </script>
 </body>
 </html>

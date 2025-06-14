@@ -187,13 +187,68 @@ export class Transcoder extends EventTarget {
         }
     }
 
-    async #encode({decoders, decoderStreams, encoders, encoderStreams, onProgress}) {
+
+    #getScaledWidthHeight({ originalWidth, originalHeight, targetWidth, targetHeight }) {
+        const originalAspectRatio = originalWidth / originalHeight;
+        const targetAspectRatio = targetWidth / targetHeight;
+        let scaledWidth, scaledHeight;
+        if (originalAspectRatio > targetAspectRatio) {
+            scaledWidth = targetWidth;
+            scaledHeight = targetWidth / originalAspectRatio;
+        }
+        else {
+            scaledHeight = targetHeight;
+            scaledWidth = targetHeight * originalAspectRatio;
+        }
+        return { scaledWidth, scaledHeight };
+    }
+    #transformFrameToAspectRatio(frame, canvas, ctx, targetWidth, targetHeight) {
+        const { scaledWidth, scaledHeight } = this.#getScaledWidthHeight({
+            originalWidth: frame.codedWidth,
+            originalHeight: frame.codedHeight,
+            targetWidth,
+            targetHeight
+        });
+        const offsetX = (targetWidth - scaledWidth) / 2;
+        const offsetY = (targetHeight - scaledHeight) / 2;
+        ctx.clearRect(0, 0, targetWidth, targetHeight);
+        ctx.drawImage(frame, offsetX, offsetY, scaledWidth, scaledHeight);
+        const frameInit = {
+            timestamp: frame.timestamp || 0,
+            duration: frame.duration || undefined,
+            visibleRect: {
+                x: 0,
+                y: 0,
+                width: targetWidth,
+                height: targetHeight
+            }
+        };
+        const newFrame = new VideoFrame(canvas, frameInit);
+        frame.close();
+        return newFrame;
+    }
+
+    async #encode({
+                      decoders,
+                      decoderStreams,
+                      encoders,
+                      encoderStreams,
+                      onProgress,
+                      targetWidth,
+                      targetHeight,
+                      keepAspectRatio
+                  }) {
+        let canvas, ctx;
+        if (keepAspectRatio) {
+            canvas = new OffscreenCanvas(targetWidth, targetHeight);
+            ctx = canvas.getContext('2d');
+        }
         const encodePromises = decoders.map(async (_, i) => {
             const decRdr = decoderStreams[i].getReader();
             const enc = encoders[i];
 
             while (true) {
-                const {done, value} = await decRdr.read();
+                let {done, value} = await decRdr.read();
                 if (done) break;
                 enc.encode(value);
                 value.close();
@@ -270,7 +325,7 @@ export class Transcoder extends EventTarget {
         }
     }
 
-    async transcode(file, {containerType, vc, ac, width, height}) {
+    async transcode(file, {containerType, vc, ac, width, height, keepAspectRatio}) {
         const rand_id = Math.random().toString(36).substr(2, 9);
         const input_libav = `input_${rand_id}`;
         const output_libav = `output_${rand_id}.${containerType}`;
@@ -330,6 +385,9 @@ export class Transcoder extends EventTarget {
                 decoderStreams: streams.decoderStreams,
                 encoders: streams.encoders,
                 encoderStreams: streams.encoderStreams,
+                targetWidth: width,
+                targetHeight: height,
+                keepAspectRatio: keepAspectRatio,
                 onProgress: updateProgress
             });
 

@@ -1,0 +1,146 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PWA Contact Picker API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <style rel="stylesheet">
+      mjx-container[jax="SVG"] > svg {
+         max-width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+    
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          PWA Contact Picker API
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2 class="shortDescription"></h2>
+          <div class="content">
+            <p>The <a href="https://developer.mozilla.org/en-US/docs/Web/API/Contact_Picker_API">Contact Picker API</a> allows web applications to access the user's contact list in a privacy-preserving way. This API is particularly useful for PWAs that need contact information.</p>
+<p>How to use the Contact Picker API:</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">const</span> props <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">,</span> <span class="token string">'email'</span><span class="token punctuation">,</span> <span class="token string">'tel'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> opts <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token literal-property property">multiple</span><span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> contacts <span class="token operator">=</span> <span class="token keyword">await</span> navigator<span class="token punctuation">.</span>contacts<span class="token punctuation">.</span><span class="token function">select</span><span class="token punctuation">(</span>props<span class="token punctuation">,</span> opts<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<table>
+<thead>
+<tr>
+<th>Platform / Browser</th>
+<th>Contact Picker API Support</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chrome (Desktop)</strong></td>
+<td>❌ Not supported</td>
+<td>Desktop browsers don't have access to contacts</td>
+</tr>
+<tr>
+<td><strong>Chrome (Android)</strong></td>
+<td>✅ Supported</td>
+<td>Full API support with contact access</td>
+</tr>
+<tr>
+<td><strong>Safari (iOS)</strong></td>
+<td>experimental feature</td>
+<td>Not implemented in Safari</td>
+</tr>
+<tr>
+<td><strong>iOS PWA (Home Screen)</strong></td>
+<td>experimental feature</td>
+<td>Safari engine limitations</td>
+</tr>
+<tr>
+<td><strong>Firefox</strong></td>
+<td>❌ Not supported</td>
+<td>Not implemented</td>
+</tr>
+</tbody>
+</table>
+<p>The API requires user permission and only works on secure contexts (HTTPS). It's designed to be privacy-first, allowing users to select specific contacts rather than giving apps access to the entire contact list.</p>
+<p>See it in action:
+Install PWA from <a href="https://stepancar.github.io/articles/articles/pwa-contact-picker/src/">this link</a></p>
+<p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>
+
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialPath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
+          }
+
+          connectedCallback() {
+              this.render();
+          }
+
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialPath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/pwa-contact-picker/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
+    </script>
+  </body>
+</html>

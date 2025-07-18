@@ -89,15 +89,16 @@ export class Transcoder extends EventTarget {
             let supported;
             try {
                 supported = await tools.Decoder.isConfigSupported(config);
-            } catch (ex) {}
+            } catch (ex) {
+            }
 
             if (!supported || !supported.supported) continue;
 
             iToO[streamI] = decoders.length;
             const encConfig = {
                 codec: istream.codec_type === this.libav.AVMEDIA_TYPE_VIDEO ? vc : ac,
-                width: width,
-                height: height,
+                width: !width ? config.codedWidth : width,
+                height: !height ? config.codedHeight : height,
                 numberOfChannels: config.numberOfChannels,
                 sampleRate: config.sampleRate
             };
@@ -111,10 +112,13 @@ export class Transcoder extends EventTarget {
                         console.error('Decoder output error:', e);
                     }
                 },
-                error: error => console.error(`Decoder error: ${error}`)
+                error: error => {
+                    console.error(`Decoder error: ${error}`);
+                    this.dispatchEvent(new CustomEvent('error', {detail: {error}}));
+                    decoderStream.push(null);
+                }
             });
             decoder.configure(config);
-
             const encoderStream = new this.#BufferStream();
             const encoder = new tools.Encoder({
                 output: (chunk, metadata) => {
@@ -122,9 +126,14 @@ export class Transcoder extends EventTarget {
                         encoderStream.push({chunk, metadata});
                     } catch (e) {
                         console.error('Encoder output error:', e);
+                        this.dispatchEvent(new CustomEvent('error', {detail: {error: e}}));
                     }
                 },
-                error: error => console.error(`Encoder error: ${error}`)
+                error: error => {
+                    console.error(`Encoder error: ${error}`);
+                    this.dispatchEvent(new CustomEvent('error', {detail: {error}}));
+                    encoderStream.push(null);
+                }
             });
             encoder.configure(encConfig);
 
@@ -178,13 +187,68 @@ export class Transcoder extends EventTarget {
         }
     }
 
-    async #encode({decoders, decoderStreams, encoders, encoderStreams, onProgress}) {
+
+    #getScaledWidthHeight({ originalWidth, originalHeight, targetWidth, targetHeight }) {
+        const originalAspectRatio = originalWidth / originalHeight;
+        const targetAspectRatio = targetWidth / targetHeight;
+        let scaledWidth, scaledHeight;
+        if (originalAspectRatio > targetAspectRatio) {
+            scaledWidth = targetWidth;
+            scaledHeight = targetWidth / originalAspectRatio;
+        }
+        else {
+            scaledHeight = targetHeight;
+            scaledWidth = targetHeight * originalAspectRatio;
+        }
+        return { scaledWidth, scaledHeight };
+    }
+    #transformFrameToAspectRatio(frame, canvas, ctx, targetWidth, targetHeight) {
+        const { scaledWidth, scaledHeight } = this.#getScaledWidthHeight({
+            originalWidth: frame.codedWidth,
+            originalHeight: frame.codedHeight,
+            targetWidth,
+            targetHeight
+        });
+        const offsetX = (targetWidth - scaledWidth) / 2;
+        const offsetY = (targetHeight - scaledHeight) / 2;
+        ctx.clearRect(0, 0, targetWidth, targetHeight);
+        ctx.drawImage(frame, offsetX, offsetY, scaledWidth, scaledHeight);
+        const frameInit = {
+            timestamp: frame.timestamp || 0,
+            duration: frame.duration || undefined,
+            visibleRect: {
+                x: 0,
+                y: 0,
+                width: targetWidth,
+                height: targetHeight
+            }
+        };
+        const newFrame = new VideoFrame(canvas, frameInit);
+        frame.close();
+        return newFrame;
+    }
+
+    async #encode({
+                      decoders,
+                      decoderStreams,
+                      encoders,
+                      encoderStreams,
+                      onProgress,
+                      targetWidth,
+                      targetHeight,
+                      keepAspectRatio
+                  }) {
+        let canvas, ctx;
+        if (keepAspectRatio) {
+            canvas = new OffscreenCanvas(targetWidth, targetHeight);
+            ctx = canvas.getContext('2d');
+        }
         const encodePromises = decoders.map(async (_, i) => {
             const decRdr = decoderStreams[i].getReader();
             const enc = encoders[i];
 
             while (true) {
-                const {done, value} = await decRdr.read();
+                let {done, value} = await decRdr.read();
                 if (done) break;
                 enc.encode(value);
                 value.close();
@@ -261,44 +325,47 @@ export class Transcoder extends EventTarget {
         }
     }
 
-    async transcode(file, {containerType, vc, ac, width, height}) {
+    async transcode(file, {containerType, vc, ac, width, height, keepAspectRatio}) {
         const rand_id = Math.random().toString(36).substr(2, 9);
         const input_libav = `input_${rand_id}`;
         const output_libav = `output_${rand_id}.${containerType}`;
 
         try {
+            let processedDuration = 0;
+            let totalDuration = 0;
+
+            const dispatchProgress = (stage, additionalData = {}) => {
+                this.dispatchEvent(new CustomEvent('progress', {
+                    detail: {
+                        stage,
+                        percent: stage === 'start' ? 0 :
+                            stage === 'complete' ? 100 :
+                                Math.min(100, (processedDuration / totalDuration) * 100),
+                        processedDuration: stage === 'start' ? 0 : processedDuration,
+                        totalDuration,
+                        ...additionalData
+                    }
+                }));
+            };
+
             await this.libav.mkreadaheadfile(input_libav, file);
             const [ifc, istreams] = await this.libav.ff_init_demuxer_file(input_libav);
 
-            const totalDuration = istreams.reduce((max, stream) => {
+            totalDuration = istreams.reduce((max, stream) => {
                 if (!stream || stream.duration === undefined) return max;
                 return Math.max(max, stream.duration);
             }, 0);
 
-            this.dispatchEvent(new CustomEvent('progress', {
-                detail: { stage: 'start', totalDuration }
-            }));
+            dispatchProgress('start', {totalDuration});
 
             const [rpkt, wpkt] = await Promise.all([
                 this.libav.av_packet_alloc(),
                 this.libav.av_packet_alloc()
             ]);
 
-            let processedDuration = 0;
             const updateProgress = (timestampSeconds) => {
                 processedDuration = Math.max(processedDuration, timestampSeconds);
-                const percent = totalDuration > 0
-                    ? Math.min(100, (processedDuration / totalDuration) * 100)
-                    : 0;
-
-                this.dispatchEvent(new CustomEvent('progress', {
-                    detail: {
-                        stage: 'processing',
-                        percent: percent.toFixed(1),
-                        processedDuration,
-                        totalDuration
-                    }
-                }));
+                dispatchProgress('processing');
             };
 
             const streams = await this.#setupStreams({istreams, vc, ac, width, height});
@@ -318,6 +385,9 @@ export class Transcoder extends EventTarget {
                 decoderStreams: streams.decoderStreams,
                 encoders: streams.encoders,
                 encoderStreams: streams.encoderStreams,
+                targetWidth: width,
+                targetHeight: height,
+                keepAspectRatio: keepAspectRatio,
                 onProgress: updateProgress
             });
 
@@ -342,20 +412,26 @@ export class Transcoder extends EventTarget {
 
             const result = await this.libav.readFile(output_libav);
 
-            this.dispatchEvent(new CustomEvent('progress', {
-                detail: { stage: 'complete', percent: 100 }
-            }));
-
+            dispatchProgress('complete');
             return result;
+
         } catch (error) {
             this.dispatchEvent(new CustomEvent('progress', {
-                detail: { stage: 'error', error: error.message }
+                detail: {
+                    stage: 'error',
+                    error: error.message,
+                    percent: 0,
+                    processedDuration: 0,
+                    totalDuration: totalDuration || 0
+                }
             }));
             console.error("Transcoding error:", error);
             throw error;
         } finally {
-            await this.libav.unlink(input_libav).catch(() => {});
-            await this.libav.unlink(output_libav).catch(() => {});
+            await this.libav.unlink(input_libav).catch(() => {
+            });
+            await this.libav.unlink(output_libav).catch(() => {
+            });
         }
     }
 }

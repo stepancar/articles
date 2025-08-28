@@ -100,6 +100,14 @@ async function getffmpeg() {
       // workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
     });
 
+    ffmpeg.on('log', ({ type, message }) => {
+      console.log(`[${type}] ${message}`);
+    });
+
+    ffmpeg.on('progress', ({ progress, time }) => {
+      console.log(`progress: ${progress}, time: ${time}`);
+    });
+
     await loadingPromise;
     
   return ffmpeg;
@@ -110,6 +118,7 @@ async function convertToDoubleHeightVideo(lottieData, config) {
     const ffmpeg = await getffmpeg();
 
     const images = extractImagesFromLottie(lottieData);
+    const originalFrameRate = lottieData.fr || 30;
     if (images.length === 0) {
       throw new Error('No images found in Lottie data');
     }
@@ -119,16 +128,19 @@ async function convertToDoubleHeightVideo(lottieData, config) {
       await ffmpeg.writeFile(`frame_${i}.png`, images[i]);
     }
 
-    const framerate = config.framerate || 25;
-    const codecParams = getCodecParams(config);
-    const outputExt = getOutputExtension(config.codec);
-    const outputFile = `output_${config.codec}_crf${config.crf}.${outputExt}`;
+    const codecParams = config.codecParams ? config.codecParams.split(' ').filter(p => p.trim()) : [];
+    const targetFps = config.targetFps || originalFrameRate;
+    const targetWidth = config.targetWidth || lottieData.w;
+    const targetHeight = targetWidth * 2;
+    const codec = extractCodecFromParams(codecParams);
+    const outputExt = getOutputExtension(codec);
+    const outputFile = `output_${codec}.${outputExt}`;
 
     const ffmpegArgs = [
-      '-framerate', framerate.toString(),
+      '-framerate', originalFrameRate.toString(),
       '-i', 'frame_%d.png',
       '-filter_complex', 
-      '[0:v]format=rgba,split=2[top][alpha];[top]format=rgb24[top_rgb];[alpha]alphaextract,format=gray[alpha_gray];[top_rgb][alpha_gray]vstack=inputs=2[v]',
+      `[0:v]format=rgba,split=2[top][alpha];[top]format=rgb24[top_rgb];[alpha]alphaextract,format=gray[alpha_gray];[top_rgb][alpha_gray]vstack=inputs=2,scale=${targetWidth}:${targetHeight},fps=${targetFps}[v]`,
       '-map', '[v]',
       ...codecParams,
       outputFile
@@ -154,21 +166,13 @@ async function convertToDoubleHeightVideo(lottieData, config) {
 }
 
 
-function getCodecParams(config) {
-  const { codec, crf } = config;
-  
-  switch (codec) {
-    case 'libx264':
-      return ['-c:v', 'libx264', '-crf', crf.toString(), '-preset', 'medium', '-pix_fmt', 'yuv420p'];
-    case 'libvpx-vp9':
-      return ['-c:v', 'libvpx-vp9', '-crf', crf.toString(), '-speed', '0', '-auto-alt-ref', '1', '-lag-in-frames', '25', '-aq-mode', '0', '-pix_fmt', 'yuv420p'];
-    case 'libx265':
-      return ['-c:v', 'libx265', '-crf', crf.toString(), '-preset', 'medium', '-pix_fmt', 'yuv420p'];
-    case 'libaom-av1':
-      return ['-c:v', 'libaom-av1', '-crf', crf.toString(), '-cpu-used', '4', '-pix_fmt', 'yuv420p'];
-    default:
-      throw new Error(`Unsupported codec: ${codec}`);
+
+function extractCodecFromParams(codecParams) {
+  const codecIndex = codecParams.findIndex(param => param === '-c:v');
+  if (codecIndex !== -1 && codecIndex + 1 < codecParams.length) {
+    return codecParams[codecIndex + 1];
   }
+  return 'unknown';
 }
 
 function getOutputExtension(codec) {
@@ -219,10 +223,9 @@ async function generate2xHeightVideo(lottieData, config) {
   infoDiv.innerHTML = `
     <strong>Video Info:</strong><br>
     Size: ${videoSizeKB} KB<br>
-    Codec: ${config.codec}<br>
-    CRF: ${config.crf}<br>
-    Framerate: ${config.framerate} fps<br>
-    Format: ${outputExt.toUpperCase()}
+    Config: ${config.codecParams}<br>
+    Target FPS: ${config.targetFps || 'equals to lottie'}<br>
+    Format: ${outputExt}
   `;
   container.appendChild(infoDiv);
 
@@ -245,9 +248,20 @@ async function generate2xHeightVideo(lottieData, config) {
 }
 
 const defaultConfigs = [
-  { codec: 'libx264', crf: 23, framerate: 25 },
-  { codec: 'libx264', crf: 30, framerate: 25 },
-  { codec: 'libx264', crf: 35, framerate: 25 }
+  { 
+    codecParams: '-c:v libx264 -crf 23 -pix_fmt yuv420p'
+  },
+  { 
+    codecParams: '-c:v libx264 -crf 23 -pix_fmt yuv420p',
+    targetFps: 15
+  },
+  { 
+    codecParams: '-c:v libx264 -crf 30 -pix_fmt yuv420p',
+    targetWidth: 360
+  },
+  { 
+    codecParams: '-c:v libx264 -crf 35 -pix_fmt yuv420p'
+  },
 ];
 
 let allVideos = [];
@@ -409,7 +423,7 @@ generateBtn.onclick = async () => {
 
     for (let i = 0; i < configs.length; i++) {
       const config = configs[i];
-      statusDiv.innerHTML = `<strong>Status:</strong> Processing configuration ${i + 1}/${configs.length}: ${config.codec}...`;
+      statusDiv.innerHTML = `<strong>Status:</strong> Processing configuration ${i + 1}/${configs.length}`;
       
       try {
         const result = await generate2xHeightVideo(lottieData, config);

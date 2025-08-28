@@ -2,3 +2,253 @@
     display: flex;
     flex-direction: column;
 }
+
+.ffmpeg-demo {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.ffmpeg-demo h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.status {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.converter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.converter label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.converter input, .converter select, .converter button {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.converter button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.converter button:hover {
+    background-color: #0056b3;
+}
+
+.converter button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.convert-status {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#download-link {
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#download-link:hover {
+    text-decoration: underline;
+}
+
+/* Video Generator Styles */
+.video-controls {
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin: 20px;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.video-controls h2 {
+    margin-top: 0;
+}
+
+.config-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.config-textarea {
+    width: 100%;
+    height: 200px;
+    font-family: monospace;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.generate-btn {
+    padding: 12px 24px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.generate-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.status-div {
+    margin: 10px 0;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 4px;
+    display: none;
+}
+
+.status-error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.results-container {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.video-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    flex: 0 0 auto;
+    max-width: 460px;
+}
+
+.video-container h3 {
+    margin-top: 0;
+}
+
+.video-element {
+    width: 420px;
+    height: 420px;
+    display: block;
+    margin: 10px 0;
+}
+
+.canvas-element {
+    width: 420px;
+    height: 420px;
+    display: block;
+    margin: 10px 0;
+    border: 1px solid #999;
+}
+
+.video-info {
+    margin: 10px 0;
+    font-family: monospace;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.download-btn {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.download-btn:hover {
+    background: #0056b3;
+}
+
+.error-container {
+    border: 1px solid #dc3545;
+    padding: 20px;
+    border-radius: 8px;
+    background: #f8d7da;
+    color: #721c24;
+    flex: 0 0 auto;
+    min-width: 460px;
+    max-width: 460px;
+}
+
+/* Drag and Drop Styles */
+.file-upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    margin: 20px 0;
+    background: #fafafa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-upload-area:hover {
+    border-color: #007bff;
+    background: #f0f8ff;
+}
+
+.file-upload-area.drag-over {
+    border-color: #28a745;
+    background: #f0fff0;
+    transform: scale(1.02);
+}
+
+.file-upload-area .upload-icon {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.file-upload-area .upload-text {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.file-upload-area .upload-subtext {
+    font-size: 14px;
+    color: #999;
+}
+
+.file-input {
+    display: none;
+}
+
+.current-file {
+    margin: 10px 0;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.current-file .file-name {
+    font-weight: bold;
+    color: #28a745;
+}

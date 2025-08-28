@@ -1,3 +1,69 @@
+
+@keyframes shimmer1 {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes shimmer2 {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(10vw, -5vh) rotate(120deg); }
+  66% { transform: translate(-5vw, 10vh) rotate(240deg); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translate(0, 0) rotate(180deg); }
+  33% { transform: translate(-8vw, 8vh) rotate(300deg); }
+  66% { transform: translate(12vw, -3vh) rotate(60deg); }
+}
+
+html {
+    position: relative;
+    min-height: 300vh;
+    background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+}
+
+html::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    z-index: -1;
+    background: 
+      linear-gradient(0deg, rgba(255,255,255,0.3), transparent 60%),
+      radial-gradient(ellipse 60vw 40vh at 50vw 50vh, #ff69b4dd 0%, #ff69b4aa 30%, transparent 70%),
+      radial-gradient(ellipse 50vw 60vh at 30vw 40vh, #00bfffdd 0%, #00bfffaa 30%, transparent 70%),
+      radial-gradient(ellipse 70vw 50vh at 70vw 30vh, #ff6b9ddd 0%, #ff6b9daa 40%, transparent 80%),
+      radial-gradient(ellipse 80vw 40vh at 40vw 60vh, #7fff7fdd 0%, #7fff7faa 40%, transparent 80%),
+      radial-gradient(ellipse 90vw 70vh at 60vw 25vh, #c77dffdd 0%, #c77dffaa 35%, transparent 75%);
+    animation: shimmer1 8s ease-in-out infinite, float1 20s ease-in-out infinite;
+    filter: blur(2px);
+}
+
+html::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    z-index: -1;
+    background: 
+      radial-gradient(ellipse 55vw 45vh at 45vw 45vh, #ffb347dd 0%, #ffb347aa 40%, transparent 80%),
+      radial-gradient(ellipse 65vw 55vh at 55vw 35vh, #87ceebdd 0%, #87ceebaa 50%, transparent 90%),
+      radial-gradient(ellipse 75vw 35vh at 35vw 55vh, #ff7f7fdd 0%, #ff7f7faa 50%, transparent 90%),
+      radial-gradient(ellipse 85vw 65vh at 65vw 65vh, #c77dffaa 0%, #c77dff77 45%, transparent 85%),
+      radial-gradient(ellipse 45vw 75vh at 25vw 25vh, #7fff7faa 0%, #7fff7f77 45%, transparent 85%);
+    animation: shimmer2 8s ease-in-out infinite, float2 25s ease-in-out infinite;
+    filter: blur(3px);
+}
+
 .container {
     display: flex;
     flex-direction: column;

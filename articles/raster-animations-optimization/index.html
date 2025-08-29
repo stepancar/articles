@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Webm video</title>
+    <title>Raster animations optimization</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -24,14 +24,19 @@
     <layout>
       <header>
         <h1>
-          Webm video
+          Raster animations optimization
         </h1>
       </header>
       <main>
         <article class="markdown">
           <h2 class="shortDescription">Draft</h2>
           <div class="content">
-            <p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>
+            <p>This article explores techniques for optimizing raster animations, focusing on balancing quality and file size. It includes a server-side benchmark script that converts Lottie animations to videos using various codecs and parameters, generating an interactive HTML report for analysis.</p>
+<p>The same idea is described in <a href="https://jakearchibald.com/2024/video-with-transparency/">This article</a></p>
+<p>It also provides an interactive demo utilizin ffmpeg.wasm.
+Unfortunatelly, due to browser limitations, the demo can only process some of codecs and parameters.</p>
+<p>To get a comprehensive benchmark, please refer to the <a href="SERVER-BENCHMARK.md">Server Benchmark Script</a>.</p>
+<p><demo-with-playground file="src/index.html" initialPath="./src/index.html"></demo-with-playground></p>
 <h2>Notes</h2>
 
           </div>
@@ -86,7 +91,7 @@
           <div>
               <iframe src="./${initialPath}"></iframe>
 
-              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/pwa-webm/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/raster-animations-optimization/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
               <img
                   alt="Open in StackBlitz"
                   src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"

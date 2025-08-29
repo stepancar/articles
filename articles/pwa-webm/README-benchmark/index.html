@@ -1,0 +1,122 @@
+
+<html><head></head><body><h1>Lottie Video Benchmark Tool</h1>
+<p>A Node.js script that converts Lottie animations to videos using FFmpeg with various codec parameters and generates a comprehensive HTML report.</p>
+<h2>Features</h2>
+<ul>
+<li><strong>Multiple Codecs</strong>: H.264, H.265, AV1, VP9</li>
+<li><strong>CRF Values</strong>: 20, 23, 27, 30, 35, 40</li>
+<li><strong>Target Widths</strong>: 420px, 360px (height is automatically 2x width)</li>
+<li><strong>Target FPS</strong>: 25fps, 15fps</li>
+<li><strong>HTML Report</strong>: Interactive grid with video previews and filtering</li>
+</ul>
+<h2>Prerequisites</h2>
+<ul>
+<li>Node.js 14+</li>
+<li>FFmpeg installed and available in PATH</li>
+<li>Lottie JSON file with embedded PNG images</li>
+</ul>
+<h2>Installation</h2>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># Make script executable</span>
+<span class="token function">chmod</span> +x lottie-benchmark.js
+
+<span class="token comment"># Or install globally</span>
+<span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-g</span> <span class="token builtin class-name">.</span></code></pre>
+<h2>Usage</h2>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># Direct execution</span>
+<span class="token function">node</span> lottie-benchmark.js path/to/your-lottie.json
+
+<span class="token comment"># Using npm script</span>
+<span class="token function">npm</span> run benchmark path/to/your-lottie.json
+
+<span class="token comment"># If installed globally</span>
+lottie-benchmark path/to/your-lottie.json</code></pre>
+<h2>Output</h2>
+<p>The script creates:</p>
+<ul>
+<li><code>./benchmark-output/</code> directory with all generated videos</li>
+<li><code>./benchmark-output/benchmark-report.html</code> - Interactive HTML report</li>
+</ul>
+<h2>Example Output Structure</h2>
+<pre><code>benchmark-output/
+├── benchmark-report.html
+├── h264_crf20_420x840_25fps.mp4
+├── h264_crf20_420x840_15fps.mp4
+├── h264_crf23_360x720_25fps.mp4
+├── vp9_crf30_420x840_25fps.webm
+├── av1_crf35_360x720_15fps.webm
+└── ... (all combinations)
+</code></pre>
+<h2>HTML Report Features</h2>
+<ul>
+<li><strong>Grid Layout</strong>: All videos displayed in organized cards</li>
+<li><strong>Interactive Filters</strong>: Filter by codec, CRF, width, and FPS</li>
+<li><strong>Statistics</strong>: Total tests, success rate, average file sizes</li>
+<li><strong>Video Preview</strong>: Embedded video players for each result</li>
+<li><strong>Detailed Info</strong>: File size, encoding time, parameters for each video</li>
+</ul>
+<h2>Configuration</h2>
+<p>Edit the <code>CONFIG</code> object in <code>lottie-benchmark.js</code> to customize:</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token constant">CONFIG</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token literal-property property">codecs</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span> <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'h264'</span><span class="token punctuation">,</span> <span class="token literal-property property">codec</span><span class="token operator">:</span> <span class="token string">'libx264'</span><span class="token punctuation">,</span> <span class="token literal-property property">ext</span><span class="token operator">:</span> <span class="token string">'mp4'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'h265'</span><span class="token punctuation">,</span> <span class="token literal-property property">codec</span><span class="token operator">:</span> <span class="token string">'libx265'</span><span class="token punctuation">,</span> <span class="token literal-property property">ext</span><span class="token operator">:</span> <span class="token string">'mp4'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'av1'</span><span class="token punctuation">,</span> <span class="token literal-property property">codec</span><span class="token operator">:</span> <span class="token string">'libaom-av1'</span><span class="token punctuation">,</span> <span class="token literal-property property">ext</span><span class="token operator">:</span> <span class="token string">'webm'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'vp9'</span><span class="token punctuation">,</span> <span class="token literal-property property">codec</span><span class="token operator">:</span> <span class="token string">'libvpx-vp9'</span><span class="token punctuation">,</span> <span class="token literal-property property">ext</span><span class="token operator">:</span> <span class="token string">'webm'</span> <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">crfValues</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token number">20</span><span class="token punctuation">,</span> <span class="token number">23</span><span class="token punctuation">,</span> <span class="token number">27</span><span class="token punctuation">,</span> <span class="token number">30</span><span class="token punctuation">,</span> <span class="token number">35</span><span class="token punctuation">,</span> <span class="token number">40</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">targetWidths</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token number">420</span><span class="token punctuation">,</span> <span class="token number">360</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">targetFps</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token number">25</span><span class="token punctuation">,</span> <span class="token number">15</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">outputDir</span><span class="token operator">:</span> <span class="token string">'./benchmark-output'</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">tempDir</span><span class="token operator">:</span> <span class="token string">'./temp-frames'</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre>
+<h2>FFmpeg Filter</h2>
+<p>The script uses this filter complex to create 2x height videos:</p>
+<pre><code>[0:v]format=rgba,split=2[top][alpha];[top]format=rgb24[top_rgb];[alpha]alphaextract,format=gray[alpha_gray];[top_rgb][alpha_gray]vstack=inputs=2,scale=WIDTH:HEIGHT,fps=FPS[v]
+</code></pre>
+<p>This creates videos where:</p>
+<ul>
+<li>Top half: RGB content</li>
+<li>Bottom half: Alpha channel as grayscale</li>
+<li>Total height: 2x the target width</li>
+</ul>
+<h2>Troubleshooting</h2>
+<p><strong>FFmpeg not found:</strong></p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># Install FFmpeg</span>
+<span class="token comment"># macOS</span>
+brew <span class="token function">install</span> ffmpeg
+
+<span class="token comment"># Ubuntu/Debian  </span>
+<span class="token function">sudo</span> <span class="token function">apt</span> <span class="token function">install</span> ffmpeg
+
+<span class="token comment"># Windows</span>
+<span class="token comment"># Download from https://ffmpeg.org/</span></code></pre>
+<p><strong>Large file sizes:</strong></p>
+<ul>
+<li>Increase CRF values (lower quality, smaller files)</li>
+<li>Reduce target width/fps</li>
+<li>Use more efficient codecs (AV1 &gt; VP9 &gt; H.265 &gt; H.264)</li>
+</ul>
+<p><strong>Out of memory:</strong></p>
+<ul>
+<li>The script processes large Lottie files with embedded images</li>
+<li>Adjust MAX_SIZE limit in extractImagesFromLottie()</li>
+</ul>
+<h2>Example Command</h2>
+<pre class="language-bash"><code class="language-bash"><span class="token function">node</span> lottie-benchmark.js my-animation.json</code></pre>
+<p>This will:</p>
+<ol>
+<li>Extract PNG frames from the Lottie JSON</li>
+<li>Run 192 FFmpeg encoding tests (4 codecs × 6 CRFs × 2 widths × 2 FPS)</li>
+<li>Generate an HTML report with all results</li>
+<li>Clean up temporary files</li>
+</ol>
+<h2>Performance</h2>
+<ul>
+<li><strong>Total tests</strong>: 192 combinations by default</li>
+<li><strong>Typical runtime</strong>: 10-30 minutes depending on animation complexity</li>
+<li><strong>Output size</strong>: Varies widely based on content and parameters</li>
+<li><strong>Parallelization</strong>: Currently sequential (could be enhanced)</li>
+</ul>
+<h2>License</h2>
+<p>MIT</p>
+</body></html>

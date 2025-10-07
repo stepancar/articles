@@ -6,6 +6,8 @@ import {
   setPremultipliedAlpha,
   drawVideo
 } from 'https://cdn.jsdelivr.net/npm/stacked-alpha-video@1.0.10/build/gl-helpers.js';
+
+import * as lottie from 'https://cdn.jsdelivr.net/npm/lottie-web@5.10.2/build/player/lottie.min.js';
 // const canvas = document.querySelector('canvas');
 // const ctx = canvas.getContext('2d', { alpha: true });
 // const video = document.querySelector('video');
@@ -49,36 +51,92 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-function extractImagesFromLottie(lottieData) {
-  const images = [];
-  const MAX_SIZE = 50 * 1024 * 1024; // 50MB limit per image
+// function extractImagesFromLottie(lottieData) {
+//   const images = [];
+//   const MAX_SIZE = 50 * 1024 * 1024; // 50MB limit per image
   
-  lottieData.assets.forEach((asset) => {
-    if (asset.p && asset.p.startsWith('data:image/png;base64,')) {
-      const base64Data = asset.p.replace(/^data:image\/png;base64,/, '');
+//   lottieData.assets.forEach((asset) => {
+//     if (asset.p && asset.p.startsWith('data:image/png;base64,')) {
+//       const base64Data = asset.p.replace(/^data:image\/png;base64,/, '');
       
-      // Check base64 size before processing
-      if (base64Data.length * 0.75 > MAX_SIZE) {
-        console.warn(`Skipping oversized image asset: ${base64Data.length * 0.75} bytes`);
-        return;
-      }
+//       // Check base64 size before processing
+//       if (base64Data.length * 0.75 > MAX_SIZE) {
+//         console.warn(`Skipping oversized image asset: ${base64Data.length * 0.75} bytes`);
+//         return;
+//       }
       
-      try {
-        const binaryString = atob(base64Data);
-        const bytes = new Uint8Array(binaryString.length);
+//       try {
+//         const binaryString = atob(base64Data);
+//         const bytes = new Uint8Array(binaryString.length);
         
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
+//         for (let i = 0; i < binaryString.length; i++) {
+//           bytes[i] = binaryString.charCodeAt(i);
+//         }
         
-        images.push(bytes);
-      } catch (error) {
-        console.error('Failed to decode base64 image:', error);
-      }
-    }
+//         images.push(bytes);
+//       } catch (error) {
+//         console.error('Failed to decode base64 image:', error);
+//       }
+//     }
+//   });
+  
+//   return images;
+// }
+
+async function extractFramesFromLottie(lottieData) {
+  
+
+  const container = document.createElement('div');
+  const width = lottieData.w;
+  const height = lottieData.h;
+
+  /**
+   * Lottie asset inherits its dimension from the container.
+   * This container needs to be appended to the DOM during load.
+   * The css ensures that it does not cause any kind of flicker, flash of lottie asset
+   * or any random scrollbars due to appending of a large div in the DOM.
+   */
+  container.style.cssText = `position:fixed;width:${width}px;height:${height}px;right:150vw;bottom:150vh;opacity:0;`;
+
+  /**
+   * Lottie uses offsetWidth and offsetHeight to calculate the dimensions of canvas
+   * But offsetWidth and offsetHeight trigger a reflow.
+   * We don't need it because we already know the dimensions.
+   */
+  Object.defineProperty(container, 'offsetWidth', {
+      get() {
+          return width;
+      },
+  });
+
+  Object.defineProperty(container, 'offsetHeight', {
+      get() {
+          return height;
+      },
   });
   
-  return images;
+  const animation = window.lottie.loadAnimation({
+    container,
+    renderer: 'canvas',
+    animationData: lottieData,
+    loop: false,
+    autoplay: false,
+  });
+
+  const frames = [];
+
+  for (let i = lottieData.ip; i < lottieData.op; i++) {
+    animation.goToAndStop(i, true);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const canvas = animation.container;
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 1));
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    frames.push(uint8Array);
+  }
+  
+  animation.destroy();
+  return frames;
 }
 
 let _ffmpeg = null;
@@ -117,7 +175,7 @@ async function getffmpeg() {
 async function convertToDoubleHeightVideo(lottieData, config) {
     const ffmpeg = await getffmpeg();
 
-    const images = extractImagesFromLottie(lottieData);
+    const images = await extractFramesFromLottie(lottieData);
     const originalFrameRate = lottieData.fr || 30;
     if (images.length === 0) {
       throw new Error('No images found in Lottie data');
@@ -184,6 +242,8 @@ function getOutputExtension(codec) {
       return 'webm';
     case 'libaom-av1':
       return 'webm';
+    case 'libwebp':
+      return 'webp';
     default:
       return 'mp4';
   }
@@ -194,7 +254,7 @@ async function generate2xHeightVideo(lottieData, config) {
   const videoSizeKB = (videoData.length / 1024).toFixed(2);
 
   const outputExt = getOutputExtension(config.codec);
-  const mimeType = outputExt === 'webm' ? 'video/webm' : 'video/mp4';
+  const mimeType = outputExt === 'webm' ? 'video/webm' : ( outputExt === 'webp' ? 'image/webp': 'video/mp4');
   const videoBlob = new Blob([videoData], { type: mimeType });
   const videoUrl = URL.createObjectURL(videoBlob);
 

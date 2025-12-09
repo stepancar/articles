@@ -289,6 +289,11 @@ async function generate2xHeightVideo(lottieData, config) {
   `;
   container.appendChild(infoDiv);
 
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.display = 'flex';
+  buttonContainer.style.gap = '10px';
+  buttonContainer.style.marginTop = '10px';
+  
   const downloadBtn = document.createElement('button');
   downloadBtn.textContent = 'Download Video';
   downloadBtn.className = 'download-btn';
@@ -298,7 +303,27 @@ async function generate2xHeightVideo(lottieData, config) {
     a.download = `lottie_2x_${config.codec}_crf${config.crf}.${outputExt}`;
     a.click();
   };
-  container.appendChild(downloadBtn);
+  buttonContainer.appendChild(downloadBtn);
+  
+  const shareBtn = document.createElement('button');
+  shareBtn.textContent = 'Share Video';
+  shareBtn.className = 'share-btn';
+  shareBtn.onclick = () => {
+    const base64Video = btoa(String.fromCharCode(...new Uint8Array(videoData)));
+    const playerUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '').replace(/\/$/, '')}/player.html?video=${base64Video}`;
+    navigator.clipboard.writeText(playerUrl).then(() => {
+      shareBtn.textContent = 'Link Copied!';
+      setTimeout(() => {
+        shareBtn.textContent = 'Share Video';
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+      alert('Failed to copy to clipboard');
+    });
+  };
+  buttonContainer.appendChild(shareBtn);
+  
+  container.appendChild(buttonContainer);
 
   return {
     container,
@@ -366,6 +391,28 @@ currentFileDiv.style.display = 'none';
 
 let selectedLottieData = null;
 
+function loadLottieFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const lottieBase64 = urlParams.get('lottie');
+  
+  if (lottieBase64) {
+    try {
+      const decodedJson = atob(lottieBase64);
+      selectedLottieData = JSON.parse(decodedJson);
+      
+      currentFileDiv.innerHTML = `<span class="file-name">🔗 Lottie from URL</span> (${(decodedJson.length / 1024).toFixed(1)} KB)`;
+      currentFileDiv.style.display = 'block';
+      generateBtn.disabled = false;
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to load lottie from URL parameter:', error);
+      return false;
+    }
+  }
+  return false;
+}
+
 function handleFile(file) {
   if (!file.name.endsWith('.json')) {
     alert('Please select a JSON file');
@@ -376,7 +423,26 @@ function handleFile(file) {
   reader.onload = (e) => {
     try {
       selectedLottieData = JSON.parse(e.target.result);
+      
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = 'Copy Link';
+      copyBtn.className = 'copy-link-btn';
+      copyBtn.onclick = () => {
+        const base64Encoded = btoa(e.target.result);
+        const urlWithParam = `${window.location.origin}${window.location.pathname}?lottie=${base64Encoded}`;
+        navigator.clipboard.writeText(urlWithParam).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => {
+            copyBtn.textContent = 'Copy Link';
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+          alert('Failed to copy to clipboard');
+        });
+      };
+      
       currentFileDiv.innerHTML = `<span class="file-name">📄 ${file.name}</span> (${(file.size / 1024).toFixed(1)} KB)`;
+      currentFileDiv.appendChild(copyBtn);
       currentFileDiv.style.display = 'block';
       generateBtn.disabled = false;
     } catch (error) {
@@ -444,6 +510,8 @@ resultsContainer.className = 'results-container';
 
 document.body.appendChild(controlsDiv);
 document.body.appendChild(resultsContainer);
+
+loadLottieFromUrl();
 
 generateBtn.onclick = async () => {
   try {

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .field-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="search"],
+        input[type="url"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .description {
+            font-size: 12px;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        [contenteditable] {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            min-height: 80px;
+            background: white;
+        }
+        [contenteditable]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <h1>Extension Test Page</h1>
+    <p>This page contains various input fields for testing browser extensions.</p>
+
+    <h2>Text Inputs (should show correction button)</h2>
+    <div class="field-group">
+        <label for="text-input">Text Input</label>
+        <input type="text" id="text-input" value="I has a error in this sentence.">
+        <p class="description">Standard text input field</p>
+
+        <label for="search-input">Search Input</label>
+        <input type="search" id="search-input" placeholder="Search for somthing...">
+        <p class="description">Search input field</p>
+
+        <label for="url-input">URL Input</label>
+        <input type="url" id="url-input" placeholder="https://example.com">
+        <p class="description">URL input field</p>
+
+        <label for="tel-input">Phone Input</label>
+        <input type="tel" id="tel-input" placeholder="+1 234 567 8900">
+        <p class="description">Telephone input field</p>
+    </div>
+
+    <h2>Textareas (should show correction button)</h2>
+    <div class="field-group">
+        <label for="textarea-small">Small Textarea</label>
+        <textarea id="textarea-small">This is a small textarea with some text that might has errors.</textarea>
+
+        <label for="textarea-large">Large Textarea</label>
+        <textarea id="textarea-large" style="min-height: 150px;">This is a larger textarea.
+
+It can contain multiple paragraphs of text.
+
+The extension should be able to correct text hear too.</textarea>
+
+        <label for="textarea-empty">Empty Textarea</label>
+        <textarea id="textarea-empty" placeholder="Type something here..."></textarea>
+    </div>
+
+    <h2>Ignored Inputs (should NOT show correction button)</h2>
+    <div class="field-group">
+        <label for="email-input">Email Input</label>
+        <input type="email" id="email-input" value="test@example.com">
+        <p class="description">Email inputs are typically ignored</p>
+
+        <label for="password-input">Password Input</label>
+        <input type="password" id="password-input" value="secretpassword">
+        <p class="description">Password inputs should never show correction</p>
+
+        <label for="number-input">Number Input</label>
+        <input type="number" id="number-input" value="12345">
+        <p class="description">Number inputs are ignored</p>
+
+        <label for="hidden-input">Hidden Input</label>
+        <input type="hidden" id="hidden-input" value="hidden value">
+        <p class="description">Hidden inputs are not visible</p>
+    </div>
+
+    <h2>Content Editable (may show correction button)</h2>
+    <div class="field-group">
+        <label>Contenteditable Div</label>
+        <div contenteditable="true" id="contenteditable-div">
+            This is a contenteditable div. It behaves like a textarea but its a div element. The extension might suport this too.
+        </div>
+    </div>
+
+    <h2>Special Cases</h2>
+    <div class="field-group">
+        <label for="readonly-input">Readonly Input</label>
+        <input type="text" id="readonly-input" value="This is readonly text" readonly>
+        <p class="description">Readonly inputs cannot be edited</p>
+
+        <label for="disabled-input">Disabled Input</label>
+        <input type="text" id="disabled-input" value="This is disabled text" disabled>
+        <p class="description">Disabled inputs cannot be interacted with</p>
+
+        <label for="maxlength-input">Input with Maxlength</label>
+        <input type="text" id="maxlength-input" value="Short" maxlength="50">
+        <p class="description">Limited to 50 characters</p>
+    </div>
+
+    <h2>Form Context</h2>
+    <div class="field-group">
+        <form id="test-form">
+            <label for="form-name">Name</label>
+            <input type="text" id="form-name" name="name" value="John Doe">
+
+            <label for="form-message">Message</label>
+            <textarea id="form-message" name="message">Hello, I woud like to inquire about youre services.</textarea>
+
+            <button type="button" id="form-button">Submit (disabled for testing)</button>
+        </form>
+    </div>
+</body>
+</html>

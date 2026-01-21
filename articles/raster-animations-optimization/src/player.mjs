@@ -26,21 +26,28 @@ function hideLoading() {
 
 function getVideoFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
-  const videoBase64 = urlParams.get('video');
-  
+  let videoBase64 = urlParams.get('video');
+
   if (!videoBase64) {
     showError('No video parameter found in URL. Please provide a base64 encoded video using ?video=<base64_data>');
     return null;
   }
-  
+
   try {
+    // Convert URL-safe base64 back to standard base64
+    videoBase64 = videoBase64.replace(/-/g, '+').replace(/_/g, '/');
+    // Add padding if needed
+    while (videoBase64.length % 4) {
+      videoBase64 += '=';
+    }
+
     const binaryString = atob(videoBase64);
     const bytes = new Uint8Array(binaryString.length);
-    
+
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
-    
+
     return bytes;
   } catch (error) {
     showError('Invalid base64 video data in URL parameter');
@@ -78,19 +85,46 @@ function createVideoPlayer(videoData) {
   title.textContent = 'Double Height Video with WebGL Alpha Transparency';
   videoContainer.appendChild(title);
   
+  // Container for side-by-side comparison
+  const comparisonDiv = document.createElement('div');
+  comparisonDiv.style.display = 'flex';
+  comparisonDiv.style.gap = '20px';
+  comparisonDiv.style.flexWrap = 'wrap';
+  comparisonDiv.style.alignItems = 'flex-start';
+
+  // Double height video (source)
+  const videoWrapper = document.createElement('div');
+  const videoLabel = document.createElement('h4');
+  videoLabel.textContent = 'Double Height Video (Source)';
+  videoLabel.style.margin = '0 0 10px 0';
+  videoWrapper.appendChild(videoLabel);
+
   const video = document.createElement('video');
   video.src = videoUrl;
   video.controls = true;
   video.autoplay = true;
   video.loop = true;
   video.muted = true;
+  video.playsInline = true;
   video.className = 'video-element';
-  video.style.display = 'none';
-  videoContainer.appendChild(video);
+  video.style.maxHeight = '400px';
+  video.style.width = 'auto';
+  videoWrapper.appendChild(video);
+  comparisonDiv.appendChild(videoWrapper);
+
+  // Canvas with transparency (result)
+  const canvasWrapper = document.createElement('div');
+  const canvasLabel = document.createElement('h4');
+  canvasLabel.textContent = 'WebGL Rendered (With Transparency)';
+  canvasLabel.style.margin = '0 0 10px 0';
+  canvasWrapper.appendChild(canvasLabel);
   
   const canvas = document.createElement('canvas');
   canvas.className = 'canvas-element';
-  videoContainer.appendChild(canvas);
+  canvasWrapper.appendChild(canvas);
+  comparisonDiv.appendChild(canvasWrapper);
+
+  videoContainer.appendChild(comparisonDiv);
   
   const infoDiv = document.createElement('div');
   infoDiv.className = 'video-info';
@@ -108,22 +142,50 @@ function createVideoPlayer(videoData) {
   video.addEventListener('loadedmetadata', () => {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight / 2;
-    
+    // Set style dimensions to maintain aspect ratio
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+
     const ctx = setupGLContext(canvas);
-    
+
     function renderFrame() {
       if (video.readyState >= 2) {
         drawVideo(ctx, video);
       }
       requestAnimationFrame(renderFrame);
     }
-    
+
     renderFrame();
     hideLoading();
+
+    // Explicitly play the video (autoplay may be blocked)
+    video.play().catch(e => console.log('Autoplay blocked:', e));
   });
   
   video.addEventListener('error', (e) => {
-    showError(`Failed to load video: ${e.message || 'Unknown error'}`);
+    const error = video.error;
+    let errorMessage = 'Unknown error';
+    if (error) {
+      switch (error.code) {
+        case MediaError.MEDIA_ERR_ABORTED:
+          errorMessage = 'Video loading aborted';
+          break;
+        case MediaError.MEDIA_ERR_NETWORK:
+          errorMessage = 'Network error while loading video';
+          break;
+        case MediaError.MEDIA_ERR_DECODE:
+          errorMessage = 'Video decoding error';
+          break;
+        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+          errorMessage = 'Video format not supported';
+          break;
+      }
+      console.error('Video error:', error.code, error.message);
+    }
+    console.log('Video data size:', videoData.length, 'bytes');
+    console.log('Detected format:', videoFormat);
+    console.log('First 20 bytes:', Array.from(videoData.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' '));
+    showError(`Failed to load video: ${errorMessage}`);
   });
   
   const downloadBtn = document.createElement('button');

@@ -10,15 +10,13 @@
 }
 
 @keyframes float1 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(10vw, -5vh) rotate(120deg); }
-  66% { transform: translate(-5vw, 10vh) rotate(240deg); }
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(100vw, 100vh); }
 }
 
 @keyframes float2 {
-  0%, 100% { transform: translate(0, 0) rotate(180deg); }
-  33% { transform: translate(-8vw, 8vh) rotate(300deg); }
-  66% { transform: translate(12vw, -3vh) rotate(60deg); }
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(100vw, 100vh); }
 }
 
 html {
@@ -35,15 +33,19 @@ html::before {
     width: 200%;
     height: 200%;
     z-index: -1;
-    background: 
-      linear-gradient(0deg, rgba(255,255,255,0.3), transparent 60%),
-      radial-gradient(ellipse 60vw 40vh at 50vw 50vh, #ff69b4dd 0%, #ff69b4aa 30%, transparent 70%),
-      radial-gradient(ellipse 50vw 60vh at 30vw 40vh, #00bfffdd 0%, #00bfffaa 30%, transparent 70%),
-      radial-gradient(ellipse 70vw 50vh at 70vw 30vh, #ff6b9ddd 0%, #ff6b9daa 40%, transparent 80%),
-      radial-gradient(ellipse 80vw 40vh at 40vw 60vh, #7fff7fdd 0%, #7fff7faa 40%, transparent 80%),
-      radial-gradient(ellipse 90vw 70vh at 60vw 25vh, #c77dffdd 0%, #c77dffaa 35%, transparent 75%);
-    animation: shimmer1 8s ease-in-out infinite, float1 20s ease-in-out infinite;
-    filter: blur(2px);
+    background:
+      radial-gradient(ellipse 25vw 20vh at 20vw 25vh, #ff0044 0%, #ff0044aa 40%, transparent 70%),
+      radial-gradient(ellipse 22vw 25vh at 80vw 20vh, #00bfff 0%, #00bfffcc 50%, transparent 80%),
+      radial-gradient(ellipse 28vw 24vh at 60vw 75vh, #0066ff 0%, #0066ffbb 45%, transparent 75%),
+      radial-gradient(ellipse 24vw 28vh at 35vw 60vh, #00ffff 0%, #00ffffcc 50%, transparent 80%),
+      radial-gradient(ellipse 26vw 22vh at 70vw 45vh, #ffdd00 0%, #ffdd00cc 45%, transparent 75%),
+      radial-gradient(ellipse 23vw 26vh at 15vw 70vh, #ff3333 0%, #ff3333bb 40%, transparent 70%),
+      radial-gradient(ellipse 27vw 23vh at 85vw 65vh, #00ccff 0%, #00ccffcc 50%, transparent 80%),
+      radial-gradient(ellipse 24vw 27vh at 45vw 15vh, #ffee00 0%, #ffee00cc 45%, transparent 75%),
+      radial-gradient(ellipse 25vw 24vh at 55vw 40vh, #3399ff 0%, #3399ffbb 50%, transparent 80%),
+      radial-gradient(ellipse 22vw 25vh at 25vw 85vh, #ff6600 0%, #ff6600bb 40%, transparent 70%);
+    animation: shimmer1 8s ease-in-out infinite, float1 6s linear infinite alternate;
+    filter: blur(1px);
 }
 
 html::after {
@@ -54,14 +56,19 @@ html::after {
     width: 200%;
     height: 200%;
     z-index: -1;
-    background: 
-      radial-gradient(ellipse 55vw 45vh at 45vw 45vh, #ffb347dd 0%, #ffb347aa 40%, transparent 80%),
-      radial-gradient(ellipse 65vw 55vh at 55vw 35vh, #87ceebdd 0%, #87ceebaa 50%, transparent 90%),
-      radial-gradient(ellipse 75vw 35vh at 35vw 55vh, #ff7f7fdd 0%, #ff7f7faa 50%, transparent 90%),
-      radial-gradient(ellipse 85vw 65vh at 65vw 65vh, #c77dffaa 0%, #c77dff77 45%, transparent 85%),
-      radial-gradient(ellipse 45vw 75vh at 25vw 25vh, #7fff7faa 0%, #7fff7f77 45%, transparent 85%);
-    animation: shimmer2 8s ease-in-out infinite, float2 25s ease-in-out infinite;
-    filter: blur(3px);
+    background:
+      radial-gradient(ellipse 26vw 23vh at 50vw 50vh, #ff4444 0%, #ff4444cc 45%, transparent 75%),
+      radial-gradient(ellipse 23vw 26vh at 10vw 80vh, #0088ff 0%, #0088ffcc 50%, transparent 80%),
+      radial-gradient(ellipse 28vw 24vh at 90vw 35vh, #00ddff 0%, #00ddffcc 50%, transparent 80%),
+      radial-gradient(ellipse 22vw 28vh at 40vw 30vh, #ffcc00 0%, #ffcc00cc 45%, transparent 75%),
+      radial-gradient(ellipse 25vw 25vh at 75vw 80vh, #00ffff 0%, #00ffffbb 50%, transparent 80%),
+      radial-gradient(ellipse 24vw 22vh at 30vw 45vh, #ff5500 0%, #ff5500bb 40%, transparent 70%),
+      radial-gradient(ellipse 27vw 25vh at 65vw 20vh, #0055ff 0%, #0055ffcc 50%, transparent 80%),
+      radial-gradient(ellipse 23vw 27vh at 5vw 55vh, #ffff00 0%, #ffff00cc 45%, transparent 75%),
+      radial-gradient(ellipse 26vw 24vh at 95vw 25vh, #ff0066 0%, #ff0066bb 40%, transparent 70%),
+      radial-gradient(ellipse 24vw 26vh at 48vw 90vh, #00aaff 0%, #00aaffcc 50%, transparent 80%);
+    animation: shimmer2 8s ease-in-out infinite, float2 7s linear infinite alternate;
+    filter: blur(1px);
 }
 
 .container {
@@ -222,8 +229,6 @@ html::after {
 }
 
 .canvas-element {
-    width: 420px;
-    height: 420px;
     display: block;
     margin: 10px 0;
     border: 1px solid #999;

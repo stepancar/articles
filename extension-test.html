@@ -71,10 +71,18 @@
             border-radius: 6px;
             min-height: 80px;
             background: white;
+            margin-bottom: 15px;
         }
         [contenteditable]:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        [contenteditable] p {
+            margin: 0 0 12px 0;
+        }
+        [contenteditable] p:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -136,12 +144,34 @@ The extension should be able to correct text hear too.</textarea>
         <p class="description">Hidden inputs are not visible</p>
     </div>
 
-    <h2>Content Editable (may show correction button)</h2>
+    <h2>Content Editable (should show N button with selection tracking)</h2>
     <div class="field-group">
-        <label>Contenteditable Div</label>
+        <label>Contenteditable Div (small)</label>
         <div contenteditable="true" id="contenteditable-div">
             This is a contenteditable div. It behaves like a textarea but its a div element. The extension might suport this too.
         </div>
+        <p class="description">Single-line contenteditable. Select text to see button reposition.</p>
+
+        <label>Contenteditable Div (multi-paragraph)</label>
+        <div contenteditable="true" id="contenteditable-large" style="min-height: 200px; line-height: 1.8;">
+            <p>This is a large contenteditable area with multiple paragraphs. Try selecting text across several lines to see the N button stretch and animate along the right edge.</p>
+            <p>The button should narrow from 28px to 20px, change to an indigo gradient, and its height should match the vertical span of your selection. When you select just a single word, the button stays short.</p>
+            <p>When you select across multiple paragraphs like this one and the one above, the button should stretch to cover the entire selection height. A thin vertical line appears inside the button when the selection is tall enough.</p>
+            <p>Hover over the N button while text is selected to see the action popup appear to the left. Without any selection, hovering shows a correction preview instead.</p>
+        </div>
+        <p class="description">Multi-paragraph contenteditable. Test multi-line selection animation.</p>
+
+        <label>Contenteditable with formatting</label>
+        <div contenteditable="true" id="contenteditable-rich" style="min-height: 120px;">
+            This paragraph has <b>bold text</b>, <i>italic text</i>, and <a href="#">a link</a>. The selection tracking should work across different inline elements without issues. Try selecting text that spans across formated and unformatted parts.
+        </div>
+        <p class="description">Contenteditable with inline formatting elements.</p>
+
+        <label>Contenteditable (empty attribute)</label>
+        <div contenteditable="" id="contenteditable-empty-attr">
+            Some editors use contenteditable="" instead of contenteditable="true". This should also be detected by the extension.
+        </div>
+        <p class="description">Uses contenteditable="" (empty string) instead of "true".</p>
     </div>
 
     <h2>Special Cases</h2>

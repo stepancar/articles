@@ -71,10 +71,18 @@
             border-radius: 6px;
             min-height: 80px;
             background: white;
+            margin-bottom: 15px;
         }
         [contenteditable]:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        [contenteditable] p {
+            margin: 0 0 12px 0;
+        }
+        [contenteditable] p:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -131,17 +139,61 @@ The extension should be able to correct text hear too.</textarea>
         <input type="number" id="number-input" value="12345">
         <p class="description">Number inputs are ignored</p>
 
+        <label for="cc-number-input">Credit Card Number</label>
+        <input type="text" id="cc-number-input" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" maxlength="19">
+        <p class="description">Credit card number input (autocomplete="cc-number")</p>
+
+        <label for="cc-exp-input">Expiration Date</label>
+        <input type="text" id="cc-exp-input" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5">
+        <p class="description">Card expiration input (autocomplete="cc-exp")</p>
+
+        <label for="cc-csc-input">CVV / CVC</label>
+        <input type="text" id="cc-csc-input" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4">
+        <p class="description">Card security code input (autocomplete="cc-csc")</p>
+
+        <label for="cc-name-input">Cardholder Name</label>
+        <input type="text" id="cc-name-input" autocomplete="cc-name" placeholder="JOHN DOE">
+        <p class="description">Cardholder name input (autocomplete="cc-name")</p>
+
         <label for="hidden-input">Hidden Input</label>
         <input type="hidden" id="hidden-input" value="hidden value">
         <p class="description">Hidden inputs are not visible</p>
     </div>
 
-    <h2>Content Editable (may show correction button)</h2>
+    <h2>Content Editable (should show N button with selection tracking)</h2>
     <div class="field-group">
-        <label>Contenteditable Div</label>
+        <label>Contenteditable Div (small)</label>
         <div contenteditable="true" id="contenteditable-div">
             This is a contenteditable div. It behaves like a textarea but its a div element. The extension might suport this too.
         </div>
+        <p class="description">Single-line contenteditable. Select text to see button reposition.</p>
+
+        <label>Contenteditable Div (multi-paragraph)</label>
+        <div contenteditable="true" id="contenteditable-large" style="min-height: 200px; line-height: 1.8;">
+            <p>This is a large contenteditable area with multiple paragraphs. Try selecting text across several lines to see the N button stretch and animate along the right edge.</p>
+            <p>The button should narrow from 28px to 20px, change to an indigo gradient, and its height should match the vertical span of your selection. When you select just a single word, the button stays short.</p>
+            <p>When you select across multiple paragraphs like this one and the one above, the button should stretch to cover the entire selection height. A thin vertical line appears inside the button when the selection is tall enough.</p>
+            <p>Hover over the N button while text is selected to see the action popup appear to the left. Without any selection, hovering shows a correction preview instead.</p>
+        </div>
+        <p class="description">Multi-paragraph contenteditable. Test multi-line selection animation.</p>
+
+        <label>Contenteditable Div (4-5 lines)</label>
+        <div contenteditable="true" id="contenteditable-medium" style="min-height: 120px; line-height: 1.6;">
+            I recieved your mesage yesterday and wanted to repond as soon as posible. Thank you for reaching out about the upcomming project deadlines. I beleive we can definately meet the requirements if we coordnate our eforts properly. Lets shedule a meting for next week to discus the details and finallize the plan togather.
+        </div>
+        <p class="description">Medium contenteditable with 4-5 lines of text and spelling errors.</p>
+
+        <label>Contenteditable with formatting</label>
+        <div contenteditable="true" id="contenteditable-rich" style="min-height: 120px;">
+            This paragraph has <b>bold text</b>, <i>italic text</i>, and <a href="#">a link</a>. The selection tracking should work across different inline elements without issues. Try selecting text that spans across formated and unformatted parts.
+        </div>
+        <p class="description">Contenteditable with inline formatting elements.</p>
+
+        <label>Contenteditable (empty attribute)</label>
+        <div contenteditable="" id="contenteditable-empty-attr">
+            Some editors use contenteditable="" instead of contenteditable="true". This should also be detected by the extension.
+        </div>
+        <p class="description">Uses contenteditable="" (empty string) instead of "true".</p>
     </div>
 
     <h2>Special Cases</h2>

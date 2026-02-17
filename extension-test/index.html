@@ -84,6 +84,168 @@
         [contenteditable] p:last-child {
             margin-bottom: 0;
         }
+        .otp-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .otp-container input {
+            width: 48px;
+            height: 48px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            padding: 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .scrollable-container {
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: white;
+        }
+        .scrollable-container textarea,
+        .scrollable-container input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .sticky-bar {
+            position: sticky;
+            top: 0;
+            background: #667eea;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sticky-bar input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .narrow-input {
+            width: 70px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-backdrop.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .modal-content textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .transparent-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0;
+            padding: 8px 0;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        .transparent-input:focus {
+            outline: none;
+            border-bottom-color: #667eea;
+            box-shadow: none;
+        }
+        .custom-styled-input {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            border: 2px dashed #667eea;
+            border-radius: 20px;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-style: italic;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        .custom-styled-input:focus {
+            outline: none;
+            border-style: solid;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        .large-font-textarea {
+            font-size: 24px;
+            line-height: 1.4;
+            min-height: 120px;
+        }
+        .small-font-textarea {
+            font-size: 10px;
+            line-height: 1.3;
+            min-height: 80px;
+        }
+        .nested-contenteditable-outer {
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            min-height: 80px;
+            background: #f8f9ff;
+            margin-bottom: 15px;
+        }
+        .nested-contenteditable-inner {
+            padding: 8px;
+            border: 1px dashed #999;
+            border-radius: 4px;
+            margin-top: 8px;
+            background: white;
+            min-height: 40px;
+        }
+        .scrollable-editable {
+            max-height: 100px;
+            overflow-y: auto;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            min-height: 100px;
+            background: white;
+            margin-bottom: 15px;
+        }
+        [dir="rtl"] {
+            text-align: right;
+        }
+        button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        button:hover {
+            background: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -155,6 +317,25 @@ The extension should be able to correct text hear too.</textarea>
         <input type="text" id="cc-name-input" autocomplete="cc-name" placeholder="JOHN DOE">
         <p class="description">Cardholder name input (autocomplete="cc-name")</p>
 
+        <label>OTP / Verification Code</label>
+        <div class="otp-container">
+            <input type="text" id="otp-1" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
+            <input type="text" id="otp-2" maxlength="1" inputmode="numeric">
+            <input type="text" id="otp-3" maxlength="1" inputmode="numeric">
+            <input type="text" id="otp-4" maxlength="1" inputmode="numeric">
+            <input type="text" id="otp-5" maxlength="1" inputmode="numeric">
+            <input type="text" id="otp-6" maxlength="1" inputmode="numeric">
+        </div>
+        <p class="description">One-time password input (autocomplete="one-time-code", single-char fields)</p>
+
+        <label for="address-street">Street Address</label>
+        <input type="text" id="address-street" autocomplete="street-address" placeholder="123 Main Street">
+        <p class="description">Street address (autocomplete="street-address")</p>
+
+        <label for="address-zip">ZIP / Postal Code</label>
+        <input type="text" id="address-zip" autocomplete="postal-code" placeholder="10001" maxlength="10">
+        <p class="description">Postal code (autocomplete="postal-code")</p>
+
         <label for="hidden-input">Hidden Input</label>
         <input type="hidden" id="hidden-input" value="hidden value">
         <p class="description">Hidden inputs are not visible</p>
@@ -194,6 +375,137 @@ The extension should be able to correct text hear too.</textarea>
             Some editors use contenteditable="" instead of contenteditable="true". This should also be detected by the extension.
         </div>
         <p class="description">Uses contenteditable="" (empty string) instead of "true".</p>
+
+        <label>Contenteditable inside scrollable container</label>
+        <div class="scrollable-editable" contenteditable="true" id="contenteditable-scrollable">
+            <p>This contenteditable is inside a container with max-height and overflow-y: auto. When the text is long enough, the container becomes scrollable.</p>
+            <p>The extension button needs to stay properly positioned as the user scrolls within this container. This is a common pattern in chat interfaces and editors.</p>
+            <p>Third paragraph to ensure the content overflows. The correction button should track the scroll position correctly and not float outside the visible area.</p>
+            <p>Fourth paragraph with even more text to guaranty that scrolling is necesary. This tests how the extension handels scroll events on non-document containers.</p>
+            <p>Fifth paragraph to make absolutly sure this container scrolls. Extensions often break when the scrollable parent is not the document itself.</p>
+        </div>
+        <p class="description">Contenteditable with overflow scroll. Tests button positioning during container scroll.</p>
+
+        <label>Nested contenteditable</label>
+        <div contenteditable="true" id="contenteditable-outer" class="nested-contenteditable-outer">
+            This is the outer contenteditable area. It contains an inner editable block below.
+            <div contenteditable="true" id="contenteditable-inner" class="nested-contenteditable-inner">
+                This is a nested contenteditable inside another contenteditable. Some rich text editors use this patern for embeded blocks.
+            </div>
+        </div>
+        <p class="description">Nested contenteditable elements. Tests which element gets the correction button.</p>
+    </div>
+
+    <h2>Layout Edge Cases</h2>
+    <div class="field-group">
+        <label>Input inside scrollable container</label>
+        <div class="scrollable-container">
+            <p style="margin: 0 0 10px;">Scroll down to find the input field below.</p>
+            <div style="height: 80px;"></div>
+            <textarea id="textarea-in-scroll">This textarea is inside a scrollable container. The correction buton should stay aligned when the parent scrolls.</textarea>
+            <div style="height: 60px;"></div>
+        </div>
+        <p class="description">Textarea inside overflow:auto container. Tests button positioning with non-document scroll.</p>
+
+        <label>Sticky bar with input</label>
+        <div class="sticky-bar">
+            <span>Search:</span>
+            <input type="text" id="sticky-input" value="I has an eror in sticky header" style="margin: 0;">
+        </div>
+        <p class="description">Input inside position:sticky element. Tests button z-index and positioning.</p>
+
+        <label for="narrow-input">Very narrow input (70px)</label>
+        <input type="text" id="narrow-input" class="narrow-input" value="tiny">
+        <p class="description">Input too narrow for a correction button to fit comfortably.</p>
+
+        <label for="textarea-large-font">Textarea with large font (24px)</label>
+        <textarea id="textarea-large-font" class="large-font-textarea">This text is very large. Does the buton scale properly?</textarea>
+        <p class="description">Tests button positioning with non-standard font size.</p>
+
+        <label for="textarea-small-font">Textarea with small font (10px)</label>
+        <textarea id="textarea-small-font" class="small-font-textarea">This text is very small. The correction button might overlap or look disproportionate relative to the tiny text inside this field.</textarea>
+        <p class="description">Tests button sizing relative to very small text.</p>
+
+        <label>Dynamically added input</label>
+        <button type="button" id="add-input-btn" onclick="
+            var container = document.getElementById('dynamic-container');
+            if (!container.querySelector('textarea')) {
+                var ta = document.createElement('textarea');
+                ta.id = 'dynamic-textarea';
+                ta.textContent = 'This textarea was added dynamicaly after page load. The extension should detect it.';
+                container.appendChild(ta);
+                this.textContent = 'Input added!';
+                this.disabled = true;
+            }
+        ">Click to add textarea</button>
+        <div id="dynamic-container"></div>
+        <p class="description">Tests MutationObserver detection of dynamically inserted elements.</p>
+
+        <label>Input inside modal</label>
+        <button type="button" id="open-modal-btn" onclick="document.getElementById('test-modal').classList.add('active')">Open modal with textarea</button>
+        <p class="description">Opens a modal dialog containing a textarea.</p>
+    </div>
+
+    <div class="modal-backdrop" id="test-modal">
+        <div class="modal-content">
+            <h3 style="margin: 0 0 16px;">Modal Dialog</h3>
+            <label for="modal-textarea">Message</label>
+            <textarea id="modal-textarea">This textarea is inside a modal overlay. The correction buton should apear above the modal backdrop and position corectly.</textarea>
+            <button type="button" onclick="document.getElementById('test-modal').classList.remove('active')">Close</button>
+        </div>
+    </div>
+
+    <h2>Internationalization</h2>
+    <div class="field-group">
+        <label for="rtl-textarea">RTL text (Arabic)</label>
+        <textarea id="rtl-textarea" dir="rtl" style="text-align: right;">هذا نص باللغة العربية يحتوي على بعض الأخطاء الإملائية لاختبار كيفية تعامل الإضافة مع النصوص من اليمين إلى اليسار.</textarea>
+        <p class="description">Right-to-left text. Tests button positioning with dir="rtl".</p>
+
+        <label for="rtl-hebrew-input">RTL text (Hebrew)</label>
+        <input type="text" id="rtl-hebrew-input" dir="rtl" value="זהו טקסט בעברית לבדיקת התוסף">
+        <p class="description">Hebrew input with dir="rtl".</p>
+
+        <label for="mixed-lang-textarea">Mixed languages</label>
+        <textarea id="mixed-lang-textarea">This is English text, а это русский текст в том же поле. Extension should handle смешанный input корректно.</textarea>
+        <p class="description">Russian + English mixed in one field.</p>
+
+        <label for="emoji-input">Unicode and emoji</label>
+        <input type="text" id="emoji-input" value="Hello world 🌍 I has a error 😊 lets fix it 🔧">
+        <p class="description">Text with emoji characters. Tests text offset calculation.</p>
+    </div>
+
+    <h2>Special HTML Elements</h2>
+    <div class="field-group">
+        <label>Input inside details/summary (collapsed)</label>
+        <details id="collapsible-section">
+            <summary>Click to expand hidden input</summary>
+            <textarea id="textarea-in-details" style="margin-top: 10px;">This textarea is inside a collapsed details element. It becomes visible only after expanding. The extension should detect it when revealed.</textarea>
+        </details>
+        <p class="description">Tests detection of inputs that become visible after user interaction.</p>
+
+        <label for="datalist-input">Input with datalist (autocomplete suggestions)</label>
+        <input type="text" id="datalist-input" list="suggestions-list" value="I want to rite a mesage" placeholder="Type to see suggestions...">
+        <datalist id="suggestions-list">
+            <option value="I want to write a message">
+            </option><option value="Please correct my grammar">
+            </option><option value="Check this sentence for errors">
+        </option></datalist>
+        <p class="description">Input with browser-native autocomplete dropdown. Tests interaction with datalist.</p>
+
+        <label for="spellcheck-off-textarea">Textarea with spellcheck="false"</label>
+        <textarea id="spellcheck-off-textarea" spellcheck="false">This textarea has spellcheck disabled. The brower wont underline erors, but the extension should stil work.</textarea>
+        <p class="description">Browser spellcheck is off. Extension should still provide corrections.</p>
+    </div>
+
+    <h2>Visual Edge Cases</h2>
+    <div class="field-group">
+        <label for="transparent-input">Transparent / minimal input</label>
+        <input type="text" id="transparent-input" class="transparent-input" value="This input has no background or visible border.">
+        <p class="description">Borderless input with transparent background. Tests button visibility against page background.</p>
+
+        <label for="custom-styled-input">Custom styled input</label>
+        <input type="text" id="custom-styled-input" class="custom-styled-input" value="This input has very custom styling with gradients and rounded corners.">
+        <p class="description">Non-standard visual design. Tests that button positioning works regardless of styling.</p>
     </div>
 
     <h2>Special Cases</h2>

@@ -370,6 +370,19 @@ The extension should be able to correct text hear too.</textarea>
         </div>
         <p class="description">Contenteditable with inline formatting elements.</p>
 
+        <label>Contenteditable with formatting (correction test)</label>
+        <div contenteditable="true" id="contenteditable-correction-test" style="min-height: 120px;">
+            I has a <b>bold text</b> and <i>italic text</i> with <a href="https://example.com">a link</a> in this sentence.
+        </div>
+        <p class="description">Contenteditable for testing that correction preserves HTML formatting.</p>
+
+        <label>Contenteditable with paragraphs (correction test)</label>
+        <div contenteditable="true" id="contenteditable-paragraphs-test" style="min-height: 120px;">
+            <p>I has a error in first paragraph.</p>
+            <p>This are the second paragraph with <b>bold</b> and <a href="https://example.com">a link</a>.</p>
+        </div>
+        <p class="description">Contenteditable with paragraphs for testing paragraph preservation.</p>
+
         <label>Contenteditable (empty attribute)</label>
         <div contenteditable="" id="contenteditable-empty-attr">
             Some editors use contenteditable="" instead of contenteditable="true". This should also be detected by the extension.

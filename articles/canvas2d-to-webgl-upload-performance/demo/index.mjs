@@ -67,16 +67,25 @@ gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 16, 0);
 gl.enableVertexAttribArray(aUv);
 gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, 16, 8);
 
-function makeCanvases(count, w, h) {
+function makeCanvases(count, w, h, uploadMethod) {
     const list = [];
     for (let i = 0; i < count; i++) {
         const c = document.createElement('canvas');
         c.width = w;
         c.height = h;
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        if (uploadMethod === 'texSubImage2D') {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        }
         list.push({
             canvas: c,
             ctx: c.getContext('2d'),
-            texture: gl.createTexture(),
+            texture,
         });
     }
     return list;
@@ -105,7 +114,7 @@ function drawOn2dCanvas(item, iter, index) {
     ctx.fillText(`#${index} it=${iter}`, 8, canvas.height / 4);
 }
 
-function uploadAndRender(items, glW, glH) {
+function uploadAndRender(items, glW, glH, uploadMethod) {
     gl.viewport(0, 0, glW, glH);
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -116,15 +125,16 @@ function uploadAndRender(items, glW, glH) {
     const sx = 1 / cols;
     const sy = 1 / rows;
 
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
     for (let i = 0; i < n; i++) {
         const item = items[i];
         gl.bindTexture(gl.TEXTURE_2D, item.texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, item.canvas);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        if (uploadMethod === 'texSubImage2D') {
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, item.canvas);
+        } else {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, item.canvas);
+        }
 
         const col = i % cols;
         const row = Math.floor(i / cols);
@@ -151,11 +161,12 @@ async function runTest() {
     const c2dH = +document.getElementById('c2d-height').value;
     const c2dCount = +document.getElementById('c2d-count').value;
     const iterations = +document.getElementById('iterations').value;
+    const uploadMethod = document.getElementById('upload-method').value;
 
     glCanvas.width = glW;
     glCanvas.height = glH;
 
-    const items = makeCanvases(c2dCount, c2dW, c2dH);
+    const items = makeCanvases(c2dCount, c2dW, c2dH, uploadMethod);
 
     await nextFrame();
 
@@ -164,7 +175,7 @@ async function runTest() {
         for (let i = 0; i < items.length; i++) {
             drawOn2dCanvas(items[i], iter, i);
         }
-        uploadAndRender(items, glW, glH);
+        uploadAndRender(items, glW, glH, uploadMethod);
         await nextFrame();
     }
     const end = performance.now();
@@ -172,7 +183,7 @@ async function runTest() {
     const avg = total / iterations;
     const fps = 1000 / avg;
 
-    addRow({ glW, glH, c2dW, c2dH, c2dCount, iterations, total, avg, fps });
+    addRow({ glW, glH, c2dW, c2dH, c2dCount, uploadMethod, iterations, total, avg, fps });
 
     disposeCanvases(items);
     statusEl.textContent = `done. FPS: ${fps.toFixed(2)}`;
@@ -187,6 +198,7 @@ function addRow(r) {
         <td>${r.glW}x${r.glH}</td>
         <td>${r.c2dW}x${r.c2dH}</td>
         <td>${r.c2dCount}</td>
+        <td>${r.uploadMethod}</td>
         <td>${r.iterations}</td>
         <td>${r.total.toFixed(2)}</td>
         <td>${r.avg.toFixed(3)}</td>
@@ -194,5 +206,33 @@ function addRow(r) {
     `;
     tbody.appendChild(tr);
 }
+
+const PRESETS = {
+    '720': [1280, 720],
+    '1080': [1920, 1080],
+    '2k': [2560, 1440],
+    '4k': [3840, 2160],
+    '8k': [7680, 4320],
+};
+
+function bindPreset(presetId, widthId, heightId) {
+    const presetEl = document.getElementById(presetId);
+    const widthEl = document.getElementById(widthId);
+    const heightEl = document.getElementById(heightId);
+    const apply = () => {
+        const p = PRESETS[presetEl.value];
+        if (p) {
+            widthEl.value = p[0];
+            heightEl.value = p[1];
+        }
+    };
+    presetEl.addEventListener('change', apply);
+    const onCustom = () => { presetEl.value = 'custom'; };
+    widthEl.addEventListener('input', onCustom);
+    heightEl.addEventListener('input', onCustom);
+}
+
+bindPreset('gl-preset', 'gl-width', 'gl-height');
+bindPreset('c2d-preset', 'c2d-width', 'c2d-height');
 
 runBtn.addEventListener('click', runTest);

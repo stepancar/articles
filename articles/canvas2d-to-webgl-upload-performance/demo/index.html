@@ -8,16 +8,44 @@
     <h1>Canvas 2D → WebGL upload performance</h1>
 
     <div>
-        <label>WebGL canvas width: <input type="number" id="gl-width" value="1280"></label>
-        <label>WebGL canvas height: <input type="number" id="gl-height" value="720"></label>
+        <label>WebGL preset:
+            <select id="gl-preset">
+                <option value="720">720p (1280x720)</option>
+                <option value="1080" selected="">1080p (1920x1080)</option>
+                <option value="2k">2K (2560x1440)</option>
+                <option value="4k">4K (3840x2160)</option>
+                <option value="8k">8K (7680x4320)</option>
+                <option value="custom">custom</option>
+            </select>
+        </label>
+        <label>W: <input type="number" id="gl-width" value="1920"></label>
+        <label>H: <input type="number" id="gl-height" value="1080"></label>
     </div>
     <div>
-        <label>Canvas 2D width: <input type="number" id="c2d-width" value="512"></label>
-        <label>Canvas 2D height: <input type="number" id="c2d-height" value="512"></label>
+        <label>Canvas 2D preset:
+            <select id="c2d-preset">
+                <option value="720">720p (1280x720)</option>
+                <option value="1080">1080p (1920x1080)</option>
+                <option value="2k">2K (2560x1440)</option>
+                <option value="4k" selected="">4K (3840x2160)</option>
+                <option value="8k">8K (7680x4320)</option>
+                <option value="custom">custom</option>
+            </select>
+        </label>
+        <label>W: <input type="number" id="c2d-width" value="3840"></label>
+        <label>H: <input type="number" id="c2d-height" value="2160"></label>
     </div>
     <div>
         <label>Number of Canvas 2D: <input type="number" id="c2d-count" value="4" min="1"></label>
         <label>Number of iterations: <input type="number" id="iterations" value="300" min="1"></label>
+    </div>
+    <div>
+        <label>Upload method:
+            <select id="upload-method">
+                <option value="texSubImage2D" selected="">texSubImage2D (default)</option>
+                <option value="texImage2D">texImage2D</option>
+            </select>
+        </label>
     </div>
     <div>
         <button id="run">Run test</button>
@@ -32,6 +60,7 @@
                 <th>WebGL size</th>
                 <th>Canvas 2D size</th>
                 <th>Canvas 2D count</th>
+                <th>Upload method</th>
                 <th>Iterations</th>
                 <th>Total time, ms</th>
                 <th>Avg per iteration, ms</th>

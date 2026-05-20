@@ -90,9 +90,27 @@ async function runTest() {
     const sumFps = fpsList.reduce((a, b) => a + b, 0);
     const avgFps = sumFps / fpsList.length;
 
-    addRow({ ...params, contextsCount, fpsList, sumFps, avgFps });
-    statusEl.textContent = `done. Sum FPS: ${sumFps.toFixed(2)}, avg per context: ${avgFps.toFixed(2)}`;
+    const bytesPerIter = params.c2dCount * params.c2dW * params.c2dH * 4;
+    const throughputList = fpsList.map((f) => bytesPerIter * f);
+    const sumThroughput = throughputList.reduce((a, b) => a + b, 0);
+
+    addRow({ ...params, contextsCount, fpsList, sumFps, avgFps, bytesPerIter, throughputList, sumThroughput });
+    statusEl.textContent = `done. Sum FPS: ${sumFps.toFixed(2)}, sum throughput: ${formatBytesPerSec(sumThroughput)}`;
     runBtn.disabled = false;
+}
+
+function formatBytes(bytes) {
+    if (bytes >= 1024 ** 3) return (bytes / 1024 ** 3).toFixed(2) + ' GB';
+    if (bytes >= 1024 ** 2) return (bytes / 1024 ** 2).toFixed(2) + ' MB';
+    if (bytes >= 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    return bytes + ' B';
+}
+
+function formatBytesPerSec(bps) {
+    if (bps >= 1024 ** 3) return (bps / 1024 ** 3).toFixed(2) + ' GB/s';
+    if (bps >= 1024 ** 2) return (bps / 1024 ** 2).toFixed(2) + ' MB/s';
+    if (bps >= 1024) return (bps / 1024).toFixed(2) + ' KB/s';
+    return bps.toFixed(0) + ' B/s';
 }
 
 let counter = 0;
@@ -109,6 +127,9 @@ function addRow(r) {
         <td>${r.fpsList.map((f) => f.toFixed(2)).join(', ')}</td>
         <td>${r.sumFps.toFixed(2)}</td>
         <td>${r.avgFps.toFixed(2)}</td>
+        <td>${formatBytes(r.bytesPerIter)}</td>
+        <td>${r.throughputList.map(formatBytesPerSec).join(', ')}</td>
+        <td>${formatBytesPerSec(r.sumThroughput)}</td>
     `;
     tbody.appendChild(tr);
 }

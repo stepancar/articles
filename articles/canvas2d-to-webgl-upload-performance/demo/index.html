@@ -46,6 +46,7 @@
                 <option value="texImage2D">texImage2D</option>
             </select>
         </label>
+        <label>Number of WebGL contexts (iframes): <input type="number" id="contexts-count" value="1" min="1"></label>
     </div>
     <div>
         <button id="run">Run test</button>
@@ -62,16 +63,17 @@
                 <th>Canvas 2D count</th>
                 <th>Upload method</th>
                 <th>Iterations</th>
-                <th>Total time, ms</th>
-                <th>Avg per iteration, ms</th>
-                <th>FPS</th>
+                <th>Contexts</th>
+                <th>Per-context FPS</th>
+                <th>Sum FPS</th>
+                <th>Avg FPS</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <h3>WebGL canvas</h3>
-    <canvas id="gl-canvas"></canvas>
+    <h3>WebGL contexts</h3>
+    <div id="frames"></div>
 
     <script src="index.mjs" type="module"></script>
 </body>

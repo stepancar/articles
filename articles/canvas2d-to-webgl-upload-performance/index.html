@@ -1,0 +1,158 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Canvas 2D to WebGL upload performance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <style rel="stylesheet">
+      mjx-container[jax="SVG"] > svg {
+         max-width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+    
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          Canvas 2D to WebGL upload performance
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2 class="shortDescription">Measure the FPS of a flow that draws on N Canvas 2D contexts and uploads each one as a texture to WebGL on every iteration.</h2>
+          <div class="content">
+            <h1>Canvas 2D → WebGL upload performance</h1>
+<h2>Introduction</h2>
+<p>A common rendering pipeline in the web is:</p>
+<ol>
+<li>Draw something with the Canvas 2D API onto one or more 2D canvases.</li>
+<li>Upload each of those 2D canvases to a WebGL texture via <code>gl.texImage2D(..., canvas)</code>.</li>
+<li>Composite all textures into the WebGL canvas.</li>
+</ol>
+<p>This flow appears in video editors, compositors, sticker overlays, etc.
+The bottleneck is rarely the WebGL draw call itself — it is the CPU→GPU
+upload of the 2D canvas content on every frame.</p>
+<p>This article ships a small benchmark that lets you control the inputs
+and see how the FPS of that pipeline changes.</p>
+<h2>Parameters</h2>
+<p>The demo allows you to control:</p>
+<ul>
+<li>WebGL canvas size — output resolution.</li>
+<li>Canvas 2D size — size of each source canvas.</li>
+<li>Number of Canvas 2D — how many 2D canvases are drawn and uploaded per iteration.</li>
+<li>Number of iterations — how many frames the test runs.</li>
+</ul>
+<p>On each iteration the demo:</p>
+<ol>
+<li>Draws a moving shape and text on every 2D canvas.</li>
+<li>Calls <code>gl.texImage2D(...)</code> for each 2D canvas, uploading it as a texture.</li>
+<li>Draws all textures into a grid on the WebGL canvas.</li>
+<li>Calls <code>gl.finish()</code> to wait for the GPU.</li>
+<li>Waits for the next animation frame.</li>
+</ol>
+<p>After the test finishes, the demo displays the total time, the average
+time per iteration and the resulting FPS.</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> iter <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> iter <span class="token operator">&lt;</span> iterations<span class="token punctuation">;</span> iter<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> items<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">drawOn2dCanvas</span><span class="token punctuation">(</span>items<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> iter<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">uploadAndRender</span><span class="token punctuation">(</span>items<span class="token punctuation">,</span> glW<span class="token punctuation">,</span> glH<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">await</span> <span class="token function">nextFrame</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The upload step is the part being measured most directly:</p>
+<pre class="language-js"><code class="language-js">gl<span class="token punctuation">.</span><span class="token function">bindTexture</span><span class="token punctuation">(</span>gl<span class="token punctuation">.</span><span class="token constant">TEXTURE_2D</span><span class="token punctuation">,</span> item<span class="token punctuation">.</span>texture<span class="token punctuation">)</span><span class="token punctuation">;</span>
+gl<span class="token punctuation">.</span><span class="token function">texImage2D</span><span class="token punctuation">(</span>gl<span class="token punctuation">.</span><span class="token constant">TEXTURE_2D</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> gl<span class="token punctuation">.</span><span class="token constant">RGBA</span><span class="token punctuation">,</span> gl<span class="token punctuation">.</span><span class="token constant">RGBA</span><span class="token punctuation">,</span> gl<span class="token punctuation">.</span><span class="token constant">UNSIGNED_BYTE</span><span class="token punctuation">,</span> item<span class="token punctuation">.</span>canvas<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<h2>Demo</h2>
+<p><demo-with-playground file="demo/index.html" initialPath="./demo/index.html"></demo-with-playground></p>
+<h2>What to expect</h2>
+<ul>
+<li>FPS scales inversely with <code>Canvas 2D size * Canvas 2D count</code>, because
+the cost of <code>texImage2D(canvas)</code> is roughly proportional to the number
+of pixels uploaded.</li>
+<li>The WebGL canvas size matters far less — once textures are on the GPU,
+rasterizing a few quads is cheap.</li>
+<li>Going from 1 large canvas to many small canvases of the same total
+area is usually slower, because each upload has fixed per-call overhead.</li>
+</ul>
+<h2>Conclusion</h2>
+<p>The 2D-draw + WebGL-upload loop is a useful pattern, but the upload step
+is what limits its FPS. Measure with this demo before designing a
+pipeline that does it every frame.</p>
+
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialPath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
+          }
+
+          connectedCallback() {
+              this.render();
+          }
+
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialPath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/canvas2d-to-webgl-upload-performance/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
+    </script>
+  </body>
+</html>

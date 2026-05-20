@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 2D -> WebGL upload performance</title>
+</head>
+<body>
+    <h1>Canvas 2D → WebGL upload performance</h1>
+
+    <div>
+        <label>WebGL canvas width: <input type="number" id="gl-width" value="1280"></label>
+        <label>WebGL canvas height: <input type="number" id="gl-height" value="720"></label>
+    </div>
+    <div>
+        <label>Canvas 2D width: <input type="number" id="c2d-width" value="512"></label>
+        <label>Canvas 2D height: <input type="number" id="c2d-height" value="512"></label>
+    </div>
+    <div>
+        <label>Number of Canvas 2D: <input type="number" id="c2d-count" value="4" min="1"></label>
+        <label>Number of iterations: <input type="number" id="iterations" value="300" min="1"></label>
+    </div>
+    <div>
+        <button id="run">Run test</button>
+        <span id="status">idle</span>
+    </div>
+
+    <h3>Result</h3>
+    <table id="result-table" border="1" cellpadding="4" cellspacing="0">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>WebGL size</th>
+                <th>Canvas 2D size</th>
+                <th>Canvas 2D count</th>
+                <th>Iterations</th>
+                <th>Total time, ms</th>
+                <th>Avg per iteration, ms</th>
+                <th>FPS</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h3>WebGL canvas</h3>
+    <canvas id="gl-canvas"></canvas>
+
+    <script src="index.mjs" type="module"></script>
+</body>
+</html>

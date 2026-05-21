@@ -46,6 +46,14 @@
                 <option value="texImage2D">texImage2D</option>
             </select>
         </label>
+        <label>Source type:
+            <select id="source-type">
+                <option value="canvas" selected="">Canvas 2D</option>
+                <option value="uint8array">Uint8Array</option>
+                <option value="videoframe">VideoFrame</option>
+                <option value="video">HTMLVideoElement</option>
+            </select>
+        </label>
         <label>Number of WebGL contexts (iframes): <input type="number" id="contexts-count" value="1" min="1"></label>
     </div>
     <div>
@@ -62,6 +70,7 @@
                 <th>Canvas 2D size</th>
                 <th>Canvas 2D count</th>
                 <th>Upload method</th>
+                <th>Source</th>
                 <th>Iterations</th>
                 <th>Contexts</th>
                 <th>Per-context FPS</th>

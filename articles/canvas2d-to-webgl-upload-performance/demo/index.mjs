@@ -62,6 +62,7 @@ async function runTest() {
         c2dCount: +document.getElementById('c2d-count').value,
         iterations: +document.getElementById('iterations').value,
         uploadMethod: document.getElementById('upload-method').value,
+        sourceType: document.getElementById('source-type').value,
     };
     const contextsCount = +document.getElementById('contexts-count').value;
 
@@ -122,6 +123,7 @@ function addRow(r) {
         <td>${r.c2dW}x${r.c2dH}</td>
         <td>${r.c2dCount}</td>
         <td>${r.uploadMethod}</td>
+        <td>${r.sourceType}</td>
         <td>${r.iterations}</td>
         <td>${r.contextsCount}</td>
         <td>${r.fpsList.map((f) => f.toFixed(2)).join(', ')}</td>

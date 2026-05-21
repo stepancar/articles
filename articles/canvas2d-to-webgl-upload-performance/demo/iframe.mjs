@@ -63,14 +63,12 @@ gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 16, 0);
 gl.enableVertexAttribArray(aUv);
 gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, 16, 8);
 
-function makeCanvases(count, w, h, uploadMethod) {
+async function makeItems(count, w, h, uploadMethod, sourceType) {
     const list = [];
     for (let i = 0; i < count; i++) {
-        const c = document.createElement('canvas');
-        c.width = w;
-        c.height = h;
-        const texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        const item = {};
+        item.texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, item.texture);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -78,13 +76,53 @@ function makeCanvases(count, w, h, uploadMethod) {
         if (uploadMethod === 'texSubImage2D') {
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
         }
-        list.push({
-            canvas: c,
-            ctx: c.getContext('2d'),
-            texture,
-        });
+
+        if (sourceType !== 'uint8array') {
+            item.canvas = document.createElement('canvas');
+            item.canvas.width = w;
+            item.canvas.height = h;
+            item.ctx = item.canvas.getContext('2d');
+        }
+        if (sourceType === 'uint8array') {
+            item.data = new Uint8Array(w * h * 4);
+            for (let j = 0; j < item.data.length; j += 4) {
+                item.data[j] = (j * 7) & 0xff;
+                item.data[j + 1] = (j * 11) & 0xff;
+                item.data[j + 2] = (j * 13) & 0xff;
+                item.data[j + 3] = 255;
+            }
+        }
+        if (sourceType === 'video') {
+            item.ctx.fillStyle = '#000';
+            item.ctx.fillRect(0, 0, w, h);
+            const stream = item.canvas.captureStream();
+            item.video = document.createElement('video');
+            item.video.muted = true;
+            item.video.playsInline = true;
+            item.video.srcObject = stream;
+            await item.video.play();
+            if (item.video.readyState < 2) {
+                await new Promise((resolve) => {
+                    item.video.addEventListener('loadeddata', resolve, { once: true });
+                });
+            }
+        }
+        list.push(item);
     }
     return list;
+}
+
+function disposeItems(items) {
+    for (const item of items) {
+        gl.deleteTexture(item.texture);
+        if (item.video) {
+            const stream = item.video.srcObject;
+            if (stream && stream.getTracks) {
+                for (const t of stream.getTracks()) t.stop();
+            }
+            item.video.srcObject = null;
+        }
+    }
 }
 
 function drawOn2dCanvas(item, iter, index) {
@@ -104,7 +142,50 @@ function drawOn2dCanvas(item, iter, index) {
     ctx.fillText(`#${index} it=${iter}`, 8, canvas.height / 4);
 }
 
-function uploadAndRender(items, glW, glH, uploadMethod) {
+function produceSource(item, iter, index, sourceType) {
+    if (sourceType === 'uint8array') {
+        const data = item.data;
+        const off = ((iter * 64) % (data.length - 4)) & ~3;
+        data[off] = iter & 0xff;
+        data[off + 1] = (iter * 2) & 0xff;
+        return;
+    }
+    drawOn2dCanvas(item, iter, index);
+}
+
+function uploadOne(item, w, h, uploadMethod, sourceType) {
+    gl.bindTexture(gl.TEXTURE_2D, item.texture);
+
+    if (sourceType === 'uint8array') {
+        if (uploadMethod === 'texSubImage2D') {
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, item.data);
+        } else {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, item.data);
+        }
+        return;
+    }
+
+    let source;
+    let toClose = null;
+    if (sourceType === 'canvas') {
+        source = item.canvas;
+    } else if (sourceType === 'videoframe') {
+        source = new VideoFrame(item.canvas, { timestamp: 0 });
+        toClose = source;
+    } else if (sourceType === 'video') {
+        source = item.video;
+    }
+
+    if (uploadMethod === 'texSubImage2D') {
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, source);
+    } else {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+    }
+
+    if (toClose) toClose.close();
+}
+
+function uploadAndRender(items, glW, glH, c2dW, c2dH, uploadMethod, sourceType) {
     gl.viewport(0, 0, glW, glH);
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -119,12 +200,7 @@ function uploadAndRender(items, glW, glH, uploadMethod) {
 
     for (let i = 0; i < n; i++) {
         const item = items[i];
-        gl.bindTexture(gl.TEXTURE_2D, item.texture);
-        if (uploadMethod === 'texSubImage2D') {
-            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, item.canvas);
-        } else {
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, item.canvas);
-        }
+        uploadOne(item, c2dW, c2dH, uploadMethod, sourceType);
 
         const col = i % cols;
         const row = Math.floor(i / cols);
@@ -142,24 +218,24 @@ function nextFrame() {
 }
 
 async function runTest(params) {
-    const { glW, glH, c2dW, c2dH, c2dCount, iterations, uploadMethod } = params;
+    const { glW, glH, c2dW, c2dH, c2dCount, iterations, uploadMethod, sourceType } = params;
     glCanvas.width = glW;
     glCanvas.height = glH;
 
-    const items = makeCanvases(c2dCount, c2dW, c2dH, uploadMethod);
+    const items = await makeItems(c2dCount, c2dW, c2dH, uploadMethod, sourceType);
 
     await nextFrame();
     const start = performance.now();
     for (let iter = 0; iter < iterations; iter++) {
         for (let i = 0; i < items.length; i++) {
-            drawOn2dCanvas(items[i], iter, i);
+            produceSource(items[i], iter, i, sourceType);
         }
-        uploadAndRender(items, glW, glH, uploadMethod);
+        uploadAndRender(items, glW, glH, c2dW, c2dH, uploadMethod, sourceType);
         await nextFrame();
     }
     const end = performance.now();
 
-    for (const it of items) gl.deleteTexture(it.texture);
+    disposeItems(items);
 
     const total = end - start;
     const avg = total / iterations;

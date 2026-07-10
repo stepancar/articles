@@ -151,6 +151,23 @@ element. In other words: in the cold-start case Chrome still exhibits the same f
 failure Firefox shipped and fixed back in 2017. Press <em>Reload</em> in the demo to
 revive the element.
 
+For the curious, the full propagation chain of that error 3: libvpx rejects the
+reference-less delta → <a
+href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L441-L443">
+<code>DecodeAlphaPlane</code> returns <code>kAlphaPlaneError</code></a> → <a
+href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L338">
+<code>VpxDecode</code> discards the already-decoded color frame and fails</a> → <a
+href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L179-L183">
+the decoder latches into a terminal error state</a> → the pipeline raises
+<code>PIPELINE_ERROR_DECODE</code> → <a
+href="https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/platform/media/web_media_player_impl.cc#L392">
+mapped to <code>kNetworkStateDecodeError</code></a> → <a
+href="https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/html/media/html_media_element.cc#L2202-L2204">
+Blink mints <code>MediaError.MEDIA_ERR_DECODE</code></a>. Note the pivotal decision at
+step two: the color frame was already successfully decoded, and it is thrown away
+because the *alpha* failed — exactly the fork that Firefox (and the WebKit patch)
+resolve the other way.
+
 ### Firefox: alpha errors are non-fatal, drop the alpha plane
 
 Firefox also runs a second libvpx decoder for the alpha side data

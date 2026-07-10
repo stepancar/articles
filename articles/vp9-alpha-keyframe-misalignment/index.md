@@ -65,6 +65,7 @@ what your browser renders until the next alpha keyframe:
 <div id="demo-controls">
     <button id="btn-play">Play</button>
     <button id="btn-pause">Pause</button>
+    <button id="btn-reload">Reload</button>
     <button data-seek="1.0">Seek 1s (misaligned)</button>
     <button data-seek="2.0">Seek 2s (misaligned)</button>
     <button data-seek="4.0">Seek 4s (misaligned)</button>
@@ -82,8 +83,8 @@ chain is broken":
 
 | Engine | Strategy | What you see after seeking to 1s/2s/4s/5s |
 |---|---|---|
-| **Chrome** | Never resets the alpha decoder on seek: the libvpx context — including its reference frames from the *pre-seek* position — survives, and delta frames are decoded against that stale history. | The mask appears immediately, but it is **wrong** — a ghost of the pre-seek mask position, smearing/drifting as deltas accumulate — then snaps correct at the 3s alpha keyframe. |
-| **Firefox** | After bug 1393087: an undecodable alpha plane is non-fatal — alpha is simply dropped for those frames. | The video turns **fully opaque** (the checkerboard disappears behind a green rectangle) until the 3s alpha keyframe, then the mask returns. |
+| **Chrome** | Never resets the alpha decoder on seek: the libvpx context — including its reference frames from the *pre-seek* position — survives, and delta frames are decoded against that stale history. | The mask appears immediately, but it is **wrong** — a ghost of the pre-seek mask position, smearing/drifting as deltas accumulate — then snaps correct at the 3s alpha keyframe. And sometimes playback **dies entirely** with `MEDIA_ERR_DECODE` (error 3) — see below. |
+| **Firefox** | After [bug 1393087](https://bugzilla.mozilla.org/show_bug.cgi?id=1393087): an undecodable alpha plane is non-fatal — alpha is simply dropped for those frames. | The video turns **fully opaque** (the checkerboard disappears behind a green rectangle) until the 3s alpha keyframe, then the mask returns. |
 | **Safari** (with the [VP9-alpha patch](https://github.com/WebKit/WebKit/pull/64837)) | The alpha decoder waits for the alpha stream's own keyframe; undecodable alpha is treated as absent, matching Firefox. | Same as Firefox: opaque until 3s, then correct. |
 
 ### Chrome: keep the alpha decoder's memory across seeks
@@ -109,6 +110,16 @@ href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f
 the whole frame decode</a>, and a decode that yields no alpha image <a
 href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L340-L343">drops
 the entire video frame</a>, color included.
+
+You can reproduce the hole with this very demo: seek around for a while and occasionally
+Chrome kills playback with **`MediaError` code 3 (`MEDIA_ERR_DECODE`)**. The stale-reference
+trick only works while the alpha libvpx context is alive; Chrome's pipeline sometimes
+re-initializes the decoder (media suspension of an idle element, decoder fallback), and if
+the next seek then lands on a color-keyframe/delta-alpha point, the alpha context has no
+history at all — `kAlphaPlaneError`, decode failure, dead <code>&lt;video&gt;</code>
+element. In other words: in the cold-start case Chrome still exhibits the same fatal
+failure Firefox shipped and fixed back in 2017. Press <em>Reload</em> in the demo to
+revive the element.
 
 ### Firefox: alpha errors are non-fatal, drop the alpha plane
 

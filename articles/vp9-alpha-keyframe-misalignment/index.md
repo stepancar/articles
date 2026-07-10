@@ -48,38 +48,7 @@ see exactly what the compositor does.
 Seek into a "misaligned" point (1s, 2s, 4s, 5s — color keyframe, delta alpha) and watch
 what your browser renders until the next alpha keyframe:
 
-<style>
-#demo-stage {
-    background: repeating-conic-gradient(#c33 0% 25%, #eee 0% 50%) 0 0 / 32px 32px;
-    padding: 16px; display: inline-block;
-}
-#demo-video { display: block; width: 320px; height: 240px; }
-#demo-controls { margin: 8px 0; }
-#demo-controls button { margin-right: 6px; }
-#demo-status, #alpha-readout { font-family: monospace; font-size: 13px; }
-#alpha-verdict {
-    display: inline-block; font-family: monospace; font-size: 13px; font-weight: bold;
-    color: #fff; background: #888; padding: 2px 8px; border-radius: 3px; margin: 4px 0;
-}
-</style>
-
-<div id="demo-stage">
-    <video id="demo-video" muted loop playsinline src="misaligned-demo.webm"></video>
-</div>
-<div id="demo-controls">
-    <button id="btn-play">Play</button>
-    <button id="btn-pause">Pause</button>
-    <button id="btn-reload">Reload</button>
-    <button data-seek="1.0">Seek 1s (misaligned)</button>
-    <button data-seek="2.0">Seek 2s (misaligned)</button>
-    <button data-seek="4.0">Seek 4s (misaligned)</button>
-    <button data-seek="3.0">Seek 3s (aligned)</button>
-</div>
-<div id="demo-status"></div>
-<div><span id="alpha-verdict">-</span></div>
-<div id="alpha-readout"></div>
-
-<script type="module" src="index.mjs"></script>
+<iframe src="./demo/index.html"></iframe>
 
 ### How to detect that the alpha is wrong
 

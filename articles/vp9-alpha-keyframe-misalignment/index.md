@@ -57,6 +57,10 @@ what your browser renders until the next alpha keyframe:
 #demo-controls { margin: 8px 0; }
 #demo-controls button { margin-right: 6px; }
 #demo-status, #alpha-readout { font-family: monospace; font-size: 13px; }
+#alpha-verdict {
+    display: inline-block; font-family: monospace; font-size: 13px; font-weight: bold;
+    color: #fff; background: #888; padding: 2px 8px; border-radius: 3px; margin: 4px 0;
+}
 </style>
 
 <div id="demo-stage">
@@ -72,9 +76,35 @@ what your browser renders until the next alpha keyframe:
     <button data-seek="3.0">Seek 3s (aligned)</button>
 </div>
 <div id="demo-status"></div>
+<div><span id="alpha-verdict">-</span></div>
 <div id="alpha-readout"></div>
 
 <script type="module" src="index.mjs"></script>
+
+### How to detect that the alpha is wrong
+
+The mask in this demo is analytic — the bar covers <code>x ∈ [m−80, m)</code> where
+<code>m = (t·160) mod 400</code> — so the page knows exactly where the bar *should* be at
+any <code>currentTime</code>. Every 120ms it draws the current frame to a canvas, measures
+where the opaque pixels actually are, and compares. The badge above the readout shows the
+verdict, and each engine lights up its own state after a misaligned seek:
+
+- <strong style="color:#080">CORRECT</strong> — measured bar matches the expected position;
+- <strong style="color:#c00">GHOST MASK</strong> — a bar is rendered, but N pixels away
+  from where it belongs: the alpha was decoded against stale pre-seek references.
+  **This is Chrome.** No error is raised, no API reports a problem — the pixels are simply
+  wrong, and only ground-truth comparison can catch it;
+- <strong style="color:#c60">ALPHA DROPPED</strong> — the frame is fully opaque: the
+  engine discarded the undecodable alpha plane. **This is Firefox and Safari.** Detectable
+  without ground truth: alpha coverage jumping to 100% right after a seek is the signature;
+- <strong style="color:#c00">DEAD</strong> — <code>video.error.code === 3</code>
+  (<code>MEDIA_ERR_DECODE</code>): Chrome's cold-start hole. The only state that is
+  trivially detectable, because the element tells you itself.
+
+That asymmetry is the practical takeaway: an *opaque* fallback (Firefox/Safari) and a
+*fatal error* (Chrome cold-start) are observable from JavaScript, but Chrome's
+stale-reference ghost is silent — a real application has no ground truth to compare
+against, so the wrong alpha simply ships to the user's screen.
 
 ## What each engine does, and why
 

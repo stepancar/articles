@@ -1,0 +1,249 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VP9 alpha in WebM: what happens when color and alpha keyframes don&#39;t align</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <style rel="stylesheet">
+      mjx-container[jax="SVG"] > svg {
+         max-width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+    
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          VP9 alpha in WebM: what happens when color and alpha keyframes don't align
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2 class="shortDescription"></h2>
+          <div class="content">
+            <p class="lead">
+    Transparent WebM video is not one stream — it is two: a color VP8/VP9 stream and a
+    separate alpha VP8/VP9 stream riding along as <code>BlockAdditional</code> data.
+    Nothing in the container guarantees their keyframes line up. This page demonstrates
+    how differently Chrome, Firefox and Safari behave when they don't.
+</p>
+<h2>The problem</h2>
+<p>A video frame is either a <strong>keyframe</strong> (complete picture) or a <strong>delta frame</strong> (a diff
+against previous frames). A delta frame can only be decoded if the decoder has walked the
+whole chain from the last keyframe — and this holds <em>per stream</em>: the color stream and
+the alpha stream each have their own chain.</p>
+<p>During continuous playback misaligned keyframes are harmless: both decoders are fed every
+frame, both chains stay intact, and pairing frames by timestamp just works.</p>
+<p>Seeking is where it breaks. The player jumps to a <strong>color</strong> keyframe (that is the only
+thing the container indexes — alpha is an attachment to the color block, it has no index
+of its own). If the alpha frame at that position is a delta, the alpha decoder is handed
+a diff it has no history for:</p>
+<pre>
+time  →        935.0        937.3 (← seek lands here)     939.6
+color:   … D D D D D D D D  [K] D D D D D D D D D D D  …
+alpha:   … [K] D D D D D D   D  D D D D D D D D D D [K] …
+</pre>
+<p>The compressed alpha bytes for 937.3 are right there — but they are undecodable. Every
+engine has to decide what to show until the alpha stream reaches its own next keyframe.
+This is not hypothetical: Firefox shipped a seek-breaking bug caused by exactly this
+(<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1393087">bug 1393087</a>, a real
+video where a 130-second region has color keyframes with delta alpha).</p>
+<h2>Demo</h2>
+<p>The video below is crafted so that the <strong>color</strong> stream has keyframes at 0/1/2/3/4/5s but
+the <strong>alpha</strong> stream has keyframes at 0s and 3s only. The alpha mask is a moving vertical
+bar, the color plane is solid green, and the page background is a checkerboard, so you can
+see exactly what the compositor does.</p>
+<p>Seek into a "misaligned" point (1s, 2s, 4s, 5s — color keyframe, delta alpha) and watch
+what your browser renders until the next alpha keyframe:</p>
+<style>
+#demo-stage {
+    background: repeating-conic-gradient(#c33 0% 25%, #eee 0% 50%) 0 0 / 32px 32px;
+    padding: 16px; display: inline-block;
+}
+#demo-video { display: block; width: 320px; height: 240px; }
+#demo-controls { margin: 8px 0; }
+#demo-controls button { margin-right: 6px; }
+#demo-status, #alpha-readout { font-family: monospace; font-size: 13px; }
+</style>
+<div id="demo-stage">
+    <video id="demo-video" muted="" loop="" playsinline="" src="misaligned-demo.webm"></video>
+</div>
+<div id="demo-controls">
+    <button id="btn-play">Play</button>
+    <button id="btn-pause">Pause</button>
+    <button data-seek="1.0">Seek 1s (misaligned)</button>
+    <button data-seek="2.0">Seek 2s (misaligned)</button>
+    <button data-seek="4.0">Seek 4s (misaligned)</button>
+    <button data-seek="3.0">Seek 3s (aligned)</button>
+</div>
+<div id="demo-status"></div>
+<div id="alpha-readout"></div>
+<script type="module" src="index.mjs"></script>
+<h2>What each engine does, and why</h2>
+<p>The three engines picked three different answers to "what do we show while the alpha
+chain is broken":</p>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th>Strategy</th>
+<th>What you see after seeking to 1s/2s/4s/5s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chrome</strong></td>
+<td>Never resets the alpha decoder on seek: the libvpx context — including its reference frames from the <em>pre-seek</em> position — survives, and delta frames are decoded against that stale history.</td>
+<td>The mask appears immediately, but it is <strong>wrong</strong> — a ghost of the pre-seek mask position, smearing/drifting as deltas accumulate — then snaps correct at the 3s alpha keyframe.</td>
+</tr>
+<tr>
+<td><strong>Firefox</strong></td>
+<td>After bug 1393087: an undecodable alpha plane is non-fatal — alpha is simply dropped for those frames.</td>
+<td>The video turns <strong>fully opaque</strong> (the checkerboard disappears behind a green rectangle) until the 3s alpha keyframe, then the mask returns.</td>
+</tr>
+<tr>
+<td><strong>Safari</strong> (with the <a href="https://github.com/WebKit/WebKit/pull/64837">VP9-alpha patch</a>)</td>
+<td>The alpha decoder waits for the alpha stream's own keyframe; undecodable alpha is treated as absent, matching Firefox.</td>
+<td>Same as Firefox: opaque until 3s, then correct.</td>
+</tr>
+</tbody>
+</table>
+<h3>Chrome: keep the alpha decoder's memory across seeks</h3>
+<p>Chromium decodes alpha WebM in <code>media/filters/vpx_video_decoder.cc</code> with <strong>two libvpx
+contexts</strong> — <code>vpx_codec_</code> for color and <code>vpx_codec_alpha_</code> for the side-data stream. The
+trick is in what happens on seek: the pipeline calls <a href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L196-L208">
+<code>VpxVideoDecoder::Reset()</code></a>, and it resets two state enums — <strong>and does not
+touch either libvpx context</strong>. The contexts are created only in <a href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L252">
+<code>ConfigureDecoder</code></a> and destroyed only in <a href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L270-L283">
+<code>CloseDecoder</code></a> (destructor, re-initialize, detach — never on seek).</p>
+<p>Reference frames live inside a libvpx context until it is destroyed. So after a seek the
+alpha decoder still holds the reference frames from the <em>pre-seek</em> position, and the
+incoming delta frames happily decode against that stale history — producing an alpha
+plane that is plausible but wrong, converging over time and snapping correct at the next
+alpha keyframe. It is a masking strategy, not a fix — and it has a hole: on a true cold
+start (no history at all), an undecodable alpha delta <a href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L338">fails
+the whole frame decode</a>, and a decode that yields no alpha image <a href="https://github.com/chromium/chromium/blob/d5f73949391e68a81c6bb339afc0b57f049bbd51/media/filters/vpx_video_decoder.cc#L340-L343">drops
+the entire video frame</a>, color included.</p>
+<h3>Firefox: alpha errors are non-fatal, drop the alpha plane</h3>
+<p>Firefox also runs a second libvpx decoder for the alpha side data
+(<code>VPXDecoder::DecodeAlpha</code>). Before <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1393087">bug 1393087</a> an alpha
+decode error was treated like any decode error — <strong>fatal</strong>, killing playback with
+<code>NS_ERROR_DOM_MEDIA_DECODE_ERR</code> the moment you seeked into a misaligned region. The fix
+made alpha failures non-fatal: the frame is rendered <strong>without its alpha plane</strong> (fully
+opaque) until the alpha stream reaches its own next keyframe and decoding resumes.</p>
+<h3>Safari: gate alpha on its own keyframes, degrade like Firefox</h3>
+<p>WebKit (with the <a href="https://github.com/WebKit/WebKit/pull/64837">VP9-alpha
+patch</a>) decodes the alpha stream on a companion <code>WebCoreDecompressionSession</code>
+(VideoToolbox) next to the color one. Two decisions matter here:</p>
+<ol>
+<li>The alpha sample's random-access flag is parsed from the <strong>alpha bitstream itself</strong>,
+not copied from the color frame — so after a flush the alpha decoder correctly waits
+for an alpha keyframe instead of being handed a delta it would decode into garbage
+(VideoToolbox, unlike libvpx-with-stale-refs, refuses missing-reference deltas).</li>
+<li>While alpha is undecodable it is treated as absent and the color frame is emitted
+opaque — deliberately matching Firefox's behavior rather than Chrome's stale-reference
+approximation, because "briefly opaque" is deterministic and testable while "briefly
+wrong" is neither.</li>
+</ol>
+<h3>The fully correct answer that nobody implements</h3>
+<p>Pre-rolling the alpha stream from its <em>own</em> previous keyframe would render this whole
+page moot — but no engine does it: it requires demuxing the two streams from two
+different entry points, and the WebM container only indexes color keyframes (<code>Cues</code> point
+at blocks; alpha is an attachment of those blocks with no index of its own).</p>
+<h2>How the demo file was made</h2>
+<p>Two VP9 streams are encoded independently with different GOP sizes, then muxed into WebM
+with the alpha stream as <code>BlockAdditional</code> (BlockAddID=1, <code>AlphaMode=1</code>) by a small
+python muxer (<a href="https://github.com/stepancar/articles/tree/main/articles/vp9-alpha-keyframe-misalignment/tools">tools/mux_misaligned.py</a>):</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># color: solid green, keyframe every 30 frames (1s)</span>
+ffmpeg <span class="token parameter variable">-f</span> lavfi <span class="token parameter variable">-i</span> <span class="token string">"color=c=green:size=320x240:rate=30:duration=6"</span> <span class="token punctuation">\</span>
+    <span class="token parameter variable">-c:v</span> libvpx-vp9 <span class="token parameter variable">-g</span> <span class="token number">30</span> <span class="token parameter variable">-keyint_min</span> <span class="token number">30</span> <span class="token parameter variable">-pix_fmt</span> yuv420p <span class="token parameter variable">-f</span> ivf color.ivf
+
+<span class="token comment"># alpha: moving bar as luma, keyframe every 90 frames (3s), full range</span>
+ffmpeg <span class="token parameter variable">-f</span> lavfi <span class="token parameter variable">-i</span> <span class="token string">"color=c=black:size=320x240:rate=30:duration=6,format=gray,\
+geq=lum='if(between(X, mod(T*160,400)-80, mod(T*160,400)), 255, 0)',\
+format=yuv420p,scale=in_range=tv:out_range=pc"</span> <span class="token punctuation">\</span>
+    <span class="token parameter variable">-c:v</span> libvpx-vp9 <span class="token parameter variable">-g</span> <span class="token number">90</span> <span class="token parameter variable">-keyint_min</span> <span class="token number">90</span> <span class="token parameter variable">-pix_fmt</span> yuv420p <span class="token parameter variable">-color_range</span> pc <span class="token parameter variable">-f</span> ivf alpha.ivf
+
+python3 tools/mux_misaligned.py color.ivf alpha.ivf misaligned-demo.webm <span class="token number">320</span> <span class="token number">240</span> <span class="token number">30</span></code></pre>
+<p>Regular encoders (ffmpeg's <code>yuva420p</code> path) always align the two streams' keyframes —
+that is why this case is rare in the wild, and why it slips through most test suites.
+A second sample with a static mask and the same misalignment is
+<a href="static-demo.webm">here</a>.</p>
+
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialPath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
+          }
+
+          connectedCallback() {
+              this.render();
+          }
+
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialPath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/vp9-alpha-keyframe-misalignment/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
+    </script>
+  </body>
+</html>

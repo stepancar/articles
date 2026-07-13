@@ -73,19 +73,31 @@ track = elem("1654ae6b", elem("ae",
     + uelem("55ee", 1)
     + elem("e0", uelem("b0", WIDTH) + uelem("ba", HEIGHT) + uelem("53c0", 1))))
 
+# One Cluster per color GOP: real-world WebM files are multi-cluster, and
+# demuxers (e.g. Firefox's WebMBufferedState) seek with cluster granularity.
+# A single-cluster file would make every seek land at t=0 and accidentally
+# rebuild the full alpha chain, hiding the engines' misalignment strategies.
+clusters = b""
+cluster_time = 0
 blocks = b""
 prev_t = 0
 for i, (cf, af) in enumerate(zip(color, alpha)):
     t = round(i * 1000 / FPS)
-    block = elem("a1", b"\x81" + struct.pack(">h", t) + b"\x00" + cf)
+    if vp9_is_key(cf) and blocks:
+        clusters += elem("1f43b675", uelem("e7", cluster_time) + blocks)
+        blocks = b""
+    if not blocks:
+        cluster_time = t
+    block = elem("a1", b"\x81" + struct.pack(">h", t - cluster_time) + b"\x00" + cf)
     additions = elem("75a1", elem("a6", uelem("ee", 1) + elem("a5", af)))
     group_payload = block + additions
     if not vp9_is_key(cf):
         group_payload += elem("fb", sint_bytes(prev_t - t))
     blocks += elem("a0", group_payload)
     prev_t = t
+if blocks:
+    clusters += elem("1f43b675", uelem("e7", cluster_time) + blocks)
 
-cluster = elem("1f43b675", uelem("e7", 0) + blocks)
-segment = elem("18538067", info + track + cluster)
+segment = elem("18538067", info + track + clusters)
 open(sys.argv[3], "wb").write(ebml_header + segment)
 print(f"wrote {sys.argv[3]}: {len(ebml_header) + len(segment)} bytes, {len(color)} frames")

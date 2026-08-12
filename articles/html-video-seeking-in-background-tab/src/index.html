@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forcing a video to load in a background tab</title>
+  <style>
+    .frame-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 8px; }
+    .frame-strip-label { font-family: monospace; font-size: 12px; min-width: 80px; }
+    .frame { border: 2px solid #2a2; display: block; }
+    /* A frame that came back without a picture is the interesting failure, so
+       it is marked instead of blending in with the thumbnails that worked. */
+    .frame.blank { border-color: #d22; }
+    #verdict { border: 3px solid; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; }
+    #verdict[data-state="ok"] { border-color: #2a2; background: #eafaea; }
+    #verdict[data-state="partial"] { border-color: #c80; background: #fdf4e3; }
+    #verdict[data-state="fail"] { border-color: #d22; background: #fdecec; }
+    .verdict-headline { font-size: 20px; font-weight: bold; }
+    #verdict[data-state="ok"] .verdict-headline { color: #171; }
+    #verdict[data-state="partial"] .verdict-headline { color: #a60; }
+    #verdict[data-state="fail"] .verdict-headline { color: #b11; }
+    .verdict-fail { font-size: 16px; margin-top: 4px; }
+    .verdict-breakdown { margin: 8px 0 0; padding-left: 20px; }
+    .verdict-config { margin-top: 8px; font-family: monospace; font-size: 12px; color: #555; }
+    #audioState { font-family: monospace; }
+    #audioState[data-state="running"] { color: #2a2; }
+    #audioState[data-state="pending-gesture"], #audioState[data-state="suspended"] { color: #d22; }
+  </style>
+</head>
+<body>
+  <h1>Forcing a video to load in a background tab</h1>
+
+  <div id="verdict" hidden></div>
+
+  <p>
+    The run is triggered by <code>visibilitychange &rarr; hidden</code>: a fresh <code>&lt;video&gt;</code> is
+    created and loaded only after the tab is already hidden, with nothing warmed up. Switch to another tab,
+    wait, come back and read the log. The milestone of interest is <code>canplay</code>, and for every milestone
+    the log records whether it fired while hidden or only after the tab became visible again.
+  </p>
+
+  <fieldset>
+    <legend>Source</legend>
+    <label for="src">video src</label><br>
+    <input id="src" type="text" size="120"
+      value="https://media.githubusercontent.com/media/stepancar/articles/main/articles/html-video-element-seeking/mediaSource/test-videos/bbb_sunflower_7sec_1080p_30fps_one_iframe.mp4">
+    <br>
+    <label for="preload">preload</label>
+    <select id="preload">
+      <option value="auto" selected>auto</option>
+      <option value="metadata">metadata</option>
+      <option value="none">none</option>
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>Load strategy</legend>
+    <label for="strategy">strategy</label>
+    <select id="strategy">
+      <option value="src" selected>src &mdash; assign the network URL directly (baseline)</option>
+      <option value="blob">blob &mdash; fetch() the bytes, then assign a blob: URL</option>
+    </select>
+    <p>
+      <code>blob</code> takes the download away from the media element: <code>fetch()</code> pulls the bytes, and
+      the element only ever sees a <code>blob:</code> URL, which needs neither the network stack nor the disk
+      cache. In Chromium a non-http URL is also exempt from the resource load scheduler
+      (<code>ResourceLoader::StartWith</code>), so nothing can stop or throttle it.
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Extra levers (combine freely)</legend>
+    <label><input id="mutedPlay" type="checkbox"> call <code>play()</code> on the muted element &mdash; a playing element is never idle, and playback demands data</label><br>
+    <label><input id="kickRvfc" type="checkbox"> call <code>requestVideoFrameCallback()</code> after load and on every poll &mdash; asks the player for a first frame it may otherwise skip while hidden</label><br>
+    <label><input id="audioKeepAlive" type="checkbox"> audible audio keep-alive &mdash; keeps the whole renderer process out of background priority</label>
+    <button id="armAudio" type="button">arm audio keep-alive</button>
+    <strong>audio: <span id="audioState">off</span></strong>
+    <p>
+      An <code>AudioContext</code> may only start inside a user gesture, once per document. Ticking the box is
+      such a gesture, but a box restored from a previous session on page load is not &mdash; use the button, or
+      just click anywhere on the page. <strong>The lever counts only if the readout says <code>running</code>
+      before the tab goes hidden</strong>; a run started with anything else is tagged <code>a</code> instead of
+      <code>A</code> and reports <code>audioKeepAliveState</code> in its summary, so it cannot be mistaken for a
+      run that had audio.
+    </p>
+    <label><input id="fetchProbe" type="checkbox" checked> parallel <code>fetch()</code> probe of the same URL &mdash; tells whether bytes flow at all while the element is stuck</label><br>
+    <label><input id="cacheBust" type="checkbox"> append a unique query to the URL &mdash; forces a cold load, so a run cannot succeed on a cached file</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Frame generation</legend>
+    <label><input id="drawFrames" type="checkbox" checked> after <code>canplay</code>, generate frames &mdash; seek to evenly spaced points, wait for <code>seeked</code>, and <code>drawImage()</code> the element into a canvas</label><br>
+    <label for="frameCount">frames per element</label>
+    <input id="frameCount" type="number" min="1" max="60" value="6">
+    <p>
+      <code>canplay</code> only means the element claims it has data. It does not mean a decoded frame can be read
+      back: a hidden tab can seek fine and still hand out a transparent or uniformly black surface. Every generated
+      frame is therefore inspected, and one carrying no picture at all is logged as <code>frame:BLANK</code> and
+      outlined in red below &mdash; that, not <code>canplay</code>, is the pass/fail of the whole approach.
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Run</legend>
+    <label for="players">parallel video elements</label>
+    <input id="players" type="number" min="1" max="24" value="1">
+    <br>
+    <label for="pollInterval">state poll interval, ms</label>
+    <input id="pollInterval" type="number" min="200" max="30000" step="100" value="1000">
+    <br>
+    <label for="giveUpAfter">give up waiting after, ms</label>
+    <input id="giveUpAfter" type="number" min="1000" max="600000" step="1000" value="120000">
+    <br>
+    <label><input id="armOnHidden" type="checkbox" checked> start a run when the tab becomes hidden</label><br>
+    <label><input id="verbose" type="checkbox"> verbose media events (<code>progress</code>, <code>timeupdate</code>)</label><br>
+    <button id="runNow" type="button">run now (baseline, visible)</button>
+    <button id="stop" type="button">stop</button>
+    <button id="clearLog" type="button">clear log</button>
+    <button id="copyLog" type="button">copy log</button>
+    <button id="downloadLog" type="button">download log (json)</button>
+    <p><strong>Status:</strong> <span id="status">idle</span></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Video elements</legend>
+    <div id="videos"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Generated frames</legend>
+    <div id="frames"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Log</legend>
+    <pre id="log"></pre>
+  </fieldset>
+
+  <script src="./index.mjs" type="module"></script>
+</body>
+</html>

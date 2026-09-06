@@ -1,0 +1,200 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A two-part contract for full-screen web apps</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <style rel="stylesheet">
+      mjx-container[jax="SVG"] > svg {
+         max-width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+    
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          A two-part contract for full-screen web apps
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2 class="shortDescription">How a page can opt into a browser's full-screen focus mode with one meta tag, while every piece of configuration keeps coming from the web app manifest</h2>
+          <div class="content">
+            <h3>The problem with browser chrome</h3>
+<p>An address bar and a toolbar cost about a fifth of a phone screen, and they are
+pure overhead for a site you use like an app. iOS already has an escape hatch —
+Add to Home Screen — but it is buried, it is per-device, and the resulting icon
+is invisible to the browser that created it.</p>
+<p>I have been building an experimental iOS browser, Buran, around a different
+arrangement: a site declares that it <em>wants</em> to be an app, the user confirms it
+once, and it lands as a tile in a home-screen widget that launches it full
+screen. The interesting part turned out to be not the full-screen view but the
+opt-in protocol, and specifically where to draw the line between "ask for it"
+and "describe it".</p>
+<h3>One tag, and it carries nothing</h3>
+<p>The declaration is a single meta tag:</p>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>buran-focus<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>manifest<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>manifest.json<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span></code></pre>
+<p>The tag is a switch. Its only job is to force the focus-mode button to appear in
+the browser. It has no <code>content</code> worth writing, and the browser does not read
+one — which is the point. The moment a vendor tag starts accepting values, it
+starts accreting configuration:</p>
+<pre class="language-html"><code class="language-html"><span class="token comment">&lt;!-- the direction I did not want to go --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>buran-focus<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>name=Reader;icon=/icon.png;orientation=portrait<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span></code></pre>
+<p>That is a second, worse manifest, wearing a different syntax, maintained in
+parallel with the real one, and specific to exactly one browser.</p>
+<h3>Everything else comes from the manifest</h3>
+<p>So the tag says <em>whether</em>, and the <a href="https://www.w3.org/TR/appmanifest/">web app manifest</a> says <em>what</em>:</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>how it is used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>short_name</code> / <code>name</code></td>
+<td>the label under the icon</td>
+</tr>
+<tr>
+<td><code>start_url</code></td>
+<td>what launching from the widget opens</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>where the app ends and the open web begins</td>
+</tr>
+<tr>
+<td><code>icons</code></td>
+<td>the tile artwork</td>
+</tr>
+<tr>
+<td><code>theme_color</code></td>
+<td>accent for the in-app chrome</td>
+</tr>
+<tr>
+<td><code>background_color</code></td>
+<td>splash colour while the first page loads</td>
+</tr>
+</tbody>
+</table>
+<p>None of these are Buran-specific, and a site that already ships a manifest for
+Android installability needs no new fields. Where a field is absent, the
+<a href="https://www.w3.org/TR/appmanifest/#processing-the-start_url-member">spec's own defaults</a> apply — <code>start_url</code> falls back to the document
+that linked the manifest, <code>scope</code> to the directory of <code>start_url</code> — rather than
+to whatever happens to be lying around in the page's <code>&lt;head&gt;</code>.</p>
+<p>That last part is a rule I had to enforce against myself. The first version
+quietly fell back to <code>&lt;title&gt;</code>, <code>&lt;meta name="theme-color"&gt;</code> and
+<code>apple-touch-icon</code> when the manifest was thin. It felt generous. It also meant
+the same site could produce two different tiles depending on which fallback
+fired, and that a page could configure the app without touching its manifest at
+all. Now those tags are ignored outright: if the configuration is not in the
+manifest, it does not exist.</p>
+<h3>What happens when the manifest is missing</h3>
+<p>The two halves can disagree — a page can ask for the button and ship no
+manifest. The tempting response is to show nothing, since there is nothing to
+configure. But the author explicitly asked for the button, and silence gives
+them nothing to debug.</p>
+<p>So the button appears anyway and states the reason: <em>no <code>&lt;link rel="manifest"&gt;</code></em>,
+or <em>manifest unreadable</em>. It is not actionable, and it is not meant to be. It is
+the difference between a contract that fails loudly and one that fails by
+looking exactly like a site that never opted in.</p>
+<h3>The demo</h3>
+<p>The page below declares the tag and a manifest with an explicit <code>scope</code>. In an
+ordinary browser it is a normal page; the readout shows how much of the screen
+the chrome is eating. It also links one page inside the scope and one outside,
+which is the case a full-screen mode has to handle — leaving the app without
+trapping you there.</p>
+<iframe src="src/index.html"></iframe>
+<p><a href="src/index.html">Open the demo full width →</a></p>
+<h3>What I am still unsure about</h3>
+<p>Two things, mostly.</p>
+<p>A vendor-prefixed tag is a bet that no standard shows up to replace it, and
+<code>display: "standalone"</code> in the manifest arguably already says "I am an app" —
+using it as the trigger would need no new markup at all. I kept the explicit tag
+because <em>installable</em> and <em>I want this browser's full-screen mode</em> are not the
+same claim, and I would rather a site opt into the second one deliberately. That
+reasoning may not survive contact with real sites.</p>
+<p>The other is <code>scope</code>. Treating it as the app boundary is what the spec intends,
+but plenty of manifests in the wild set it carelessly, and a boundary drawn in
+the wrong place is worse than no boundary at all.</p>
+
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialPath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
+          }
+
+          connectedCallback() {
+              this.render();
+          }
+
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialPath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/buran-focus-mode/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
+    </script>
+  </body>
+</html>

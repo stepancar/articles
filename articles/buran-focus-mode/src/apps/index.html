@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buran demo apps</title>
+<link rel="stylesheet" href="./app.css">
+<style>
+  :root { --bg: #101216; --fg: #e9ecf2; --accent: #4f8cff; }
+  .app {
+    display: flex; align-items: center; gap: 14px;
+    text-decoration: none; color: inherit;
+    border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+    border-radius: 16px; padding: 13px; margin-bottom: 11px;
+  }
+  .app img { width: 52px; height: 52px; border-radius: 12px; flex: none; }
+  .app b { display: block; font-weight: 600; }
+  .app span { display: block; font-size: 14px; opacity: .58; margin-top: 1px; }
+  .note { font-size: 14px; opacity: .58; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Buran demo apps</h1></header>
+  <p class="meta">four pages for testing focus mode</p>
+
+  <p class="note" style="margin-bottom:20px">The first three declare
+  <code>&lt;meta name="buran-focus"&gt;</code> and a web app manifest, each with
+  its own scope, icon and colours — so they land as separate tiles in the widget.
+  Add at least two to try the widget grid and the in-app switcher.</p>
+
+  <a class="app" href="./reader/">
+    <img src="./icons/reader-192.png" alt="">
+    <b>Reader<span>dark, long-form text</span></b>
+  </a>
+  <a class="app" href="./notes/">
+    <img src="./icons/notes-192.png" alt="">
+    <b>Notes<span>light, remembers what you type</span></b>
+  </a>
+  <a class="app" href="./timer/">
+    <img src="./icons/timer-192.png" alt="">
+    <b>Focus Timer<span>dark green, 25-minute countdown</span></b>
+  </a>
+  <a class="app" href="./no-manifest/">
+    <img src="./icons/none-192.png" alt="">
+    <b>Tag without a manifest<span>the failure case: banner with a reason, nothing to tap</span></b>
+  </a>
+
+  <div class="card" style="margin-top:20px">
+    <h2>This page</h2>
+    <p style="margin:0" class="note">Deliberately does not opt in, so no banner
+    should appear here — and it doubles as the out-of-scope destination: reach it
+    from inside a focus app and you should get a compact bar with the host and a
+    way back.</p>
+  </div>
+
+  <div class="nav"><a href="../../">About focus mode &rarr;</a></div>
+</div>
+</body>
+</html>

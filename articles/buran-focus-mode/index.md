@@ -92,6 +92,18 @@ trapping you there.
 
 [Open the demo full width &rarr;](./src/index.html)
 
+### Four apps to try it on
+
+One page is enough to see the mechanism, but not enough to see the point: the
+widget is a grid, and a grid of one is a bookmark. So there are three separate
+mini-apps, each with its own scope, icon and colours, plus the failure case.
+
+[Buran demo apps &rarr;](./src/apps/)
+
+The hub page deliberately does *not* opt in, which makes it useful twice: no
+banner should appear on it, and reaching it from inside one of the apps is the
+out-of-scope case.
+
 ### What I am still unsure about
 
 Two things, mostly.

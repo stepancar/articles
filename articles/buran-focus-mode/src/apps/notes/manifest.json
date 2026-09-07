@@ -1,0 +1,14 @@
+{
+    "name": "Buran Notes demo",
+    "short_name": "Notes",
+    "description": "A scratchpad that survives relaunching from the widget",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "theme_color": "#e08a1e",
+    "background_color": "#fdfaf4",
+    "icons": [
+        { "src": "../icons/notes-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "../icons/notes-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    ]
+}

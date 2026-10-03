@@ -1,0 +1,142 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WebM VP9 support comparison</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/articles/styles/highlight.css">
+    <link rel="stylesheet" href="/articles/styles/header.css">
+    <link rel="stylesheet" href="/articles/styles/content.css">
+    <link rel="stylesheet" href="/articles/styles/markdown.css">
+    <style rel="stylesheet">
+      mjx-container[jax="SVG"] > svg {
+         max-width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="/articles/styles/typography.css">
+    
+  </head>
+
+  <body>
+    <layout>
+      <header>
+        <h1>
+          WebM VP9 support comparison
+        </h1>
+      </header>
+      <main>
+        <article class="markdown">
+          <h2 class="shortDescription"></h2>
+          <div class="content">
+            <p>WebKit PR: <a href="https://github.com/WebKit/WebKit/pull/64837">VP9 with transparency plays back incorrectly</a></p>
+<iframe src="demo/index.html"></iframe>
+<h2>Generating the test videos</h2>
+<pre class="language-sh"><code class="language-sh"><span class="token shebang important">#!/bin/sh</span>
+<span class="token comment"># Generates the VP9 WebM test videos used by the demo page.</span>
+<span class="token comment"># Every file is 200x200, 2s, 10fps, solid #3366cc. Files with alpha have four</span>
+<span class="token comment"># vertical stripes at 0 / 10% / 50% / 100% opacity, chosen so that the expected</span>
+<span class="token comment"># 8-bit alpha is exactly 0 / 26 / 128 / 255 at every bit depth.</span>
+<span class="token builtin class-name">set</span> <span class="token parameter variable">-e</span>
+<span class="token builtin class-name">cd</span> <span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token function">dirname</span> <span class="token string">"<span class="token variable">$0</span>"</span><span class="token variable">)</span></span>/../videos"</span>
+
+<span class="token function-name function">encode</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment"># name pix_fmt profile [alpha codes: a10 a50 amax [geq pix_fmt]]</span>
+    <span class="token assign-left variable">filter</span><span class="token operator">=</span><span class="token string">"color=c=0x3366cc:s=200x200:d=2:r=10,format=<span class="token variable">${7<span class="token operator">:-</span>$2}</span>"</span>
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-n</span> <span class="token string">"<span class="token variable">$4</span>"</span> <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+        <span class="token assign-left variable">filter</span><span class="token operator">=</span><span class="token string">"<span class="token variable">$filter</span>,geq=lum='lum(X,Y)':cb='cb(X,Y)':cr='cr(X,Y)':a='if(lt(X,50),0,if(lt(X,100),<span class="token variable">$4</span>,if(lt(X,150),<span class="token variable">$5</span>,<span class="token variable">$6</span>)))',format=<span class="token variable">$2</span>"</span>
+    <span class="token keyword">fi</span>
+    ffmpeg <span class="token parameter variable">-hide_banner</span> <span class="token parameter variable">-loglevel</span> error <span class="token parameter variable">-y</span> <span class="token parameter variable">-f</span> lavfi <span class="token parameter variable">-i</span> <span class="token string">"<span class="token variable">$filter</span>"</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-c:v</span> libvpx-vp9 <span class="token parameter variable">-strict</span> experimental <span class="token parameter variable">-pix_fmt</span> <span class="token string">"<span class="token variable">$2</span>"</span> <span class="token parameter variable">-profile:v</span> <span class="token string">"<span class="token variable">$3</span>"</span> <span class="token parameter variable">-b:v</span> <span class="token number">0</span> <span class="token parameter variable">-crf</span> <span class="token number">4</span> <span class="token string">"<span class="token variable">$1</span>.webm"</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># Profile 0: 8-bit 4:2:0</span>
+encode vp9-p0-8bit-420              yuv420p      <span class="token number">0</span>
+encode vp9-p0-8bit-420-alpha        yuva420p     <span class="token number">0</span> <span class="token number">26</span> <span class="token number">128</span> <span class="token number">255</span>
+<span class="token comment"># Profile 1: 8-bit 4:2:2 / 4:4:4</span>
+encode vp9-p1-8bit-422              yuv422p      <span class="token number">1</span>
+encode vp9-p1-8bit-422-alpha        yuva422p     <span class="token number">1</span> <span class="token number">26</span> <span class="token number">128</span> <span class="token number">255</span>
+encode vp9-p1-8bit-444              yuv444p      <span class="token number">1</span>
+encode vp9-p1-8bit-444-alpha        yuva444p     <span class="token number">1</span> <span class="token number">26</span> <span class="token number">128</span> <span class="token number">255</span>
+<span class="token comment"># Profile 2: 10/12-bit 4:2:0 (ffmpeg has no yuva420p12le)</span>
+encode vp9-p2-10bit-420             yuv420p10le  <span class="token number">2</span>
+encode vp9-p2-10bit-420-alpha       yuva420p10le <span class="token number">2</span> <span class="token number">104</span> <span class="token number">514</span> <span class="token number">1023</span>
+encode vp9-p2-12bit-420             yuv420p12le  <span class="token number">2</span>
+<span class="token comment"># Profile 3: 10/12-bit 4:2:2 / 4:4:4</span>
+encode vp9-p3-10bit-422             yuv422p10le  <span class="token number">3</span>
+encode vp9-p3-10bit-422-alpha       yuva422p10le <span class="token number">3</span> <span class="token number">104</span> <span class="token number">514</span> <span class="token number">1023</span>
+encode vp9-p3-10bit-444             yuv444p10le  <span class="token number">3</span>
+encode vp9-p3-10bit-444-alpha       yuva444p10le <span class="token number">3</span> <span class="token number">104</span> <span class="token number">514</span> <span class="token number">1023</span>
+encode vp9-p3-12bit-444             yuv444p12le  <span class="token number">3</span>
+<span class="token comment"># geq has no 12-bit YUVA support, so draw in 16 bits: 6568 / 32904 / 65528</span>
+<span class="token comment"># become 410 / 2056 / 4095 after conversion to 12 bits.</span>
+encode vp9-p3-12bit-444-alpha       yuva444p12le <span class="token number">3</span> <span class="token number">6568</span> <span class="token number">32904</span> <span class="token number">65528</span> yuva444p16le</code></pre>
+
+          </div>
+        </article>
+      </main>
+      <footer></footer>
+    </layout>
+
+    <script>
+        function resizeIframe(iframe) {
+            const height = parseInt(iframe.style.height);
+            const scrollHeight = iframe.contentWindow.document.documentElement.scrollHeight
+            iframe.style.height = scrollHeight + 'px';
+            console.log(height, scrollHeight)
+            if (height < scrollHeight) {  
+              console.log('resize')
+              iframe.style.height = scrollHeight + 20 + 'px';
+            }
+        }
+
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe) => {
+              resizeIframe(iframe);
+            });
+        }, 100);
+
+
+    class DemoWithPlayground extends HTMLElement {
+      static get observedAttributes() {
+        return ['initialPath', 'file'];
+      }
+
+      constructor() {
+          super();
+              // this.attachShadow({ mode: 'open' });
+          }
+
+          connectedCallback() {
+              this.render();
+          }
+
+          attributeChangedCallback() {
+              this.render();
+          }
+
+          render() {
+              const initialPath = this.getAttribute('initialPath') || '';
+              const file = this.getAttribute('file') || '';
+          
+          this.innerHTML = `
+          <div>
+              <iframe src="./${initialPath}"></iframe>
+
+              <a href="https://stackblitz.com/github/stepancar/articles/tree/main/articles/webm-vp9-support-comparison/?file=${file}&initialPath=${initialPath}&startScript=start" target="_blank">
+              <img
+                  alt="Open in StackBlitz"
+                  src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
+              />
+              </a>
+          </div>
+          `;
+          }
+      }
+
+    customElements.define('demo-with-playground', DemoWithPlayground);
+    </script>
+  </body>
+</html>

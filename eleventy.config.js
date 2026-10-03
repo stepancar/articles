@@ -48,4 +48,22 @@ module.exports = function(eleventyConfig) {
     });
 
     eleventyConfig.addPlugin(pluginSyntaxHighlight)
+
+    // Articles sorted by creationDate, newest first. Articles without a date go last.
+    eleventyConfig.addCollection("articles", function (collectionApi) {
+      return collectionApi
+        .getAll()
+        .filter((item) => item.data.layout === "article.njk")
+        .sort((a, b) => {
+          const aTime = a.data.creationDate ? new Date(a.data.creationDate).getTime() : 0;
+          const bTime = b.data.creationDate ? new Date(b.data.creationDate).getTime() : 0;
+          return bTime - aTime;
+        });
+    });
+
+    // YAML dates are parsed as UTC midnight, so format in UTC to avoid an off-by-one day.
+    eleventyConfig.addFilter("articleDate", function (value) {
+      if (!value) return "";
+      return new Date(value).toISOString().slice(0, 10);
+    });
 };

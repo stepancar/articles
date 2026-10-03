@@ -2,6 +2,7 @@
 layout: article.njk
 title: Video Frame Extractor
 shortDescription: This article explores details of impelmenting analog of html video element.
+creationDate: 2024-11-04
 ---
 
 Lets run simple animation.

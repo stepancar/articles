@@ -4,15 +4,13 @@
         <title>Page title</title>
     </head>
     <body>
-        {% assign sortedPages = collections.all | where: "data.layout", "article.njk" | sort: "data.creationDate" %}
-
         <h2>
             Stepancar's blog
         </h2>
         <ul>
-            {% for page in sortedPages  %}
+            {% for page in collections.articles %}
                 <li>
-                    <a href="{{ page.url }}">{{ page.data.title }}</a>
+                    {% if page.data.creationDate %}<time datetime="{{ page.data.creationDate | articleDate }}">{{ page.data.creationDate | articleDate }}</time> — {% endif %}<a href="{{ page.url }}">{{ page.data.title }}</a>
                 </li>
             {% endfor %}
         </ul>

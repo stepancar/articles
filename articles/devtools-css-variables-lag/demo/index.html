@@ -1,0 +1,89 @@
+
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSS Variables vs DevTools</title>
+<style>
+  body { margin: 0; font: 14px/1.4 system-ui, sans-serif; background: #fff; color: #111; }
+  #panel {
+    position: sticky; top: 0; z-index: 1; display: flex; flex-wrap: wrap; gap: 12px; align-items: end;
+    padding: 12px 16px; background: #f4f4f5; border-bottom: 1px solid #ddd;
+  }
+  #panel label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #555; }
+  #panel input { width: 120px; padding: 6px 8px; font: inherit; border: 1px solid #ccc; border-radius: 6px; }
+  #panel button { padding: 7px 14px; font: inherit; border: 0; border-radius: 6px; background: #2563eb; color: #fff; cursor: pointer; }
+  #stats { font-size: 12px; color: #555; margin-left: auto; }
+  #root { display: flex; flex-wrap: wrap; gap: 2px; padding: 16px; }
+  .item { width: 16px; height: 16px; border-radius: 3px; }
+</style>
+<style id="vars"></style>
+</head>
+<body>
+<div id="panel">
+  <label>CSS-переменных в :root
+    <input id="varsInput" type="number" min="0" step="100">
+  </label>
+  <label>DOM-элементов
+    <input id="nodesInput" type="number" min="0" step="100">
+  </label>
+  <button id="apply">Применить</button>
+  <span id="stats"></span>
+</div>
+<div id="root"></div>
+
+<script>
+  const DEFAULT_VARS = 1000;
+  const DEFAULT_NODES = 2000;
+
+  const params = new URLSearchParams(location.search);
+  const readInt = (name, fallback) => {
+    const value = parseInt(params.get(name), 10);
+    return Number.isFinite(value) && value >= 0 ? value : fallback;
+  };
+
+  const varsInput = document.getElementById('varsInput');
+  const nodesInput = document.getElementById('nodesInput');
+  varsInput.value = readInt('vars', DEFAULT_VARS);
+  nodesInput.value = readInt('nodes', DEFAULT_NODES);
+
+  function render() {
+    const varCount = Math.max(0, parseInt(varsInput.value, 10) || 0);
+    const nodeCount = Math.max(0, parseInt(nodesInput.value, 10) || 0);
+    const t0 = performance.now();
+
+    // Все переменные объявлены на :root, поэтому наследуются каждым элементом.
+    let css = ':root {\n';
+    for (let i = 0; i < varCount; i++) {
+      css += `  --color-${i}: hsl(${(i * 37) % 360} 70% 55%);\n`;
+    }
+    css += '}\n';
+    document.getElementById('vars').textContent = css;
+
+    const root = document.getElementById('root');
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < nodeCount; i++) {
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.style.background = varCount ? `var(--color-${i % varCount})` : '#ccc';
+      fragment.appendChild(el);
+    }
+    root.replaceChildren(fragment);
+
+    const url = new URL(location.href);
+    url.searchParams.set('vars', varCount);
+    url.searchParams.set('nodes', nodeCount);
+    history.replaceState(null, '', url);
+
+    document.getElementById('stats').textContent =
+        `${varCount} переменных · ${nodeCount} элементов · ${(performance.now() - t0).toFixed(0)} ms`;
+  }
+
+  document.getElementById('apply').addEventListener('click', render);
+  for (const input of [varsInput, nodesInput]) {
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') render(); });
+  }
+  render();
+</script>
+</body>
+</html>

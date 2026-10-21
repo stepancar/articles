@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Почему DOM-дерево в DevTools лагает на страницах с тысячами CSS-переменных</title>
+    <title>DevTools и тысячи CSS-переменных: демка</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -24,108 +24,17 @@
     <layout>
       <header>
         <h1>
-          Почему DOM-дерево в DevTools лагает на страницах с тысячами CSS-переменных
+          DevTools и тысячи CSS-переменных: демка
         </h1>
       </header>
       <main>
         <article class="markdown">
           <h2 class="shortDescription"></h2>
           <div class="content">
-            <p>Если на <code>:root</code> объявлено больше ~2000 CSS-переменных, дерево элементов во вкладке Elements
-начинает заметно тормозить: узлы медленно раскрываются, а мутации DOM вызывают подвисания.
-Это типичная ситуация для дизайн-систем, которые выгружают все токены в custom properties.</p>
-<h2>Демка</h2>
-<p><a href="demo/index.html"><code>demo/index.html</code></a> генерирует страницу с настраиваемым числом:</p>
-<ul>
-<li>CSS-переменных на <code>:root</code> (по умолчанию <strong>1000</strong>);</li>
-<li>DOM-элементов (по умолчанию <strong>2000</strong>).</li>
-</ul>
-<p>Параметры можно передать в URL, например: <code>demo/index.html?vars=5000&amp;nodes=2000</code>.</p>
-<p>Как воспроизвести:</p>
-<ol>
-<li>Откройте демку и DevTools → Elements.</li>
-<li>Раскройте <code>&lt;div id="root"&gt;</code> и прокрутите дерево, повыбирайте узлы.</li>
-<li>Поставьте <code>vars=0</code>, нажмите «Применить» и сравните отзывчивость дерева.</li>
-</ol>
-<h2>Причина</h2>
-<p>Каждая строка DOM-дерева может показывать бейджи <code>flex</code>, <code>grid</code>, <code>container</code>, <code>scroll-snap</code>.
-Чтобы решить, какой бейдж показать, <code>ElementsTreeElement</code> для <strong>каждого</strong> узла запрашивает
-полный computed style:</p>
-<pre class="language-ts"><code class="language-ts"><span class="token comment">// front_end/panels/elements/ElementsTreeElement.ts</span>
-<span class="token keyword">this</span><span class="token punctuation">.</span>#layout <span class="token operator">=</span> <span class="token keyword">await</span> node<span class="token punctuation">.</span><span class="token function">domModel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">cssModel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getLayoutPropertiesFromComputedStyle</span><span class="token punctuation">(</span>nodeId<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
-<p><code>getLayoutPropertiesFromComputedStyle</code> вызывает <code>CSS.getComputedStyleForNode</code>, но использует из
-ответа всего около восьми свойств: <code>display</code>, <code>container-type</code>, <code>scroll-snap-type</code>,
-<code>grid-template-*</code> и anchor-свойства.</p>
-<p>Бэкенд при этом отдаёт <strong>все</strong> вычисленные свойства (~486) и <strong>все</strong> custom properties
-элемента:</p>
-<pre class="language-cpp"><code class="language-cpp"><span class="token comment">// third_party/blink/renderer/core/inspector/inspector_css_agent.cc</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> it <span class="token operator">:</span> computed_style_info<span class="token operator">-&gt;</span><span class="token function">GetVariables</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token punctuation">(</span><span class="token operator">*</span>style<span class="token punctuation">)</span><span class="token operator">-&gt;</span><span class="token function">emplace_back</span><span class="token punctuation">(</span>protocol<span class="token double-colon punctuation">::</span>CSS<span class="token double-colon punctuation">::</span><span class="token class-name">CSSComputedStyleProperty</span><span class="token double-colon punctuation">::</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-                             <span class="token punctuation">.</span><span class="token function">setName</span><span class="token punctuation">(</span>it<span class="token punctuation">.</span>key<span class="token punctuation">)</span>
-                             <span class="token punctuation">.</span><span class="token function">setValue</span><span class="token punctuation">(</span>it<span class="token punctuation">.</span>value<span class="token operator">-&gt;</span><span class="token function">CssText</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-                             <span class="token punctuation">.</span><span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
-<p>Custom properties наследуются, поэтому переменные с <code>:root</code> попадают в ответ для каждого
-элемента страницы. В итоге на каждый узел дерева приходит JSON на тысячи записей. Его нужно
-сериализовать, передать по CDP, распарсить и превратить в <code>Map</code>. Всё это повторяется при
-раскрытии узлов и при мутациях DOM.</p>
-<h2>Замеры</h2>
-<p>Скрипт <a href="bench.mjs"><code>bench.mjs</code></a> делает тот же CDP-вызов, что и DOM-дерево, для 204 узлов в
-headless Chrome:</p>
-<table>
-<thead>
-<tr>
-<th>переменных на <code>:root</code></th>
-<th>свойств на узел</th>
-<th>payload</th>
-<th>время бэкенда</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>486</td>
-<td>4.4 MB</td>
-<td>45 ms</td>
-</tr>
-<tr>
-<td>500</td>
-<td>986</td>
-<td>7.9 MB</td>
-<td>66 ms</td>
-</tr>
-<tr>
-<td>2000</td>
-<td>2486</td>
-<td>19 MB</td>
-<td>163 ms</td>
-</tr>
-<tr>
-<td>5000</td>
-<td>5486</td>
-<td>42 MB</td>
-<td>392 ms</td>
-</tr>
-</tbody>
-</table>
-<p>Нагрузка растёт линейно с числом переменных. В таблице только время бэкенда: разбор JSON и
-построение <code>Map</code> во фронтенде добавляются сверху.</p>
-<pre class="language-bash"><code class="language-bash"><span class="token function">node</span> bench.mjs</code></pre>
-<h2>Как исправить</h2>
-<p>Фронтенду для бейджей не нужен полный computed style. Решение состоит из двух частей:</p>
-<ol>
-<li><strong>Протокол / Blink.</strong> Добавить в <code>CSS.getComputedStyleForNode</code> опциональный параметр,
-например <code>experimental optional array of string propertyNames</code>. Когда он передан, отдавать
-только запрошенные свойства и не обходить <code>GetVariables()</code>.</li>
-<li><strong>devtools-frontend.</strong> В <code>getLayoutPropertiesFromComputedStyle</code> передавать список нужных
-свойств. Кешировать результат для бейджей отдельно от полного computed style.</li>
-</ol>
-<p>После этого цена бейджей перестанет зависеть от числа переменных. Даже без переменных payload
-уменьшится примерно в 50 раз.</p>
-<h2>Обходной путь для разработчиков сайтов</h2>
-<p>Пока исправления нет, можно не держать все токены на <code>:root</code>. Объявляйте переменные на
-контейнерах, где они реально используются, или регистрируйте через <code>@property</code> с
-<code>inherits: false</code> те токены, которым не нужно наследование.</p>
+            <p><a href="demo/index.html">Открыть демку</a></p>
+<p>Демка генерирует страницу с настраиваемым числом CSS-переменных на <code>:root</code>
+(по умолчанию <strong>1000</strong>) и DOM-элементов (по умолчанию <strong>2000</strong>).
+Параметры можно передать в URL: <code>demo/index.html?vars=5000&amp;nodes=2000</code>.</p>
 
           </div>
         </article>
